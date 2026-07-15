@@ -222,21 +222,17 @@ p { color: var(--clr-charcoal); }
   top: 0; left: 0; right: 0;
   z-index: var(--z-nav);
   padding: 0.9rem 0;
-  background: rgba(250, 247, 242, 0.88);
-  backdrop-filter: saturate(180%) blur(14px);
-  -webkit-backdrop-filter: saturate(180%) blur(14px);
-  border-bottom: 1px solid rgba(176, 138, 91, 0.12);
-  color: var(--clr-ink);
+  background: var(--clr-ink); /* Solid Black Background */[cite: 19]
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--clr-cream); /* White Text */[cite: 19]
   transition: all var(--transition);
 }
 .site-header.scrolled {
-  background: rgba(250, 247, 242, 0.96);
+  background: var(--clr-ink);
   padding: 0.65rem 0;
-  border-bottom: 1px solid var(--clr-line);
-  box-shadow: 0 6px 22px rgba(13,15,16,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5);
 }
-.site-header.dark { color: var(--clr-cream); }
-.site-header.dark.scrolled { background: rgba(13, 15, 16, 0.9); border-bottom-color: rgba(255,255,255,0.08); }
 
 .nav-inner {
   display: flex;
@@ -252,12 +248,13 @@ p { color: var(--clr-charcoal); }
   font-size: 1.35rem;
   font-weight: 600;
   letter-spacing: -0.02em;
+  color: var(--clr-cream);[cite: 19]
 }
 .brand-mark {
   width: 38px; height: 38px;
   display: grid; place-items: center;
-  background: var(--clr-ink);
-  color: var(--clr-cream);
+  background: var(--clr-cream); /* Cream background for logo on black header */[cite: 19]
+  color: var(--clr-ink);
   border-radius: 50%;
   font-family: var(--ff-display);
   font-weight: 700;
@@ -290,10 +287,8 @@ p { color: var(--clr-charcoal); }
   align-items: center;
   gap: clamp(0.2rem, 0.55vw, 0.6rem);
   padding: 0.3rem 0.45rem;
-  border: 1px solid rgba(176, 138, 91, 0.18);
-  border-radius: 999px;
-  background: rgba(250, 247, 242, 0.75);
-  backdrop-filter: blur(16px);
+  border: none; /* Pill border removed */[cite: 19]
+  background: transparent; /* Pill background removed for clean styling */[cite: 19]
   flex-wrap: nowrap;
   overflow: visible;
 }
@@ -305,7 +300,7 @@ p { color: var(--clr-charcoal); }
   padding: 0.45rem 0.7rem;
   border-radius: 999px;
   white-space: nowrap;
-  color: var(--clr-ink);
+  color: var(--clr-cream); /* White Nav Links */[cite: 19]
 }
 .nav-link::after {
   content: '';
@@ -319,8 +314,8 @@ p { color: var(--clr-charcoal); }
 .nav-link.active::after { width: 0; }
 .nav-link:hover,
 .nav-link.active {
-  color: var(--clr-ink);
-  background: rgba(201, 162, 106, 0.18);
+  color: var(--clr-cream);
+  background: rgba(176, 138, 91, 0.25); /* Premium hover background on black */[cite: 19]
 }
 
 .mega-menu {
@@ -374,7 +369,7 @@ p { color: var(--clr-charcoal); }
 .mega-menu span {
   display: block;
   margin-top: 0.25rem;
-  color: rgba(250,247,242,.68);
+  color: rgba(250, 247, 242, .68);
   font-size: .78rem;
   line-height: 1.45;
 }
@@ -389,9 +384,9 @@ p { color: var(--clr-charcoal); }
   width: 44px; height: 44px;
   place-items: center;
   border-radius: 50%;
-  border: 1px solid var(--clr-ink);
+  border: 1px solid var(--clr-cream);[cite: 19]
   background: transparent;
-  color: var(--clr-ink);
+  color: var(--clr-cream);[cite: 19]
   cursor: pointer;
 }
 .hamburger span {
@@ -427,13 +422,13 @@ p { color: var(--clr-charcoal); }
     justify-content: flex-start;
     gap: 0;
     padding: 6rem 2rem 2rem;
-    background: var(--clr-cream);
-    color: var(--clr-ink);
+    background: var(--clr-ink); /* Dark mobile drawer */
+    color: var(--clr-cream);
     border-radius: 0;
     border: 0;
     transform: translateX(100%);
     transition: transform var(--transition);
-    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.15);
+    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.4);
   }
   .nav-menu.open { transform: translateX(0); }
   .nav-mega-wrap { width: 100%; }
@@ -446,16 +441,16 @@ p { color: var(--clr-charcoal); }
     grid-template-columns: 1fr;
     margin-top: 0.5rem;
     padding: 0.65rem;
-    background: rgba(13,15,16,0.04);
-    color: var(--clr-ink);
+    background: rgba(255,255,255,0.04);
+    color: var(--clr-cream);
   }
-  .mega-menu strong { color: var(--clr-ink); }
-  .mega-menu span { color: var(--clr-muted); }
+  .mega-menu strong { color: var(--clr-cream); }
+  .mega-menu span { color: rgba(250, 247, 242, 0.6); }
   .nav-link {
     width: 100%;
     padding: 1rem 0;
     font-size: 1.1rem;
-    border-bottom: 1px solid var(--clr-line);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
     border-radius: 0;
   }
   .nav-cta .btn { display: none; }
