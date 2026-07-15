@@ -2,6 +2,7 @@
 (function () {
   const HEADER_HTML = `
 <header class="site-header">
+  <div class="nav-overlay"></div>
   <div class="container nav-inner">
     <a href="/" class="brand" aria-label="Sahanines Interiors home">
       <span class="brand-mark">S</span>
