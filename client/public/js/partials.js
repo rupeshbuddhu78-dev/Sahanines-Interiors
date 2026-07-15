@@ -1,8 +1,7 @@
 /* Inject shared header/footer/WhatsApp float so pages stay lean */
 (function () {
-  const HEADER_HTML = `
+  const HEADER_HTML = `[cite: 16]
 <header class="site-header">
-  <div class="nav-overlay"></div>
   <div class="container nav-inner">
     <a href="/" class="brand" aria-label="Sahanines Interiors home">
       <span class="brand-mark">S</span>
@@ -37,9 +36,9 @@
       <button class="hamburger" aria-label="Toggle menu"><span></span></button>
     </div>
   </div>
-</header>`;
+</header>`;[cite: 16]
 
-  const FOOTER_HTML = `
+  const FOOTER_HTML = `[cite: 16]
 <footer class="site-footer">
   <div class="container">
     <div class="footer-top">
@@ -111,10 +110,10 @@
   <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
     <path d="M20.52 3.48A11.85 11.85 0 0012.06 0C5.5 0 .16 5.34.16 11.9c0 2.1.56 4.14 1.62 5.94L0 24l6.32-1.65a11.86 11.86 0 005.73 1.46h.01c6.55 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.44-8.43zM12.07 21.8h-.01a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.75.98 1-3.66-.24-.38a9.87 9.87 0 01-1.51-5.24c0-5.45 4.44-9.89 9.9-9.89 2.64 0 5.13 1.03 6.99 2.9a9.85 9.85 0 012.9 6.99c0 5.45-4.44 9.89-9.89 9.89zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.66.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.51.15-.17.2-.29.3-.49.1-.2.05-.37-.02-.52-.07-.15-.66-1.6-.9-2.19-.24-.57-.48-.5-.66-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.03 1.01-1.03 2.46 0 1.45 1.06 2.85 1.2 3.05.15.2 2.08 3.18 5.05 4.46.7.3 1.26.48 1.69.62.71.23 1.35.19 1.86.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35z"/>
   </svg>
-</a>`;
+</a>`;[cite: 16]
 
-  const headerMount = document.getElementById('site-header') || document.querySelector('[data-partial="header"]');
-  const footerMount = document.getElementById('site-footer') || document.querySelector('[data-partial="footer"]');
-  if (headerMount) headerMount.outerHTML = HEADER_HTML;
-  if (footerMount) footerMount.outerHTML = FOOTER_HTML;
+  const headerMount = document.getElementById('site-header') || document.querySelector('[data-partial="header"]');[cite: 16]
+  const footerMount = document.getElementById('site-footer') || document.querySelector('[data-partial="footer"]');[cite: 16]
+  if (headerMount) headerMount.outerHTML = HEADER_HTML;[cite: 16]
+  if (footerMount) footerMount.outerHTML = FOOTER_HTML;[cite: 16]
 })();
