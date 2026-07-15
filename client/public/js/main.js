@@ -10,22 +10,49 @@
     setState();
   }
 
-  // ---------- Mobile menu ----------
+  // ---------- Mobile menu and accordion ----------
   const hamburger = document.querySelector('.hamburger');
   const menu = document.querySelector('.nav-menu');
+  const overlay = document.querySelector('.nav-overlay');
+  const megaWrap = document.querySelector('.nav-mega-wrap');
+
+  const closeMenu = () => {
+    if (hamburger && menu) {
+      hamburger.classList.remove('active');
+      menu.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      document.body.style.overflow = '';
+    }
+  };
+
   if (hamburger && menu) {
     hamburger.addEventListener('click', () => {
       hamburger.classList.toggle('active');
       menu.classList.toggle('open');
+      document.body.classList.toggle('menu-open');
       document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
     });
-    menu.querySelectorAll('a').forEach((a) =>
-      a.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        menu.classList.remove('open');
-        document.body.style.overflow = '';
-      })
-    );
+
+    // Close menu when clicking any link except the parent dropdown "Services" link on mobile
+    menu.querySelectorAll('.nav-link:not(.nav-mega-wrap > .nav-link), .mega-menu a').forEach((a) => {
+      a.addEventListener('click', closeMenu);
+    });
+
+    // Toggle sub-menu (Services) accordion on mobile
+    if (megaWrap) {
+      const megaLink = megaWrap.querySelector('.nav-link');
+      megaLink.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1180) {
+          e.preventDefault(); // Prevent navigating to /services.html directly on first tap
+          megaWrap.classList.toggle('active');
+        }
+      });
+    }
+  }
+
+  // Close menu when clicking the overlay background
+  if (overlay) {
+    overlay.addEventListener('click', closeMenu);
   }
 
   // ---------- Active nav link ----------
