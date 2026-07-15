@@ -254,7 +254,7 @@ p { color: var(--clr-charcoal); }
   font-weight: 600;
   letter-spacing: -0.02em;
   position: relative;
-  z-index: 110; /* Overlay ke upar rahega */
+  z-index: 110;
 }
 .brand-mark {
   width: 38px; height: 38px;
@@ -390,7 +390,7 @@ p { color: var(--clr-charcoal); }
   align-items: center;
   gap: 0.65rem;
   position: relative;
-  z-index: 110; /* Buttons overlay ke upar rahenge */
+  z-index: 110;
 }
 .hamburger {
   display: none;
@@ -424,24 +424,24 @@ p { color: var(--clr-charcoal); }
 .hamburger.active span::before { top: 0; transform: rotate(45deg); }
 .hamburger.active span::after { top: 0; transform: rotate(-45deg); }
 
-/* Beautiful Backdrop Blur Overlay */
+/* Semi-dark background mask */
 .nav-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(13, 15, 16, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 99;
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--transition);
+  transition: opacity 0.3s ease;
 }
 body.menu-open .nav-overlay {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Highly Refined Mobile Nav Media Query */
+/* ---------- RESPONSIVE MOBILE NAV ---------- */
 @media (max-width: 1180px) {
   .hamburger { display: grid; }
   .site-header.dark .hamburger {
@@ -449,40 +449,60 @@ body.menu-open .nav-overlay {
     color: var(--clr-cream);
   }
   
-  /* Menu open hone par hamburger button humesha visible black dikhega background contrast ke liye */
+  /* Menu open hone par hamburger hamesha pure black dikhega clear close karne ke liye */
   body.menu-open .hamburger {
-    color: var(--clr-ink) !important;
-    border-color: var(--clr-ink) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
   }
   
   .nav-menu {
     position: fixed;
-    inset: 0 0 0 auto;
-    width: min(360px, 85vw);
+    top: 0; right: 0; bottom: 0;
+    width: min(290px, 80vw); /* Sahi width, hand reach ke liye perfect */
+    height: 100vh;
+    height: 100dvh;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     gap: 0;
-    padding: 6.5rem 1.75rem 2.5rem;
-    background: rgba(250, 247, 242, 0.98);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    color: var(--clr-ink);
-    border-radius: 0;
-    border: 0;
-    border-left: 1px solid rgba(176, 138, 91, 0.15);
+    padding: 85px 1.5rem 30px 1.5rem !important; /* Fixed spacing */
+    background: #ffffff !important; /* FORCE PURE WHITE */
+    border-radius: 0 !important;
+    border: none !important;
+    border-left: 1px solid #e2e2e2 !important;
     transform: translateX(100%);
-    transition: transform var(--transition);
-    box-shadow: -10px 0 30px rgba(13, 15, 16, 0.08);
+    transition: transform 0.3s ease;
+    box-shadow: -10px 0 35px rgba(0,0,0,0.15);
     z-index: 100;
-    overflow-y: auto; /* Screen choti hone par list scroll ho sakegi! */
+    overflow-y: auto !important; /* Scrolling bilkul smooth chalegi! */
     -webkit-overflow-scrolling: touch;
   }
   .nav-menu.open { transform: translateX(0); }
   
   .nav-mega-wrap { width: 100%; }
   
-  /* Collapsible Services Dropdown (Accordion) Style */
+  /* Reset link colors for mobile to stark pure black */
+  .nav-link {
+    width: 100% !important;
+    padding: 0.85rem 0.5rem !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    color: #000000 !important; /* FORCE BLACK TEXT */
+    border-bottom: 1px solid #eeeeee !important; /* Clean separator lines */
+    border-radius: 0 !important;
+    background: transparent !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .nav-link:hover, 
+  .nav-link.active {
+    color: var(--clr-bronze) !important;
+    background: rgba(0, 0, 0, 0.03) !important;
+  }
+  
+  /* Collapsible Services Dropdown styling */
   .mega-menu {
     position: relative;
     left: 0; top: 0;
@@ -492,13 +512,13 @@ body.menu-open .nav-overlay {
     pointer-events: none;
     transform: none;
     grid-template-columns: 1fr;
-    margin-top: 0;
+    margin: 0;
     padding: 0;
-    background: rgba(13, 15, 16, 0.03);
+    background: #fcfbf9;
     border: none;
-    border-radius: var(--radius);
+    border-radius: 8px;
     box-shadow: none;
-    transition: max-height 0.35s var(--ease-lux), opacity 0.35s var(--ease-lux), padding 0.35s ease, margin 0.35s ease;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
     overflow: hidden;
   }
   .nav-mega-wrap.active .mega-menu {
@@ -506,58 +526,40 @@ body.menu-open .nav-overlay {
     opacity: 1;
     pointer-events: auto;
     padding: 0.5rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.75rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #eaeaea;
   }
   .mega-menu a {
     background: transparent;
     border: none;
-    padding: 0.75rem 0.5rem;
-    border-bottom: 1px solid rgba(13, 15, 16, 0.05);
+    padding: 0.65rem 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
     border-radius: 0;
   }
   .mega-menu a:last-child {
     border-bottom: none;
   }
   .mega-menu strong {
-    color: var(--clr-ink);
+    color: #000000 !important; /* Pure black text inside sub-menu */
     font-size: 0.95rem;
   }
   .mega-menu span {
-    color: var(--clr-muted);
+    color: #666666 !important; /* Dark grey helper text */
     font-size: 0.75rem;
   }
   
-  .nav-link {
-    width: 100%;
-    padding: 0.95rem 0;
-    font-size: 1.05rem;
-    border-bottom: 1px solid var(--clr-line);
-    border-radius: 0;
-    color: var(--clr-ink);
-  }
-  .nav-link:hover, .nav-link.active {
-    background: transparent;
-    color: var(--clr-bronze);
-  }
-  
-  /* Services dropdown indicator (Arrow arrow dynamic rotation) */
-  .nav-mega-wrap .nav-link {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-  }
+  /* Dropdown indicator arrow */
   .nav-mega-wrap .nav-link::after {
     content: '▾';
-    font-size: 0.85rem;
-    transition: transform 0.3s var(--ease-lux);
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
     display: inline-block;
-    color: var(--clr-muted);
+    color: #000000 !important;
   }
   .nav-mega-wrap.active .nav-link::after {
     transform: rotate(180deg);
-    color: var(--clr-bronze);
+    color: var(--clr-bronze) !important;
   }
 
   .nav-cta .btn { display: none; }
