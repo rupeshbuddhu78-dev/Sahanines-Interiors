@@ -10,50 +10,39 @@
     setState();
   }
 
-  // ---------- Mobile menu and accordion ----------
-  const hamburger = document.querySelector('.hamburger');
-  const menu = document.querySelector('.nav-menu');
-  const overlay = document.querySelector('.nav-overlay');
-  const megaWrap = document.querySelector('.nav-mega-wrap');
+  // ---------- BULLETPROOF GLOBAL CLICK DELEGATION (For Mobile Nav) ----------
+  document.addEventListener('click', (e) => {
+    const hamburger = e.target.closest('.hamburger');
+    const overlay = e.target.closest('.nav-overlay');
+    const menuLink = e.target.closest('.nav-menu .nav-link:not(.nav-mega-wrap > .nav-link), .mega-menu a');
+    const megaLink = e.target.closest('.nav-mega-wrap > .nav-link');
 
-  const closeMenu = () => {
-    if (hamburger && menu) {
-      hamburger.classList.remove('active');
-      menu.classList.remove('open');
+    const menu = document.querySelector('.nav-menu');
+    const hamburgerBtn = document.querySelector('.hamburger');
+
+    // 1. Hamburger toggle click
+    if (hamburger) {
+      hamburger.classList.toggle('active');
+      if (menu) menu.classList.toggle('open');
+      document.body.classList.toggle('menu-open');
+      if (menu) {
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+      }
+    } 
+    // 2. Clicked outside (overlay) or clicked on regular menu links to close
+    else if (overlay || menuLink) {
+      if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+      if (menu) menu.classList.remove('open');
       document.body.classList.remove('menu-open');
       document.body.style.overflow = '';
+    } 
+    // 3. Services (accordion dropdown) click on mobile
+    else if (megaLink && window.innerWidth <= 1180) {
+      e.preventDefault(); // Stop direct navigation on first tap
+      const megaWrap = megaLink.closest('.nav-mega-wrap');
+      if (megaWrap) megaWrap.classList.toggle('active');
     }
-  };
-
-  if (hamburger && menu) {
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      menu.classList.toggle('open');
-      document.body.classList.toggle('menu-open');
-      document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
-    });
-
-    // Close menu when clicking any link except the parent dropdown "Services" link on mobile
-    menu.querySelectorAll('.nav-link:not(.nav-mega-wrap > .nav-link), .mega-menu a').forEach((a) => {
-      a.addEventListener('click', closeMenu);
-    });
-
-    // Toggle sub-menu (Services) accordion on mobile
-    if (megaWrap) {
-      const megaLink = megaWrap.querySelector('.nav-link');
-      megaLink.addEventListener('click', (e) => {
-        if (window.innerWidth <= 1180) {
-          e.preventDefault(); // Prevent navigating to /services.html directly on first tap
-          megaWrap.classList.toggle('active');
-        }
-      });
-    }
-  }
-
-  // Close menu when clicking the overlay background
-  if (overlay) {
-    overlay.addEventListener('click', closeMenu);
-  }
+  });
 
   // ---------- Active nav link ----------
   const normalizePath = (value) => {
@@ -143,7 +132,6 @@
     try {
       const { settings } = await API.get('/settings/public');
       if (!settings) return;
-      // Update text placeholders
       document.querySelectorAll('[data-setting]').forEach((el) => {
         const key = el.dataset.setting;
         const val = key.split('.').reduce((acc, k) => (acc ? acc[k] : undefined), settings);
@@ -156,7 +144,6 @@
           else el.textContent = val;
         }
       });
-      // Update copyright placeholder
       const cp = document.querySelector('[data-copyright]');
       if (cp && settings.footer?.copyright) {
         cp.textContent = settings.footer.copyright.replace('{year}', new Date().getFullYear());
@@ -218,7 +205,7 @@
     }
   };
 
-  // ---------- Hero parallax (subtle) ----------
+  // ---------- Hero parallax ----------
   const heroBg = document.querySelector('.hero-bg');
   if (heroBg && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     window.addEventListener('scroll', () => {
