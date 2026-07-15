@@ -217,6 +217,7 @@ p { color: var(--clr-charcoal); }
 .btn-sm { padding: 0.65rem 1.2rem; font-size: 0.82rem; }
 
 /* ---------- Header / Navigation ---------- */
+/* ---------- Header / Navigation ---------- */
 .site-header {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -252,6 +253,8 @@ p { color: var(--clr-charcoal); }
   font-size: 1.35rem;
   font-weight: 600;
   letter-spacing: -0.02em;
+  position: relative;
+  z-index: 110; /* Overlay ke upar rahega */
 }
 .brand-mark {
   width: 38px; height: 38px;
@@ -306,6 +309,8 @@ p { color: var(--clr-charcoal); }
   border-radius: 999px;
   white-space: nowrap;
   color: var(--clr-ink);
+  display: inline-block;
+  transition: all var(--transition-fast);
 }
 .nav-link::after {
   content: '';
@@ -360,6 +365,7 @@ p { color: var(--clr-charcoal); }
   border-radius: 16px;
   border: 1px solid rgba(250,247,242,0.08);
   background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  display: block;
 }
 .mega-menu a:hover {
   border-color: rgba(201,162,106,0.45);
@@ -383,6 +389,8 @@ p { color: var(--clr-charcoal); }
   display: flex;
   align-items: center;
   gap: 0.65rem;
+  position: relative;
+  z-index: 110; /* Buttons overlay ke upar rahenge */
 }
 .hamburger {
   display: none;
@@ -393,6 +401,7 @@ p { color: var(--clr-charcoal); }
   background: transparent;
   color: var(--clr-ink);
   cursor: pointer;
+  transition: all var(--transition-fast);
 }
 .hamburger span {
   display: block;
@@ -415,9 +424,37 @@ p { color: var(--clr-charcoal); }
 .hamburger.active span::before { top: 0; transform: rotate(45deg); }
 .hamburger.active span::after { top: 0; transform: rotate(-45deg); }
 
-/* Mobile nav */
+/* Beautiful Backdrop Blur Overlay */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 15, 16, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+body.menu-open .nav-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Highly Refined Mobile Nav Media Query */
 @media (max-width: 1180px) {
   .hamburger { display: grid; }
+  .site-header.dark .hamburger {
+    border-color: var(--clr-cream);
+    color: var(--clr-cream);
+  }
+  
+  /* Menu open hone par hamburger button humesha visible black dikhega background contrast ke liye */
+  body.menu-open .hamburger {
+    color: var(--clr-ink) !important;
+    border-color: var(--clr-ink) !important;
+  }
+  
   .nav-menu {
     position: fixed;
     inset: 0 0 0 auto;
@@ -426,38 +463,103 @@ p { color: var(--clr-charcoal); }
     align-items: flex-start;
     justify-content: flex-start;
     gap: 0;
-    padding: 6rem 2rem 2rem;
-    background: var(--clr-cream);
+    padding: 6.5rem 1.75rem 2.5rem;
+    background: rgba(250, 247, 242, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     color: var(--clr-ink);
     border-radius: 0;
     border: 0;
+    border-left: 1px solid rgba(176, 138, 91, 0.15);
     transform: translateX(100%);
     transition: transform var(--transition);
-    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.15);
+    box-shadow: -10px 0 30px rgba(13, 15, 16, 0.08);
+    z-index: 100;
+    overflow-y: auto; /* Screen choti hone par list scroll ho sakegi! */
+    -webkit-overflow-scrolling: touch;
   }
   .nav-menu.open { transform: translateX(0); }
+  
   .nav-mega-wrap { width: 100%; }
+  
+  /* Collapsible Services Dropdown (Accordion) Style */
   .mega-menu {
-    position: static;
+    position: relative;
+    left: 0; top: 0;
     width: 100%;
-    opacity: 1;
-    pointer-events: auto;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
     transform: none;
     grid-template-columns: 1fr;
-    margin-top: 0.5rem;
-    padding: 0.65rem;
-    background: rgba(13,15,16,0.04);
-    color: var(--clr-ink);
+    margin-top: 0;
+    padding: 0;
+    background: rgba(13, 15, 16, 0.03);
+    border: none;
+    border-radius: var(--radius);
+    box-shadow: none;
+    transition: max-height 0.35s var(--ease-lux), opacity 0.35s var(--ease-lux), padding 0.35s ease, margin 0.35s ease;
+    overflow: hidden;
   }
-  .mega-menu strong { color: var(--clr-ink); }
-  .mega-menu span { color: var(--clr-muted); }
-  .nav-link {
-    width: 100%;
-    padding: 1rem 0;
-    font-size: 1.1rem;
-    border-bottom: 1px solid var(--clr-line);
+  .nav-mega-wrap.active .mega-menu {
+    max-height: 500px;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .mega-menu a {
+    background: transparent;
+    border: none;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid rgba(13, 15, 16, 0.05);
     border-radius: 0;
   }
+  .mega-menu a:last-child {
+    border-bottom: none;
+  }
+  .mega-menu strong {
+    color: var(--clr-ink);
+    font-size: 0.95rem;
+  }
+  .mega-menu span {
+    color: var(--clr-muted);
+    font-size: 0.75rem;
+  }
+  
+  .nav-link {
+    width: 100%;
+    padding: 0.95rem 0;
+    font-size: 1.05rem;
+    border-bottom: 1px solid var(--clr-line);
+    border-radius: 0;
+    color: var(--clr-ink);
+  }
+  .nav-link:hover, .nav-link.active {
+    background: transparent;
+    color: var(--clr-bronze);
+  }
+  
+  /* Services dropdown indicator (Arrow arrow dynamic rotation) */
+  .nav-mega-wrap .nav-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  .nav-mega-wrap .nav-link::after {
+    content: '▾';
+    font-size: 0.85rem;
+    transition: transform 0.3s var(--ease-lux);
+    display: inline-block;
+    color: var(--clr-muted);
+  }
+  .nav-mega-wrap.active .nav-link::after {
+    transform: rotate(180deg);
+    color: var(--clr-bronze);
+  }
+
   .nav-cta .btn { display: none; }
 }
 
