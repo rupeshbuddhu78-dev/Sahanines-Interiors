@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact Us | Sahanines Interiors — Free Site Visit &amp; Quote</title>
+  <meta name="description" content="Contact Sahanines Interiors for a free consultation, site visit and itemised quote. WhatsApp, phone or contact form — we reply within an hour.">
+  <link rel="canonical" href="https://sahanines.com/contact">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <section class="page-hero">
+    <div class="container page-hero-content">
+      <div class="breadcrumb reveal"><a href="/">Home</a><span>·</span>Contact</div>
+      <h1 class="reveal" data-delay="1">Let's design something remarkable.</h1>
+      <p class="reveal" data-delay="2">
+        Share your brief below and our senior designer will reach out within one business day
+        with a discovery call and a site-visit slot.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div style="display:grid;grid-template-columns: 1.4fr 1fr;gap:3rem;align-items:start;">
+        <!-- FORM -->
+        <div class="reveal">
+          <span class="eyebrow">Send a message</span>
+          <h2 class="section-title">Tell us about your space.</h2>
+          <form id="contactForm" enctype="multipart/form-data" style="margin-top:2rem;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="name">Full name *</label>
+                <input class="form-control" type="text" id="name" name="name" required minlength="2" maxlength="120">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="phone">Phone *</label>
+                <input class="form-control" type="tel" id="phone" name="phone" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="email">Email *</label>
+                <input class="form-control" type="email" id="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="city">City</label>
+                <input class="form-control" type="text" id="city" name="city">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="service">Service Required</label>
+                <select class="form-control" id="service" name="service">
+                  <option value="">Select</option>
+                  <option>False Ceiling</option>
+                  <option>PVC Ceiling</option>
+                  <option>Gypsum Ceiling</option>
+                  <option>POP Design</option>
+                  <option>Wood Work</option>
+                  <option>LED / Cove Lighting</option>
+                  <option>Home Interior</option>
+                  <option>Commercial Interior</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="budget">Budget Range</label>
+                <select class="form-control" id="budget" name="budget">
+                  <option value="">Select</option>
+                  <option>Below ₹1 Lakh</option>
+                  <option>₹1 – 5 Lakh</option>
+                  <option>₹5 – 15 Lakh</option>
+                  <option>₹15 – 30 Lakh</option>
+                  <option>Above ₹30 Lakh</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="propertyType">Property Type</label>
+                <select class="form-control" id="propertyType" name="propertyType">
+                  <option value="">Select</option>
+                  <option>1 BHK</option>
+                  <option>2 BHK</option>
+                  <option>3 BHK</option>
+                  <option>4 BHK / Villa</option>
+                  <option>Office</option>
+                  <option>Retail / Restaurant</option>
+                  <option>Other Commercial</option>
+                </select>
+              </div>
+              <div class="form-group full">
+                <label class="form-label" for="message">Project Brief *</label>
+                <textarea class="form-control" id="message" name="message" required minlength="5" placeholder="Tell us about your space, style preferences, timelines…"></textarea>
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Reference Image (optional)</label>
+                <label class="form-file" id="fileZone">
+                  <input type="file" name="referenceImage" accept="image/*" id="fileInput">
+                  <div>
+                    <div style="font-family:var(--ff-display);font-size:1.15rem;margin-bottom:.35rem;">📎 Upload inspiration image</div>
+                    <div class="form-hint">PNG, JPG or WEBP up to 5MB</div>
+                    <div id="fileName" class="form-hint" style="margin-top:.5rem;color:var(--clr-bronze);"></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-bronze btn-lg" style="margin-top:2rem;">
+              Send Message
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- INFO -->
+        <aside class="reveal" data-delay="1">
+          <div style="background:var(--clr-ink);color:var(--clr-cream);padding:2.5rem;border-radius:var(--radius-lg);">
+            <span class="eyebrow" style="color:var(--clr-bronze);">Get in touch</span>
+            <h3 style="color:var(--clr-cream);font-size:1.75rem;margin:1rem 0 2rem;">We reply fast — usually within an hour.</h3>
+            <ul style="display:grid;gap:1.75rem;">
+              <li>
+                <div style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--clr-bronze);margin-bottom:.4rem;">Studio</div>
+                <div data-setting="contact.address" style="font-family:var(--ff-display);font-size:1.1rem;">Guwahati, Assam, India</div>
+              </li>
+              <li>
+                <div style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--clr-bronze);margin-bottom:.4rem;">Call</div>
+                <a data-setting="contact.phone" href="tel:+917636008047" style="font-family:var(--ff-display);font-size:1.1rem;color:var(--clr-cream);">+91 7636 008 047</a>
+              </li>
+              <li>
+                <div style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--clr-bronze);margin-bottom:.4rem;">Email</div>
+                <a data-setting="contact.email" href="mailto:sahanines01@gmail.com" style="font-family:var(--ff-display);font-size:1.1rem;color:var(--clr-cream);">sahanines01@gmail.com</a>
+              </li>
+              <li>
+                <div style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--clr-bronze);margin-bottom:.4rem;">Hours</div>
+                <div data-setting="contact.workingHours" style="font-family:var(--ff-display);font-size:1.1rem;">Mon–Sat: 09:30 – 19:00</div>
+              </li>
+            </ul>
+            <a href="#" data-setting="contact.whatsapp" target="_blank" rel="noopener" class="btn btn-bronze" style="margin-top:2rem;width:100%;">
+              💬 Chat on WhatsApp
+            </a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-warm">
+    <div class="container">
+      <div class="split" style="align-items:start;">
+        <div>
+          <span class="eyebrow">Booking request</span>
+          <h2 class="section-title">Schedule a site visit.</h2>
+          <p class="section-lead">Choose your preferred date, time and service. The admin dashboard receives this as a booking notification.</p>
+        </div>
+        <form id="bookingForm" enctype="multipart/form-data" style="background:var(--clr-cream);padding:2rem;border-radius:var(--radius-lg);box-shadow:var(--shadow);">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Name *</label><input class="form-control" name="name" required></div>
+            <div class="form-group"><label class="form-label">Phone *</label><input class="form-control" name="phone" required></div>
+            <div class="form-group"><label class="form-label">Email *</label><input class="form-control" type="email" name="email" required></div>
+            <div class="form-group"><label class="form-label">Service *</label><select class="form-control" name="service" required><option value="">Select</option><option>False Ceiling</option><option>PVC Ceiling</option><option>Gypsum Ceiling</option><option>POP Design</option><option>Wood Work</option><option>Home Interior</option><option>Commercial Interior</option></select></div>
+            <div class="form-group"><label class="form-label">Preferred Date</label><input class="form-control" type="date" name="preferredDate"></div>
+            <div class="form-group"><label class="form-label">Preferred Time</label><input class="form-control" type="time" name="preferredTime"></div>
+            <div class="form-group"><label class="form-label">Budget</label><input class="form-control" name="budget" placeholder="Approx budget"></div>
+            <div class="form-group"><label class="form-label">Property Type</label><input class="form-control" name="propertyType" placeholder="2BHK, office, shop…"></div>
+            <div class="form-group full"><label class="form-label">Address</label><input class="form-control" name="address"></div>
+            <div class="form-group full"><label class="form-label">Message</label><textarea class="form-control" name="message"></textarea></div>
+            <div class="form-group full"><label class="form-label">Reference Images</label><input class="form-control" type="file" name="referenceImages" accept="image/*" multiple></div>
+          </div>
+          <button class="btn btn-primary btn-lg" type="submit" style="margin-top:1.5rem;">Request Booking</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      window.handleForm(form, '/contact', { multipart: true });
+    });
+    const bookingForm = document.getElementById('bookingForm');
+    bookingForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      window.handleForm(bookingForm, '/bookings', { multipart: true });
+    });
+    const fileInput = document.getElementById('fileInput');
+    const fileZone = document.getElementById('fileZone');
+    const fileName = document.getElementById('fileName');
+    fileInput.addEventListener('change', () => {
+      fileName.textContent = fileInput.files[0]?.name || '';
+    });
+    ['dragover'].forEach(ev => fileZone.addEventListener(ev, (e) => {
+      e.preventDefault(); fileZone.classList.add('drag');
+    }));
+    ['dragleave','drop'].forEach(ev => fileZone.addEventListener(ev, () => fileZone.classList.remove('drag')));
+    fileZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files[0]) {
+        fileInput.files = e.dataTransfer.files;
+        fileName.textContent = e.dataTransfer.files[0].name;
+      }
+    });
+  </script>
+</body>
+</html>

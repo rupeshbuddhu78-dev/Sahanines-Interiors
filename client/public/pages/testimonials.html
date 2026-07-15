@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Testimonials | Sahanines Interiors</title>
+  <meta name="description" content="Read what our clients say about working with Sahanines Interiors — reviews from homeowners, commercial clients and residential customers.">
+  <link rel="canonical" href="https://sahanines.com/testimonials">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <section class="page-hero">
+    <div class="container page-hero-content">
+      <div class="breadcrumb reveal"><a href="/">Home</a><span>·</span>Testimonials</div>
+      <h1 class="reveal" data-delay="1">Words from those who trusted us.</h1>
+      <p class="reveal" data-delay="2">
+        We've delivered 450+ projects. Here are unfiltered reviews from a few of them.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div id="testimonialsGrid" class="services-grid" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr));">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    (async () => {
+      const grid = document.getElementById('testimonialsGrid');
+      try {
+        const { items } = await API.get('/testimonials');
+        if (!items.length) {
+          grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--clr-muted);">Testimonials coming soon.</p>';
+          return;
+        }
+        grid.innerHTML = items.map(t => `
+          <article class="testimonial reveal">
+            <div class="testimonial-review">${escapeHtml(t.review)}</div>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">${t.customerImage?.url ? `<img src="${t.customerImage.url}" alt="${escapeHtml(t.customerName)}">` : t.customerName?.[0] || '★'}</div>
+              <div>
+                <div class="testimonial-name">${escapeHtml(t.customerName)}</div>
+                <div class="testimonial-role">${escapeHtml([t.role, t.location].filter(Boolean).join(' · '))}</div>
+                <div class="testimonial-rating">${'★'.repeat(t.rating || 5)}${'☆'.repeat(5 - (t.rating || 5))}</div>
+              </div>
+            </div>
+          </article>
+        `).join('');
+        // Trigger reveal
+        document.querySelectorAll('.testimonial.reveal').forEach(el => setTimeout(() => el.classList.add('in'), 50));
+      } catch (err) {
+        grid.innerHTML = '<p style="grid-column:1/-1;color:var(--clr-error);">Failed to load testimonials.</p>';
+      }
+    })();
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  </script>
+</body>
+</html>

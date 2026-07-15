@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery | Sahanines Interiors — Interior Design Portfolio</title>
+  <meta name="description" content="Browse our premium interior design portfolio — living rooms, kitchens, offices, false ceilings, PVC, POP, gypsum and woodwork projects.">
+  <link rel="canonical" href="https://sahanines.com/gallery">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <section class="page-hero">
+    <div class="container page-hero-content">
+      <div class="breadcrumb reveal"><a href="/">Home</a><span>·</span>Gallery</div>
+      <h1 class="reveal" data-delay="1">A curated portfolio of premium work.</h1>
+      <p class="reveal" data-delay="2">
+        Every image is a delivered project. Filter by room, material or style — click any image
+        for a fullscreen preview.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="gallery-toolbar">
+        <div class="gallery-filters" role="tablist">
+          <button class="filter-chip active" data-category="all">All Work</button>
+          <button class="filter-chip" data-category="living-room">Living Room</button>
+          <button class="filter-chip" data-category="bedroom">Bedroom</button>
+          <button class="filter-chip" data-category="kitchen">Kitchen</button>
+          <button class="filter-chip" data-category="office">Office</button>
+          <button class="filter-chip" data-category="commercial">Commercial</button>
+          <button class="filter-chip" data-category="pvc">PVC</button>
+          <button class="filter-chip" data-category="pop">POP</button>
+          <button class="filter-chip" data-category="gypsum">Gypsum</button>
+          <button class="filter-chip" data-category="wood">Wood</button>
+          <button class="filter-chip" data-category="custom">Custom</button>
+        </div>
+        <div class="gallery-search">
+          <span>🔍</span>
+          <input type="text" id="gallerySearch" placeholder="Search projects…" aria-label="Search gallery">
+        </div>
+      </div>
+      <div id="galleryGrid" class="masonry"></div>
+      <div id="gallerySpinner" class="spinner" style="display:none;"></div>
+      <div id="gallerySentinel" style="height:1px;"></div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/gallery.js"></script>
+</body>
+</html>

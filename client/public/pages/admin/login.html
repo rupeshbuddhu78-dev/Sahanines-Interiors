@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin Login | Sahanines Interiors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="admin">
+  <div class="login-shell">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-brand-mark">S</div>
+        <div>
+          <div style="font-family:'Fraunces',serif;font-size:1.1rem;font-weight:600;">Sahanines</div>
+          <div style="font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--a-muted);">Admin Console</div>
+        </div>
+      </div>
+      <h1 class="login-title">Welcome back.</h1>
+      <p class="login-sub">Sign in to manage your website content.</p>
+
+      <form id="loginForm" novalidate>
+        <div class="a-form-group">
+          <label class="a-label" for="email">Email</label>
+          <input class="a-input" type="email" id="email" name="email" required autocomplete="username">
+        </div>
+        <div class="a-form-group">
+          <label class="a-label" for="password">Password</label>
+          <input class="a-input" type="password" id="password" name="password" required autocomplete="current-password">
+        </div>
+        <label style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--a-muted);margin-bottom:1.5rem;cursor:pointer;">
+          <input type="checkbox" name="remember" id="remember" style="accent-color:var(--a-accent);">
+          Remember me for 7 days
+        </label>
+        <button type="submit" class="a-btn" style="width:100%;padding:.9rem;font-size:.9rem;">
+          <span id="loginBtnText">Sign In</span>
+        </button>
+        <div id="loginError" style="color:var(--a-error);font-size:.85rem;margin-top:1rem;display:none;"></div>
+      </form>
+      <button id="forgotToggle" class="a-btn ghost" style="width:100%;margin-top:1rem;" type="button">Forgot / Reset Password</button>
+      <form id="forgotForm" style="display:none;margin-top:1rem;border-top:1px solid var(--a-border);padding-top:1rem;">
+        <div class="a-form-group">
+          <label class="a-label" for="forgotEmail">Email</label>
+          <input class="a-input" type="email" id="forgotEmail" required>
+        </div>
+        <button class="a-btn ghost" style="width:100%;" type="submit">Generate Reset Link</button>
+        <div id="forgotResult" style="color:var(--a-muted);font-size:.82rem;margin-top:.75rem;"></div>
+        <div class="a-form-group" style="margin-top:1rem;">
+          <label class="a-label" for="resetToken">Reset Token</label>
+          <input class="a-input" id="resetToken" placeholder="Paste token from email">
+        </div>
+        <div class="a-form-group">
+          <label class="a-label" for="resetPassword">New Password</label>
+          <input class="a-input" type="password" id="resetPassword" minlength="8">
+        </div>
+        <button class="a-btn" id="resetBtn" style="width:100%;" type="button">Reset Password</button>
+      </form>
+
+      <div style="text-align:center;margin-top:2rem;font-size:.82rem;color:var(--a-muted);">
+        <a href="/" style="color:var(--a-accent);text-decoration:none;">← Back to website</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    // If already logged in, redirect
+    if (API.getToken()) {
+      API.get('/auth/me', { auth: true })
+        .then(() => window.location.href = '/admin/dashboard')
+        .catch(() => API.clearToken());
+    }
+
+    const form = document.getElementById('loginForm');
+    document.getElementById('forgotToggle').addEventListener('click', () => {
+      const box = document.getElementById('forgotForm');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = document.getElementById('loginError');
+      const btnText = document.getElementById('loginBtnText');
+      errBox.style.display = 'none';
+      btnText.textContent = 'Signing in…';
+
+      try {
+        const res = await API.post('/auth/login', {
+          email: form.email.value.trim(),
+          password: form.password.value,
+          remember: form.remember.checked,
+        });
+        API.setToken(res.token);
+        window.location.href = '/admin/dashboard';
+      } catch (err) {
+        errBox.textContent = err.message || 'Login failed';
+        errBox.style.display = 'block';
+        btnText.textContent = 'Sign In';
+      }
+    });
+    document.getElementById('forgotForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const box = document.getElementById('forgotResult');
+      try {
+        const res = await API.post('/auth/forgot-password', { email: document.getElementById('forgotEmail').value.trim() });
+        box.textContent = res.resetToken ? `Dev reset token: ${res.resetToken}` : res.message;
+      } catch (err) {
+        box.textContent = err.message || 'Could not start reset flow';
+      }
+    });
+    document.getElementById('resetBtn').addEventListener('click', async () => {
+      const box = document.getElementById('forgotResult');
+      try {
+        await API.post('/auth/reset-password', {
+          token: document.getElementById('resetToken').value.trim(),
+          password: document.getElementById('resetPassword').value,
+        });
+        box.textContent = 'Password reset. You can sign in now.';
+      } catch (err) {
+        box.textContent = err.message || 'Password reset failed';
+      }
+    });
+  </script>
+</body>
+</html>

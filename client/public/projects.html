@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Before &amp; After Projects | Sahanines Interiors</title>
+  <meta name="description" content="See real transformations — before-and-after slider comparisons of interior design projects completed by Sahanines Interiors.">
+  <link rel="canonical" href="https://sahanines.com/projects">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <section class="page-hero">
+    <div class="container page-hero-content">
+      <div class="breadcrumb reveal"><a href="/">Home</a><span>·</span>Projects</div>
+      <h1 class="reveal" data-delay="1">Before &amp; after. Real spaces, real transformations.</h1>
+      <p class="reveal" data-delay="2">
+        Drag the slider on any project to reveal the transformation. Filter by project type or
+        search by customer, location or keyword.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="gallery-toolbar">
+        <div class="gallery-filters">
+          <button class="filter-chip active" data-type="all">All</button>
+          <button class="filter-chip" data-type="false-ceiling">False Ceiling</button>
+          <button class="filter-chip" data-type="pvc-ceiling">PVC</button>
+          <button class="filter-chip" data-type="gypsum-ceiling">Gypsum</button>
+          <button class="filter-chip" data-type="pop-ceiling">POP</button>
+          <button class="filter-chip" data-type="wood-ceiling">Wood</button>
+          <button class="filter-chip" data-type="residential-interior">Residential</button>
+          <button class="filter-chip" data-type="commercial-interior">Commercial</button>
+          <button class="filter-chip" data-type="office-interior">Office</button>
+        </div>
+        <div class="gallery-search">
+          <span>🔍</span>
+          <input type="text" id="projectSearch" placeholder="Search projects…" aria-label="Search projects">
+        </div>
+      </div>
+      <div id="projectsGrid" class="services-grid" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr));"></div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container-narrow" style="text-align:center;">
+      <h2 style="color:var(--clr-cream);">Your space, next.</h2>
+      <p>Book a free site visit — we'll bring material samples and moodboards.</p>
+      <div class="hero-actions" style="justify-content:center;margin-top:2rem;">
+        <a href="/contact.html" class="btn btn-bronze btn-lg">Book Free Site Visit</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/beforeAfter.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Services | Sahanines Interiors — False Ceiling, PVC, POP, Wood Work</title>
+  <meta name="description" content="Full-service interior design — false ceiling, PVC, gypsum, POP, wood work, LED cove, home and commercial interior services with warranty.">
+  <link rel="canonical" href="https://sahanines.com/services">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <section class="page-hero">
+    <div class="container page-hero-content">
+      <div class="breadcrumb reveal"><a href="/">Home</a><span>·</span>Services</div>
+      <h1 class="reveal" data-delay="1">Eight disciplines, one seamless studio.</h1>
+      <p class="reveal" data-delay="2">
+        Every service below is delivered in-house — design, procurement, execution and warranty.
+        No subcontractors, no finger-pointing, no surprises.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div id="servicesContainer">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container-narrow" style="text-align:center;">
+      <span class="eyebrow reveal" style="justify-content:center;">Get Started</span>
+      <h2 class="reveal" style="margin: 1rem 0; color: var(--clr-cream);">Not sure which service you need?</h2>
+      <p class="reveal">Talk to our senior designer for a free 30-minute discovery call.</p>
+      <div class="hero-actions reveal" style="justify-content:center;margin-top:2rem;">
+        <a href="/contact.html" class="btn btn-bronze btn-lg">Book Consultation</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    (async () => {
+      const container = document.getElementById('servicesContainer');
+      try {
+        const { items } = await API.get('/services');
+        if (!items.length) {
+          container.innerHTML = '<p style="text-align:center;color:var(--clr-muted);">Services will appear here soon.</p>';
+          return;
+        }
+        container.innerHTML = items.map((s, i) => `
+          <div id="${s.slug}" class="split" style="align-items:center;padding:4rem 0;border-bottom:1px solid var(--clr-line);">
+            <div style="${i % 2 ? 'order:2' : ''}">
+              <span class="eyebrow">Service · ${String(i+1).padStart(2,'0')}</span>
+              <h2 class="section-title">${escapeHtml(s.title)}</h2>
+              <p class="section-lead">${escapeHtml(s.shortDescription)}</p>
+              <p>${escapeHtml(s.description)}</p>
+              ${(s.benefits && s.benefits.length) ? `
+                <ul style="margin-top:1.5rem;display:grid;gap:.6rem;">
+                  ${s.benefits.map(b => `<li style="display:flex;gap:.6rem;"><span style="color:var(--clr-bronze);">✓</span> ${escapeHtml(b)}</li>`).join('')}
+                </ul>` : ''}
+              ${(s.gallery && s.gallery.length) ? `
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:1.5rem;">
+                  ${s.gallery.slice(0,3).map(g => `<img src="${g.url}" alt="${escapeHtml(s.title)} project" loading="lazy" style="height:90px;width:100%;object-fit:cover;border-radius:12px;">`).join('')}
+                </div>` : ''}
+              ${(s.faqs && s.faqs.length) ? `
+                <div style="margin-top:1.5rem;display:grid;gap:.7rem;">
+                  ${s.faqs.slice(0,3).map(f => `<details class="faq-item" style="padding:1rem;border:1px solid var(--clr-line);border-radius:14px;"><summary style="cursor:pointer;font-weight:700;">${escapeHtml(f.question)}</summary><p style="margin-top:.7rem;">${escapeHtml(f.answer)}</p></details>`).join('')}
+                </div>` : ''}
+              ${s.startingPrice ? `<p style="margin-top:1.5rem;font-family:var(--ff-display);color:var(--clr-bronze);font-size:1.1rem;">${escapeHtml(s.startingPrice)}</p>` : ''}
+              <div class="hero-actions" style="margin-top:2rem;">
+                <a href="/contact.html" class="btn btn-bronze">Get Quote</a>
+                <a href="/gallery.html?category=${categoryFor(s.slug)}" class="btn btn-outline">See Gallery</a>
+              </div>
+            </div>
+            <div class="split-image ${i % 2 ? '' : ''}" style="${i % 2 ? 'order:1' : ''}">
+              <img src="${s.banner?.url || fallbackImage(i)}" alt="${escapeHtml(s.title)}" loading="lazy">
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = `<p style="text-align:center;color:var(--clr-error);">Failed to load services.</p>`;
+      }
+    })();
+
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function fallbackImage(i){
+      const imgs = [
+        'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=900&q=80',
+        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900&q=80',
+        'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=900&q=80',
+        'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=900&q=80',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80',
+        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=900&q=80',
+      ];
+      return imgs[i % imgs.length];
+    }
+    function categoryFor(slug){
+      const map = { 'false-ceiling':'gypsum', 'pvc-ceiling':'pvc', 'gypsum-ceiling':'gypsum', 'pop-ceiling':'pop', 'wood-work':'wood', 'home-interior':'living-room', 'commercial-interior':'commercial', 'led-ceiling':'gypsum' };
+      return map[slug] || 'all';
+    }
+  </script>
+</body>
+</html>

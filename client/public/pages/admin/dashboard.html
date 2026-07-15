@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin Dashboard | Sahanines Interiors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="admin">
+  <div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="mark">S</div>
+        <div>
+          <div class="name">Sahanines</div>
+          <div class="tag">Admin</div>
+        </div>
+      </div>
+      <div class="nav-section-label">Overview</div>
+      <button class="side-nav-item active" data-nav="dashboard"><span class="icon">▦</span> Dashboard</button>
+      <button class="side-nav-item" data-nav="notifications"><span class="icon">🔔</span> Notifications <span class="badge" id="navUnread" style="display:none;">0</span></button>
+
+      <div class="nav-section-label">Content</div>
+      <button class="side-nav-item" data-nav="gallery"><span class="icon">🖼</span> Gallery</button>
+      <button class="side-nav-item" data-nav="projects"><span class="icon">◐</span> Before/After</button>
+      <button class="side-nav-item" data-nav="services"><span class="icon">◈</span> Services</button>
+      <button class="side-nav-item" data-nav="testimonials"><span class="icon">★</span> Testimonials</button>
+      <button class="side-nav-item" data-nav="faqs"><span class="icon">?</span> FAQ</button>
+      <button class="side-nav-item" data-nav="users"><span class="icon">👥</span> Users</button>
+
+      <div class="nav-section-label">Communication</div>
+      <button class="side-nav-item" data-nav="bookings"><span class="icon">📅</span> Bookings <span class="badge" id="navPendingBookings" style="display:none;">0</span></button>
+      <button class="side-nav-item" data-nav="messages"><span class="icon">✉</span> Messages <span class="badge" id="navUnreadMsgs" style="display:none;">0</span></button>
+
+      <div class="nav-section-label">Settings</div>
+      <button class="side-nav-item" data-nav="settings"><span class="icon">⚙</span> Website Settings</button>
+      <button class="side-nav-item" data-nav="profile"><span class="icon">👤</span> Profile</button>
+      <button class="side-nav-item" id="logoutBtn"><span class="icon">↩</span> Logout</button>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="topbar-actions">
+          <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+            🔔
+            <span class="dot" id="notifDot" style="display:none;"></span>
+          </button>
+          <a href="/" target="_blank" class="icon-btn" title="View site">↗</a>
+          <div class="admin-avatar" id="avatarLetter">A</div>
+          <div id="notifPopover" class="notif-popover">
+            <div class="notif-header">
+              <strong>Notifications</strong>
+              <button class="a-btn ghost sm" id="markAllRead">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notifList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- DASHBOARD OVERVIEW -->
+        <div data-view="dashboard" class="active">
+          <div class="stat-cards" id="statCards"></div>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;">
+            <div class="panel">
+              <div class="panel-header">
+                <h3 class="panel-title">Monthly Activity</h3>
+              </div>
+              <div class="panel-body chart-wrap">
+                <canvas id="monthlyChart"></canvas>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3 class="panel-title">Bookings by Status</h3></div>
+              <div class="panel-body chart-wrap"><canvas id="statusChart"></canvas></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Recent Activity</h3></div>
+            <div class="panel-body"><div id="activityList"><div style="color:var(--a-muted);">Loading…</div></div></div>
+          </div>
+        </div>
+
+        <!-- GALLERY -->
+        <div data-view="gallery">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Gallery Images</h3>
+              <div class="toolbar">
+                <div class="search-box"><input type="text" id="gallerySearchAdmin" placeholder="Search…"></div>
+                <button class="a-btn" id="openUploadModal">+ Upload Images</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div id="galleryAdminGrid" class="card-grid"></div>
+              <div style="text-align:center;padding:1.5rem;">
+                <button class="a-btn ghost" id="loadMoreGallery">Load more</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECTS (Before/After) -->
+        <div data-view="projects">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Before &amp; After Projects</h3>
+              <button class="a-btn" id="openBaModal">+ New Project</button>
+            </div>
+            <div class="panel-body"><div id="baAdminGrid" class="card-grid"></div></div>
+          </div>
+        </div>
+
+        <!-- SERVICES -->
+        <div data-view="services">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Services</h3>
+              <button class="a-btn" id="openServiceModal">+ New Service</button>
+            </div>
+            <div class="panel-body"><table class="table" id="servicesTable"></table></div>
+          </div>
+        </div>
+
+        <!-- TESTIMONIALS -->
+        <div data-view="testimonials">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Testimonials</h3>
+              <button class="a-btn" id="openTestimonialModal">+ New Testimonial</button>
+            </div>
+            <div class="panel-body"><table class="table" id="testimonialsTable"></table></div>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div data-view="faqs">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">FAQs</h3>
+              <button class="a-btn" id="openFaqModal">+ New FAQ</button>
+            </div>
+            <div class="panel-body"><table class="table" id="faqTable"></table></div>
+          </div>
+        </div>
+
+        <!-- BOOKINGS -->
+        <div data-view="bookings">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Bookings</h3>
+              <div class="toolbar">
+                <select class="a-select" id="bookingStatusFilter" style="min-width:150px;">
+                  <option value="">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <div class="search-box"><input type="text" id="bookingSearch" placeholder="Search…"></div>
+              </div>
+            </div>
+            <div class="panel-body"><table class="table" id="bookingsTable"></table></div>
+          </div>
+        </div>
+
+        <!-- MESSAGES -->
+        <div data-view="messages">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Contact Messages</h3>
+              <div class="toolbar">
+                <select class="a-select" id="msgStatusFilter" style="min-width:150px;">
+                  <option value="">All</option>
+                  <option value="unread">Unread</option>
+                  <option value="read">Read</option>
+                  <option value="replied">Replied</option>
+                  <option value="archived">Archived</option>
+                </select>
+                <div class="search-box"><input type="text" id="msgSearch" placeholder="Search…"></div>
+                <button class="a-btn ghost" id="exportMessagesCsv" type="button">Export CSV</button>
+              </div>
+            </div>
+            <div class="panel-body"><table class="table" id="messagesTable"></table></div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div data-view="settings">
+          <form id="settingsForm">
+            <div class="panel">
+              <div class="panel-header"><h3 class="panel-title">Branding</h3></div>
+              <div class="panel-body">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;">
+                  <div class="a-form-group"><label class="a-label">Website Name</label><input class="a-input" name="websiteName"></div>
+                  <div class="a-form-group"><label class="a-label">Company Name</label><input class="a-input" name="companyName"></div>
+                  <div class="a-form-group"><label class="a-label">Tagline</label><input class="a-input" name="tagline"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem;">
+                  <div class="a-form-group"><label class="a-label">Logo</label><input class="a-input branding-upload" data-field="logo" type="file" accept="image/*"></div>
+                  <div class="a-form-group"><label class="a-label">Favicon</label><input class="a-input branding-upload" data-field="favicon" type="file" accept="image/*"></div>
+                  <div class="a-form-group"><label class="a-label">Hero Background</label><input class="a-input branding-upload" data-field="heroBg" type="file" accept="image/*"></div>
+                  <div class="a-form-group"><label class="a-label">Open Graph Image</label><input class="a-input branding-upload" data-field="ogImage" type="file" accept="image/*"></div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3 class="panel-title">Hero Section</h3></div>
+              <div class="panel-body">
+                <div class="a-form-group"><label class="a-label">Hero Title</label><input class="a-input" name="hero.title"></div>
+                <div class="a-form-group"><label class="a-label">Hero Subtitle</label><textarea class="a-textarea" name="hero.subtitle"></textarea></div>
+                <div class="a-form-group"><label class="a-label">CTA Text</label><input class="a-input" name="hero.ctaText"></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3 class="panel-title">About</h3></div>
+              <div class="panel-body">
+                <div class="a-form-group"><label class="a-label">Mission</label><textarea class="a-textarea" name="about.mission"></textarea></div>
+                <div class="a-form-group"><label class="a-label">Vision</label><textarea class="a-textarea" name="about.vision"></textarea></div>
+                <div class="a-form-group"><label class="a-label">Story</label><textarea class="a-textarea" name="about.story"></textarea></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;">
+                  <div class="a-form-group"><label class="a-label">Years Experience</label><input class="a-input" name="about.yearsExperience" type="number"></div>
+                  <div class="a-form-group"><label class="a-label">Projects Completed</label><input class="a-input" name="about.projectsCompleted" type="number"></div>
+                  <div class="a-form-group"><label class="a-label">Happy Clients</label><input class="a-input" name="about.happyClients" type="number"></div>
+                  <div class="a-form-group"><label class="a-label">Awards</label><input class="a-input" name="about.awards" type="number"></div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3 class="panel-title">Contact</h3></div>
+              <div class="panel-body">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;">
+                  <div class="a-form-group"><label class="a-label">Address</label><input class="a-input" name="contact.address"></div>
+                  <div class="a-form-group"><label class="a-label">Phone</label><input class="a-input" name="contact.phone"></div>
+                  <div class="a-form-group"><label class="a-label">WhatsApp</label><input class="a-input" name="contact.whatsapp"></div>
+                  <div class="a-form-group"><label class="a-label">Email</label><input class="a-input" name="contact.email" type="email"></div>
+                  <div class="a-form-group"><label class="a-label">Working Hours</label><input class="a-input" name="contact.workingHours"></div>
+                </div>
+                <div class="a-form-group"><label class="a-label">Google Maps Embed</label><textarea class="a-textarea" name="contact.googleMapsEmbed" placeholder="&lt;iframe src=…"></textarea></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3 class="panel-title">Social Links</h3></div>
+              <div class="panel-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;">
+                <div class="a-form-group"><label class="a-label">Facebook</label><input class="a-input" name="social.facebook"></div>
+                <div class="a-form-group"><label class="a-label">Instagram</label><input class="a-input" name="social.instagram"></div>
+                <div class="a-form-group"><label class="a-label">YouTube</label><input class="a-input" name="social.youtube"></div>
+                <div class="a-form-group"><label class="a-label">LinkedIn</label><input class="a-input" name="social.linkedin"></div>
+                <div class="a-form-group"><label class="a-label">Twitter</label><input class="a-input" name="social.twitter"></div>
+                <div class="a-form-group"><label class="a-label">Pinterest</label><input class="a-input" name="social.pinterest"></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3 class="panel-title">Footer</h3></div>
+              <div class="panel-body">
+                <div class="a-form-group"><label class="a-label">Description</label><textarea class="a-textarea" name="footer.description"></textarea></div>
+                <div class="a-form-group"><label class="a-label">Copyright (use {year})</label><input class="a-input" name="footer.copyright"></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3 class="panel-title">SEO</h3></div>
+              <div class="panel-body">
+                <div class="a-form-group"><label class="a-label">SEO Title</label><input class="a-input" name="seo.title"></div>
+                <div class="a-form-group"><label class="a-label">SEO Description</label><textarea class="a-textarea" name="seo.description"></textarea></div>
+                <div class="a-form-group"><label class="a-label">Keywords (comma separated)</label><input class="a-input" name="seo.keywords"></div>
+                <div class="a-form-group"><label class="a-label">Google Analytics ID</label><input class="a-input" name="seo.googleAnalyticsId"></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-top:1.5rem;">
+              <button class="a-btn" type="submit">Save Settings</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- USERS -->
+        <div data-view="users">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Admin Users</h3>
+              <div class="toolbar">
+                <div class="search-box"><input type="text" id="userSearch" placeholder="Search users…"></div>
+                <button class="a-btn" id="openUserModal">+ New Admin</button>
+              </div>
+            </div>
+            <div class="panel-body"><table class="table" id="usersTable"></table></div>
+          </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div data-view="profile">
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Profile</h3></div>
+            <div class="panel-body">
+              <form id="profileForm">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;">
+                  <div class="a-form-group"><label class="a-label">Name</label><input class="a-input" name="name" id="profileName"></div>
+                  <div class="a-form-group"><label class="a-label">Phone</label><input class="a-input" name="phone" id="profilePhone"></div>
+                  <div class="a-form-group"><label class="a-label">Email (read-only)</label><input class="a-input" id="profileEmail" disabled></div>
+                </div>
+                <button class="a-btn mt-4" type="submit">Save Profile</button>
+              </form>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Change Password</h3></div>
+            <div class="panel-body">
+              <form id="passwordForm" style="max-width:480px;">
+                <div class="a-form-group"><label class="a-label">Current Password</label><input class="a-input" type="password" name="currentPassword" required></div>
+                <div class="a-form-group"><label class="a-label">New Password (min 8)</label><input class="a-input" type="password" name="newPassword" required minlength="8"></div>
+                <button class="a-btn" type="submit">Update Password</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS FULL VIEW -->
+        <div data-view="notifications">
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">All Notifications</h3></div>
+            <div class="panel-body" id="notifFullList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div class="modal-backdrop" id="genericModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Modal</h3>
+        <button class="icon-btn" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>
