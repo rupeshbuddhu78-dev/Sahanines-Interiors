@@ -1315,3 +1315,42 @@ textarea.form-control { min-height: 140px; resize: vertical; }
   0%, 100% { box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4); }
   50% { box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4), 0 0 0 16px rgba(37, 211, 102, 0.15); }
 }
+
+/* --- MOBILE MENU OVERLAPPING FIX --- */
+@media (max-width: 1180px) {
+  
+  .nav-menu, 
+  .mobile-menu, 
+  .menu-overlay {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+    padding: 100px 24px 40px 24px !important; 
+    height: 100vh !important;
+  }
+
+  .nav-link, 
+  .menu-item, 
+  .service-card,
+  .submenu {
+    position: relative !important; 
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin-bottom: 1.5rem !important; 
+    width: 100% !important;
+  }
+
+  .nav-bg-text, 
+  .bg-text, 
+  .watermark {
+    position: absolute !important;
+    z-index: -1 !important; 
+    opacity: 0.05 !important; 
+    pointer-events: none !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+}
