@@ -591,6 +591,9 @@ body.admin {
   .sidebar.open { transform: translateX(0); }
   .topbar { padding: 1rem; }
   .content { padding: 1rem; }
+  
+  /* YAHAN NAYA CODE ADD KIYA HAI BUTTON DIKHANE KE LIYE */
+  #mobileMenuBtn { display: grid !important; }
 }
 
 /* ---------- Utilities ---------- */
