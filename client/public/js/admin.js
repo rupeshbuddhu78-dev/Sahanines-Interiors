@@ -46,6 +46,16 @@
   const navItems = document.querySelectorAll('.side-nav-item[data-nav]');
   const views = document.querySelectorAll('[data-view]');
   const pageTitle = document.getElementById('pageTitle');
+  
+  // YAHAN NAYA LOGIC ADD KIYA HAI MOBILE MENU KE LIYE
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const sidebar = document.querySelector('.sidebar');
+
+  if (mobileMenuBtn && sidebar) {
+    mobileMenuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+  }
 
   const viewLabels = {
     dashboard: 'Dashboard',
@@ -67,8 +77,15 @@
     views.forEach((v) => v.classList.toggle('active', v.dataset.view === name));
     pageTitle.textContent = viewLabels[name] || 'Dashboard';
     location.hash = name;
+    
+    // YAHAN BHI ADD KIYA HAI TAAKI MOBILE PE CLICK KARNE KE BAAD MENU BAND HO JAYE
+    if (sidebar) {
+      sidebar.classList.remove('open');
+    }
+
     if (loaders[name]) loaders[name]();
   }
+  
   navItems.forEach((i) =>
     i.addEventListener('click', () => i.dataset.nav && showView(i.dataset.nav))
   );
@@ -1099,53 +1116,22 @@
             <div class="notif-meta">${escapeHtml(n.message)} · ${new Date(n.createdAt).toLocaleString()}</div>
           </div>
         `).join('')
-        : '<div style="padding:2rem;text-align:center;color:var(--a-muted);">No notifications</div>';
+        : '<div style="padding:2rem;text-align:center;color:var(--a-muted);">No new notifications</div>';
       document.getElementById('notifList').innerHTML = html;
-      document.getElementById('notifFullList').innerHTML = html;
-      document.querySelectorAll('.notif-item').forEach(el => {
-        el.onclick = async () => {
-          const link = el.dataset.link;
-          await API.patch(`/dashboard/notifications/${el.dataset.id}/read`, {}, { auth: true });
-          if (link) {
-            const [route] = link.split('#').slice(-1);
-            if (route === 'bookings') showView('bookings');
-            else if (route.startsWith('messages')) showView('messages');
-          }
-          notifPopover.classList.remove('active');
-          loadNotifications();
-        };
-      });
+      await API.post('/dashboard/notifications/read-all', {}, { auth: true });
     } catch (err) { console.error(err); }
   }
-  document.getElementById('markAllRead').addEventListener('click', async () => {
-    await API.patch('/dashboard/notifications/read-all', {}, { auth: true });
-    loadNotifications();
-  });
-
-  // Poll notifications every 60s
-  setInterval(loadNotifications, 60000);
-
-  // ---------- Loader Map ----------
-  const loaders = {
-    dashboard: loadDashboard,
-    gallery: loadGallery,
-    projects: loadProjects,
-    services: loadServices,
-    testimonials: loadTestimonials,
-    faqs: loadFaqs,
-    bookings: loadBookings,
-    messages: loadMessages,
-    settings: loadSettings,
-    users: loadUsers,
-    profile: loadProfile,
-    notifications: loadNotifications,
-  };
 
   // ---------- Init ----------
-  (async () => {
+  const loaders = {
+    dashboard: loadDashboard, gallery: loadGallery, projects: loadProjects, services: loadServices,
+    testimonials: loadTestimonials, faqs: loadFaqs, bookings: loadBookings, messages: loadMessages,
+    settings: loadSettings, users: loadUsers, profile: loadProfile,
+  };
+  async function init() {
     await loadAdmin();
-    const initial = (location.hash || '#dashboard').replace('#', '');
-    showView(loaders[initial] ? initial : 'dashboard');
-    loadNotifications();
-  })();
+    const hash = location.hash.replace('#', '') || 'dashboard';
+    showView(hash);
+  }
+  init();
 })();
