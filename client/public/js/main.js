@@ -2,201 +2,201 @@
 (function () {
   'use strict';
 
-  // ---------- Header scroll state ----------[cite: 15]
-  const header = document.querySelector('.site-header');[cite: 15]
-  if (header) {[cite: 15]
-    const setState = () => header.classList.toggle('scrolled', window.scrollY > 20);[cite: 15]
-    window.addEventListener('scroll', setState, { passive: true });[cite: 15]
-    setState();[cite: 15]
-  }[cite: 15]
+  // ---------- Header scroll state ----------
+  const header = document.querySelector('.site-header');
+  if (header) {
+    const setState = () => header.classList.toggle('scrolled', window.scrollY > 20);
+    window.addEventListener('scroll', setState, { passive: true });
+    setState();
+  }
 
-  // ---------- Mobile menu ----------[cite: 15]
-  const hamburger = document.querySelector('.hamburger');[cite: 15]
-  const menu = document.querySelector('.nav-menu');[cite: 15]
-  if (hamburger && menu) {[cite: 15]
-    hamburger.addEventListener('click', () => {[cite: 15]
-      hamburger.classList.toggle('active');[cite: 15]
-      menu.classList.toggle('open');[cite: 15]
-      document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';[cite: 15]
-    });[cite: 15]
-    menu.querySelectorAll('a').forEach((a) =>[cite: 15]
-      a.addEventListener('click', () => {[cite: 15]
-        hamburger.classList.remove('active');[cite: 15]
-        menu.classList.remove('open');[cite: 15]
-        document.body.style.overflow = '';[cite: 15]
-      })[cite: 15]
-    );[cite: 15]
-  }[cite: 15]
+  // ---------- Mobile menu ----------
+  const hamburger = document.querySelector('.hamburger');
+  const menu = document.querySelector('.nav-menu');
+  if (hamburger && menu) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      menu.classList.toggle('open');
+      document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+    });
+    menu.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        menu.classList.remove('open');
+        document.body.style.overflow = '';
+      })
+    );
+  }
 
-  // ---------- Active nav link ----------[cite: 15]
-  const normalizePath = (value) => {[cite: 15]
-    let out = value.replace(/\/$/, '') || '/';[cite: 15]
-    out = out.replace(/\.html$/, '');[cite: 15]
-    if (out === '/index') out = '/';[cite: 15]
-    return out;[cite: 15]
-  };[cite: 15]
-  const path = normalizePath(window.location.pathname);[cite: 15]
-  document.querySelectorAll('.nav-link').forEach((a) => {[cite: 15]
-    const href = normalizePath(a.getAttribute('href').split('#')[0].split('?')[0]);[cite: 15]
-    if (href === path) a.classList.add('active');[cite: 15]
-  });[cite: 15]
+  // ---------- Active nav link ----------
+  const normalizePath = (value) => {
+    let out = value.replace(/\/$/, '') || '/';
+    out = out.replace(/\.html$/, '');
+    if (out === '/index') out = '/';
+    return out;
+  };
+  const path = normalizePath(window.location.pathname);
+  document.querySelectorAll('.nav-link').forEach((a) => {
+    const href = normalizePath(a.getAttribute('href').split('#')[0].split('?')[0]);
+    if (href === path) a.classList.add('active');
+  });
 
-  // ---------- Reveal on scroll ----------[cite: 15]
-  const io = new IntersectionObserver([cite: 15]
-    (entries) => {[cite: 15]
-      entries.forEach((e) => {[cite: 15]
-        if (e.isIntersecting) {[cite: 15]
-          e.target.classList.add('in');[cite: 15]
-          io.unobserve(e.target);[cite: 15]
-        }[cite: 15]
-      });[cite: 15]
-    },[cite: 15]
-    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }[cite: 15]
-  );[cite: 15]
-  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));[cite: 15]
+  // ---------- Reveal on scroll ----------
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
-  // ---------- Counters ----------[cite: 15]
-  const counters = document.querySelectorAll('[data-count]');[cite: 15]
-  const countObserver = new IntersectionObserver([cite: 15]
-    (entries) => {[cite: 15]
-      entries.forEach((e) => {[cite: 15]
-        if (!e.isIntersecting) return;[cite: 15]
-        const el = e.target;[cite: 15]
-        const target = parseInt(el.dataset.count, 10);[cite: 15]
-        const suffix = el.dataset.suffix || '';[cite: 15]
-        let current = 0;[cite: 15]
-        const step = Math.max(1, Math.ceil(target / 40));[cite: 15]
-        const tick = () => {[cite: 15]
-          current += step;[cite: 15]
-          if (current >= target) {[cite: 15]
-            el.textContent = target.toLocaleString() + suffix;[cite: 15]
-          } else {[cite: 15]
-            el.textContent = current.toLocaleString() + suffix;[cite: 15]
-            requestAnimationFrame(tick);[cite: 15]
-          }[cite: 15]
-        };[cite: 15]
-        tick();[cite: 15]
-        countObserver.unobserve(el);[cite: 15]
-      });[cite: 15]
-    },[cite: 15]
-    { threshold: 0.4 }[cite: 15]
-  );[cite: 15]
-  counters.forEach((c) => countObserver.observe(c));[cite: 15]
+  // ---------- Counters ----------
+  const counters = document.querySelectorAll('[data-count]');
+  const countObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = parseInt(el.dataset.count, 10);
+        const suffix = el.dataset.suffix || '';
+        let current = 0;
+        const step = Math.max(1, Math.ceil(target / 40));
+        const tick = () => {
+          current += step;
+          if (current >= target) {
+            el.textContent = target.toLocaleString() + suffix;
+          } else {
+            el.textContent = current.toLocaleString() + suffix;
+            requestAnimationFrame(tick);
+          }
+        };
+        tick();
+        countObserver.unobserve(el);
+      });
+    },
+    { threshold: 0.4 }
+  );
+  counters.forEach((c) => countObserver.observe(c));
 
-  // ---------- FAQ Accordion ----------[cite: 15]
-  document.querySelectorAll('.faq-question').forEach((q) => {[cite: 15]
-    q.addEventListener('click', () => {[cite: 15]
-      const item = q.closest('.faq-item');[cite: 15]
-      item.classList.toggle('open');[cite: 15]
-    });[cite: 15]
-  });[cite: 15]
+  // ---------- FAQ Accordion ----------
+  document.querySelectorAll('.faq-question').forEach((q) => {
+    q.addEventListener('click', () => {
+      const item = q.closest('.faq-item');
+      item.classList.toggle('open');
+    });
+  });
 
-  // ---------- Toast ----------[cite: 15]
-  window.toast = function (message, type = 'info') {[cite: 15]
-    let stack = document.querySelector('.toast-stack');[cite: 15]
-    if (!stack) {[cite: 15]
-      stack = document.createElement('div');[cite: 15]
-      stack.className = 'toast-stack';[cite: 15]
-      document.body.appendChild(stack);[cite: 15]
-    }[cite: 15]
-    const t = document.createElement('div');[cite: 15]
-    t.className = `toast ${type}`;[cite: 15]
-    t.textContent = message;[cite: 15]
-    stack.appendChild(t);[cite: 15]
-    setTimeout(() => {[cite: 15]
-      t.style.transition = 'opacity 0.3s, transform 0.3s';[cite: 15]
-      t.style.opacity = 0;[cite: 15]
-      t.style.transform = 'translateX(120%)';[cite: 15]
-      setTimeout(() => t.remove(), 300);[cite: 15]
-    }, 4200);[cite: 15]
-  };[cite: 15]
+  // ---------- Toast ----------
+  window.toast = function (message, type = 'info') {
+    let stack = document.querySelector('.toast-stack');
+    if (!stack) {
+      stack = document.createElement('div');
+      stack.className = 'toast-stack';
+      document.body.appendChild(stack);
+    }
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = message;
+    stack.appendChild(t);
+    setTimeout(() => {
+      t.style.transition = 'opacity 0.3s, transform 0.3s';
+      t.style.opacity = 0;
+      t.style.transform = 'translateX(120%)';
+      setTimeout(() => t.remove(), 300);
+    }, 4200);
+  };
 
-  // ---------- Populate settings-driven placeholders ----------[cite: 15]
-  async function loadSettings() {[cite: 15]
-    try {[cite: 15]
-      const { settings } = await API.get('/settings/public');[cite: 15]
-      if (!settings) return;[cite: 15]
-      // Update text placeholders[cite: 15]
-      document.querySelectorAll('[data-setting]').forEach((el) => {[cite: 15]
-        const key = el.dataset.setting;[cite: 15]
-        const val = key.split('.').reduce((acc, k) => (acc ? acc[k] : undefined), settings);[cite: 15]
-        if (val !== undefined && val !== null && val !== '') {[cite: 15]
-          if (el.tagName === 'A' && key.startsWith('social.')) el.href = val;[cite: 15]
-          else if (el.tagName === 'A' && key === 'contact.email') el.href = `mailto:${val}`;[cite: 15]
-          else if (el.tagName === 'A' && (key === 'contact.phone' || key === 'contact.whatsapp'))[cite: 15]
-            el.href = key === 'contact.whatsapp' ? `https://wa.me/${String(val).replace(/\D/g, '')}` : `tel:${val}`;[cite: 15]
-          else if (el.tagName === 'IMG') el.src = val.url || val;[cite: 15]
-          else el.textContent = val;[cite: 15]
-        }[cite: 15]
-      });[cite: 15]
-      // Update copyright placeholder[cite: 15]
-      const cp = document.querySelector('[data-copyright]');[cite: 15]
-      if (cp && settings.footer?.copyright) {[cite: 15]
-        cp.textContent = settings.footer.copyright.replace('{year}', new Date().getFullYear());[cite: 15]
-      }[cite: 15]
-      if (settings.seo?.title) document.title = settings.seo.title;[cite: 15]
-      const setMeta = (selector, value, attr = 'content') => {[cite: 15]
-        if (!value) return;[cite: 15]
-        const el = document.querySelector(selector);[cite: 15]
-        if (el) el.setAttribute(attr, value);[cite: 15]
-      };[cite: 15]
-      setMeta('meta[name="description"]', settings.seo?.description);[cite: 15]
-      setMeta('meta[property="og:title"]', settings.seo?.title);[cite: 15]
-      setMeta('meta[property="og:description"]', settings.seo?.description);[cite: 15]
-      setMeta('meta[property="og:image"]', settings.seo?.ogImage?.url);[cite: 15]
-      setMeta('meta[name="twitter:image"]', settings.seo?.ogImage?.url);[cite: 15]
-      if (settings.logo?.url) {[cite: 15]
-        document.querySelectorAll('.brand-mark').forEach((el) => {[cite: 15]
-          el.innerHTML = `<img src="${settings.logo.url}" alt="${settings.websiteName || 'Sahanines Interiors'}" loading="lazy">`;[cite: 15]
-          el.classList.add('brand-mark-img');[cite: 15]
-        });[cite: 15]
-      }[cite: 15]
-      if (settings.hero?.background?.url) {[cite: 15]
-        document.querySelectorAll('.hero-bg').forEach((el) => {[cite: 15]
-          el.style.backgroundImage = `linear-gradient(90deg, rgba(13,15,16,.78), rgba(13,15,16,.24)), url("${settings.hero.background.url}")`;[cite: 15]
-        });[cite: 15]
-      }[cite: 15]
-      window.__siteSettings = settings;[cite: 15]
-    } catch (err) {[cite: 15]
-      console.warn('Settings load failed:', err.message);[cite: 15]
-    }[cite: 15]
-  }[cite: 15]
-  loadSettings();[cite: 15]
+  // ---------- Populate settings-driven placeholders ----------
+  async function loadSettings() {
+    try {
+      const { settings } = await API.get('/settings/public');
+      if (!settings) return;
+      // Update text placeholders
+      document.querySelectorAll('[data-setting]').forEach((el) => {
+        const key = el.dataset.setting;
+        const val = key.split('.').reduce((acc, k) => (acc ? acc[k] : undefined), settings);
+        if (val !== undefined && val !== null && val !== '') {
+          if (el.tagName === 'A' && key.startsWith('social.')) el.href = val;
+          else if (el.tagName === 'A' && key === 'contact.email') el.href = `mailto:${val}`;
+          else if (el.tagName === 'A' && (key === 'contact.phone' || key === 'contact.whatsapp'))
+            el.href = key === 'contact.whatsapp' ? `https://wa.me/${String(val).replace(/\D/g, '')}` : `tel:${val}`;
+          else if (el.tagName === 'IMG') el.src = val.url || val;
+          else el.textContent = val;
+        }
+      });
+      // Update copyright placeholder
+      const cp = document.querySelector('[data-copyright]');
+      if (cp && settings.footer?.copyright) {
+        cp.textContent = settings.footer.copyright.replace('{year}', new Date().getFullYear());
+      }
+      if (settings.seo?.title) document.title = settings.seo.title;
+      const setMeta = (selector, value, attr = 'content') => {
+        if (!value) return;
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute(attr, value);
+      };
+      setMeta('meta[name="description"]', settings.seo?.description);
+      setMeta('meta[property="og:title"]', settings.seo?.title);
+      setMeta('meta[property="og:description"]', settings.seo?.description);
+      setMeta('meta[property="og:image"]', settings.seo?.ogImage?.url);
+      setMeta('meta[name="twitter:image"]', settings.seo?.ogImage?.url);
+      if (settings.logo?.url) {
+        document.querySelectorAll('.brand-mark').forEach((el) => {
+          el.innerHTML = `<img src="${settings.logo.url}" alt="${settings.websiteName || 'Sahanines Interiors'}" loading="lazy">`;
+          el.classList.add('brand-mark-img');
+        });
+      }
+      if (settings.hero?.background?.url) {
+        document.querySelectorAll('.hero-bg').forEach((el) => {
+          el.style.backgroundImage = `linear-gradient(90deg, rgba(13,15,16,.78), rgba(13,15,16,.24)), url("${settings.hero.background.url}")`;
+        });
+      }
+      window.__siteSettings = settings;
+    } catch (err) {
+      console.warn('Settings load failed:', err.message);
+    }
+  }
+  loadSettings();
 
-  // ---------- Generic form handler ----------[cite: 15]
-  window.handleForm = async function (form, endpoint, options = {}) {[cite: 15]
-    const submitBtn = form.querySelector('[type="submit"]');[cite: 15]
-    const originalText = submitBtn ? submitBtn.innerHTML : '';[cite: 15]
-    if (submitBtn) {[cite: 15]
-      submitBtn.disabled = true;[cite: 15]
-      submitBtn.innerHTML = '<span class="spinner spinner-sm"></span> Sending…';[cite: 15]
-    }[cite: 15]
-    try {[cite: 15]
-      const formData = new FormData(form);[cite: 15]
-      const useFormData = options.multipart || form.querySelector('input[type="file"]');[cite: 15]
-      const body = useFormData[cite: 15]
-        ? formData[cite: 15]
-        : Object.fromEntries(formData.entries());[cite: 15]
-      const res = await API.post(endpoint, body);[cite: 15]
-      window.toast(res.message || 'Submitted successfully.', 'success');[cite: 15]
-      form.reset();[cite: 15]
-      if (options.onSuccess) options.onSuccess(res);[cite: 15]
-    } catch (err) {[cite: 15]
-      window.toast(err.message || 'Something went wrong.', 'error');[cite: 15]
-    } finally {[cite: 15]
-      if (submitBtn) {[cite: 15]
-        submitBtn.disabled = false;[cite: 15]
-        submitBtn.innerHTML = originalText;[cite: 15]
-      }[cite: 15]
-    }[cite: 15]
-  };[cite: 15]
+  // ---------- Generic form handler ----------
+  window.handleForm = async function (form, endpoint, options = {}) {
+    const submitBtn = form.querySelector('[type="submit"]');
+    const originalText = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner spinner-sm"></span> Sending…';
+    }
+    try {
+      const formData = new FormData(form);
+      const useFormData = options.multipart || form.querySelector('input[type="file"]');
+      const body = useFormData
+        ? formData
+        : Object.fromEntries(formData.entries());
+      const res = await API.post(endpoint, body);
+      window.toast(res.message || 'Submitted successfully.', 'success');
+      form.reset();
+      if (options.onSuccess) options.onSuccess(res);
+    } catch (err) {
+      window.toast(err.message || 'Something went wrong.', 'error');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    }
+  };
 
-  // ---------- Hero parallax (subtle) ----------[cite: 15]
-  const heroBg = document.querySelector('.hero-bg');[cite: 15]
-  if (heroBg && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {[cite: 15]
-    window.addEventListener('scroll', () => {[cite: 15]
-      const y = window.scrollY;[cite: 15]
-      heroBg.style.transform = `translateY(${y * 0.25}px)`;[cite: 15]
-    }, { passive: true });[cite: 15]
-  }[cite: 15]
+  // ---------- Hero parallax (subtle) ----------
+  const heroBg = document.querySelector('.hero-bg');
+  if (heroBg && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      heroBg.style.transform = `translateY(${y * 0.25}px)`;
+    }, { passive: true });
+  }
 })();
