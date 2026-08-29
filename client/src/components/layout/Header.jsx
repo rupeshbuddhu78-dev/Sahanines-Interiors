@@ -16,6 +16,16 @@ export default function Header() {
 
   useEffect(() => { setMenuOpen(false) }, [location])
 
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
   const links = [
     { to: '/', label: 'Home' },
     { to: '/about', label: 'About' },
@@ -33,32 +43,41 @@ export default function Header() {
   }
 
   return (
-    <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-      <div className="container">
-        <div className="header-inner">
-          <Link to="/" className="logo">
-            {settings?.businessName || 'Sahanines'} <span>Interiors</span>
-          </Link>
+    <>
+      <header className={`header ${scrolled ? 'scrolled' : ''}`}>
+        <div className="container">
+          <div className="header-inner">
+            <Link to="/" className="logo">
+              {settings?.businessName || 'Sahanines'} <span>Interiors</span>
+            </Link>
 
-          <nav className="nav-links" aria-label="Main navigation">
-            {links.map(link => (
-              <Link key={link.to} to={link.to} className={isActive(link.to) ? 'active' : ''}>
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+            <nav className="nav-links" aria-label="Main navigation">
+              {links.map(link => (
+                <Link key={link.to} to={link.to} className={isActive(link.to) ? 'active' : ''}>
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
 
-          <div className="header-cta">
-            <Link to="/contact" className="btn btn-primary btn-sm">Get Free Quote</Link>
-            <a href={`tel:${settings?.phone || '07636008047'}`} className="btn btn-outline-dark btn-sm">Call Now</a>
+            <div className="header-cta">
+              <Link to="/contact" className="btn btn-primary btn-sm">Get Free Quote</Link>
+              <a href={`tel:${settings?.phone || '07636008047'}`} className="btn btn-outline-dark btn-sm">Call Now</a>
+            </div>
+
+            <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
+              <span></span><span></span><span></span>
+            </button>
           </div>
-
-          <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
-            <span></span><span></span><span></span>
-          </button>
         </div>
-      </div>
+      </header>
 
+      {/* Mobile Menu Overlay */}
+      <div 
+        className={`mobile-menu-overlay ${menuOpen ? 'open' : ''}`}
+        onClick={() => setMenuOpen(false)}
+      />
+
+      {/* Mobile Menu */}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
         {links.map(link => (
           <Link key={link.to} to={link.to} className={isActive(link.to) ? 'active' : ''}>
@@ -70,6 +89,6 @@ export default function Header() {
           <a href={`tel:${settings?.phone || '07636008047'}`} className="btn btn-outline-dark">Call Now</a>
         </div>
       </div>
-    </header>
+    </>
   )
 }
