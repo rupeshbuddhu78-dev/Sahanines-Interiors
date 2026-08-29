@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 
 export default function AdminLayout() {
   const [admin, setAdmin] = useState(null)
@@ -35,6 +36,10 @@ export default function AdminLayout() {
 
   return (
     <div className="admin-layout">
+      <Helmet>
+        <title>Admin | Sahanines Interiors</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <aside className="admin-sidebar">
         <div className="admin-sidebar-logo">
           Sahanines <span>Admin</span>

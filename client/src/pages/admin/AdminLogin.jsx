@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import axios from 'axios'
 
 export default function AdminLogin() {
@@ -27,9 +28,14 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="admin-login">
-      <div className="admin-login-card">
-        <h1>Admin Login</h1>
+    <>
+      <Helmet>
+        <title>Admin Login | Sahanines Interiors</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="admin-login">
+        <div className="admin-login-card">
+          <h1>Admin Login</h1>
         <p>Sahanines Interiors</p>
         {error && <div style={{ background: '#fee', color: '#c00', padding: 12, borderRadius: 8, marginBottom: 16, fontSize: '0.9rem' }}>{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -45,7 +51,8 @@ export default function AdminLogin() {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

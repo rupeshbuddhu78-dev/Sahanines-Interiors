@@ -635,24 +635,42 @@ app.post('/api/upload', auth, upload.single('image'), async (req, res) => {
   }
 });
 
-// Sitemap
+// Sitemap (dynamic - supplements static sitemap.xml in client/public/)
 app.get('/sitemap.xml', async (req, res) => {
-  const base = process.env.SITE_URL || 'https://sahaninesinteriors.com';
-  let xml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-  ['/', '/about', '/services', '/projects', '/gallery', '/reviews', '/faq', '/contact'].forEach(p => { xml += `<url><loc>${base}${p}</loc><changefreq>weekly</changefreq></url>`; });
+  const base = process.env.SITE_URL || 'https://best-false-ceiling-specialist-of-guwahati-sahaninesinteriors.in';
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+  const staticPages = [
+    { path: '/', priority: '1.0', changefreq: 'weekly' },
+    { path: '/about', priority: '0.8', changefreq: 'monthly' },
+    { path: '/services', priority: '0.9', changefreq: 'weekly' },
+    { path: '/projects', priority: '0.8', changefreq: 'weekly' },
+    { path: '/gallery', priority: '0.7', changefreq: 'weekly' },
+    { path: '/reviews', priority: '0.8', changefreq: 'monthly' },
+    { path: '/faq', priority: '0.6', changefreq: 'monthly' },
+    { path: '/contact', priority: '0.9', changefreq: 'monthly' }
+  ];
+  staticPages.forEach(p => { xml += `  <url><loc>${base}${p.path}</loc><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>\n`; });
   
   if (USE_MONGO) {
     const services = await Service.find({ isActive: true });
-    services.forEach(s => { xml += `<url><loc>${base}/services/${s.slug}</loc><changefreq>monthly</changefreq></url>`; });
-    const projects = await Project.find({ isActive: true });
-    projects.forEach(p => { xml += `<url><loc>${base}/projects/${p.slug}</loc><changefreq>monthly</changefreq></url>`; });
+    services.forEach(s => { xml += `  <url><loc>${base}/services/${s.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n`; });
   } else {
-    db.services.filter(s => s.isActive).forEach(s => { xml += `<url><loc>${base}/services/${s.slug}</loc><changefreq>monthly</changefreq></url>`; });
-    db.projects.filter(p => p.isActive).forEach(p => { xml += `<url><loc>${base}/projects/${p.slug}</loc><changefreq>monthly</changefreq></url>`; });
+    db.services.filter(s => s.isActive).forEach(s => { xml += `  <url><loc>${base}/services/${s.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n`; });
   }
   
   xml += '</urlset>';
   res.header('Content-Type', 'application/xml').send(xml);
+});
+
+// Domain redirect: if accessed via old Render URL, redirect to production domain
+app.use((req, res, next) => {
+  const host = req.headers.host;
+  const productionHost = 'best-false-ceiling-specialist-of-guwahati-sahaninesinteriors.in';
+  if (host && host.includes('onrender.com') && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+    const newUrl = `https://${productionHost}${req.originalUrl}`;
+    return res.redirect(301, newUrl);
+  }
+  next();
 });
 
 // Serve React build

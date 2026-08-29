@@ -5,4 +5,4 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /uploads/
 
-Sitemap: https://sahaninesinteriors.com/sitemap.xml
+Sitemap: https://best-false-ceiling-specialist-of-guwahati-sahaninesinteriors.in/sitemap.xml

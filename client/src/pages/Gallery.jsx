@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { Link } from 'react-router-dom'
+import { SITE_URL } from '../constants'
 import axios from 'axios'
 
 export default function Gallery() {
@@ -15,16 +17,46 @@ export default function Gallery() {
     }).catch(console.error)
   }, [activeCategory])
 
+  const title = 'Gallery | False Ceiling & Interior Work Photos | Sahanines Interiors Guwahati'
+  const description = 'View our gallery of false ceiling and interior design work in Guwahati. Browse photos of gypsum, POP, lighting, residential and commercial ceiling projects by Sahanines Interiors.'
+  const ogImage = 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=1200&q=80'
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Gallery', item: `${SITE_URL}/gallery` }
+    ]
+  }
+
   return (
     <>
       <Helmet>
-        <title>Gallery | False Ceiling & Interior Work Photos | Sahanines Interiors Guwahati</title>
-        <meta name="description" content="View our gallery of false ceiling and interior design work in Guwahati. Browse photos of gypsum, POP, lighting, residential and commercial projects." />
-        <link rel="canonical" href={`${window.location.origin}/gallery`} />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={`${SITE_URL}/gallery`} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={`${SITE_URL}/gallery`} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="og:site_name" content="Sahanines Interiors" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="robots" content="index, follow" />
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
       <section className="page-header">
         <div className="container">
+          <div className="breadcrumbs">
+            <Link to="/">Home</Link><span>/</span>
+            <span>Gallery</span>
+          </div>
           <h1>Our Gallery</h1>
           <p>Browse our collection of false ceiling and interior work</p>
         </div>

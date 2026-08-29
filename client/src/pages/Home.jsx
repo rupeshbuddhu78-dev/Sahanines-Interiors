@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useSite } from '../context/SiteContext'
+import { SITE_URL } from '../constants'
 import axios from 'axios'
 import Counter from '../components/common/Counter'
 
@@ -37,34 +38,59 @@ export default function Home() {
 
   const heroImage = settings?.hero?.image || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=80'
 
+  const title = 'Sahanines Interiors | False Ceiling & Interior Design in Guwahati, Assam'
+  const description = 'Sahanines Interiors provides professional false ceiling, gypsum ceiling, POP ceiling, ceiling lighting and interior design solutions in Guwahati, Assam. Contact us for a free quote.'
+  const ogImage = settings?.seo?.ogImage || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80'
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'HomeAndConstructionBusiness',
-    name: settings?.businessName || 'Sahanines Interiors',
-    telephone: settings?.phone || '076360 08047',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'House No. 4, Shantipur, Ashram Road, Jyotikuchi',
-      addressLocality: 'Guwahati',
-      addressRegion: 'Assam',
-      postalCode: '781009',
-      addressCountry: 'IN'
-    },
-    url: window.location.origin,
-    areaServed: { '@type': 'City', name: 'Guwahati' },
-    description: settings?.seo?.defaultDescription || 'Professional false ceiling and interior design services in Guwahati, Assam.'
+    '@graph': [
+      {
+        '@type': 'LocalBusiness',
+        '@id': `${SITE_URL}/#business`,
+        name: 'Sahanines Interiors',
+        telephone: settings?.phone || '076360 08047',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'House No. 4, Shantipur, Ashram Road, Jyotikuchi',
+          addressLocality: 'Guwahati',
+          addressRegion: 'Assam',
+          postalCode: '781009',
+          addressCountry: 'IN'
+        },
+        url: SITE_URL,
+        areaServed: { '@type': 'City', name: 'Guwahati' },
+        description: 'Professional false ceiling and interior design services in Guwahati, Assam.',
+        priceRange: '$$'
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${SITE_URL}/#website`,
+        url: SITE_URL,
+        name: 'Sahanines Interiors',
+        publisher: { '@id': `${SITE_URL}/#business` }
+      }
+    ]
   }
 
   return (
     <>
       <Helmet>
-        <title>{settings?.seo?.defaultTitle || 'Sahanines Interiors | False Ceiling & Interior Design in Guwahati'}</title>
-        <meta name="description" content={settings?.seo?.defaultDescription || 'Sahanines Interiors provides professional false ceiling, gypsum ceiling, POP ceiling, ceiling lighting and interior solutions in Guwahati, Assam.'} />
-        <link rel="canonical" href={window.location.origin} />
-        <meta property="og:title" content={settings?.seo?.defaultTitle || 'Sahanines Interiors | False Ceiling & Interior Design in Guwahati'} />
-        <meta property="og:description" content={settings?.seo?.defaultDescription || ''} />
-        {settings?.seo?.ogImage && <meta property="og:image" content={settings.seo.ogImage} />}
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={`${SITE_URL}/`} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={`${SITE_URL}/`} />
+        <meta property="og:image" content={ogImage} />
         <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="og:site_name" content="Sahanines Interiors" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
@@ -136,7 +162,7 @@ export default function Home() {
                 <div className="about-feature"><span className="icon">✓</span> Clean Finishing</div>
                 <div className="about-feature"><span className="icon">✓</span> Timely Delivery</div>
               </div>
-              <Link to="/about" className="btn btn-outline-dark" style={{ marginTop: 28 }}>Learn More</Link>
+              <Link to="/about" className="btn btn-outline-dark" style={{ marginTop: 28 }}>Learn More About Us</Link>
             </div>
           </div>
         </div>
@@ -163,6 +189,9 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 32 }}>
+            <Link to="/services" className="btn btn-outline-dark">View All Services</Link>
           </div>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { SITE_URL } from '../constants'
 import axios from 'axios'
 
 export default function ServiceDetail() {
@@ -20,21 +21,62 @@ export default function ServiceDetail() {
 
   if (!service) return <div className="loading"><div className="spinner"></div></div>
 
+  const title = service.seoTitle || `${service.name} in Guwahati | Sahanines Interiors`
+  const description = service.seoDescription || service.shortDescription
+  const ogImage = service.image || 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=1200&q=80'
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Service',
-    name: service.name,
-    description: service.shortDescription,
-    provider: { '@type': 'LocalBusiness', name: 'Sahanines Interiors' },
-    areaServed: { '@type': 'City', name: 'Guwahati' }
+    '@graph': [
+      {
+        '@type': 'Service',
+        name: service.name,
+        description: service.shortDescription,
+        provider: { '@type': 'LocalBusiness', name: 'Sahanines Interiors', url: SITE_URL },
+        areaServed: { '@type': 'City', name: 'Guwahati' },
+        url: `${SITE_URL}/services/${slug}`
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/services` },
+          { '@type': 'ListItem', position: 3, name: service.name, item: `${SITE_URL}/services/${slug}` }
+        ]
+      }
+    ]
+  }
+
+  // Add FAQ schema if service has FAQs
+  if (service.faqs && service.faqs.length > 0) {
+    jsonLd['@graph'].push({
+      '@type': 'FAQPage',
+      mainEntity: service.faqs.map(faq => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: { '@type': 'Answer', text: faq.answer }
+      }))
+    })
   }
 
   return (
     <>
       <Helmet>
-        <title>{service.seoTitle || `${service.name} Services in Guwahati | Sahanines Interiors`}</title>
-        <meta name="description" content={service.seoDescription || service.shortDescription} />
-        <link rel="canonical" href={`${window.location.origin}/services/${slug}`} />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={`${SITE_URL}/services/${slug}`} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={`${SITE_URL}/services/${slug}`} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="og:site_name" content="Sahanines Interiors" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
@@ -43,7 +85,7 @@ export default function ServiceDetail() {
           <div className="breadcrumbs">
             <Link to="/">Home</Link><span>/</span>
             <Link to="/services">Services</Link><span>/</span>
-            {service.name}
+            <span>{service.name}</span>
           </div>
           <h1>{service.name}</h1>
           <p>{service.shortDescription}</p>
@@ -79,7 +121,7 @@ export default function ServiceDetail() {
                   <div className="faq-list">
                     {service.faqs.map((faq, i) => (
                       <div key={i} className={`faq-item ${openFaq === i ? 'open' : ''}`}>
-                        <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                        <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
                           {faq.question}
                           <span className="icon">+</span>
                         </button>
@@ -113,6 +155,13 @@ export default function ServiceDetail() {
                   ))}
                 </div>
               )}
+
+              <div style={{ marginTop: 24 }}>
+                <h3>Explore More</h3>
+                <Link to="/projects" style={{ display: 'block', padding: '8px 0', color: 'var(--secondary)', fontSize: '0.9rem' }}>View Our Projects →</Link>
+                <Link to="/gallery" style={{ display: 'block', padding: '8px 0', color: 'var(--secondary)', fontSize: '0.9rem' }}>Browse Gallery →</Link>
+                <Link to="/reviews" style={{ display: 'block', padding: '8px 0', color: 'var(--secondary)', fontSize: '0.9rem' }}>Read Client Reviews →</Link>
+              </div>
             </aside>
           </div>
         </div>

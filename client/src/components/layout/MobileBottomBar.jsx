@@ -1,4 +1,5 @@
 import { useSite } from '../../context/SiteContext'
+import { Link } from 'react-router-dom'
 
 export default function MobileBottomBar() {
   const { settings } = useSite()
@@ -14,9 +15,9 @@ export default function MobileBottomBar() {
         <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent('Hello Sahanines Interiors, I would like to enquire about false ceiling/interior work in Guwahati.')}`} className="wa-btn" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp us">
           WhatsApp
         </a>
-        <a href="/contact" className="quote-btn">
+        <Link to="/contact" className="quote-btn">
           Get Quote
-        </a>
+        </Link>
       </div>
     </div>
   )

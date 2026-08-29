@@ -30,6 +30,7 @@ export default function Footer() {
             <Link to="/projects">Projects</Link>
             <Link to="/gallery">Gallery</Link>
             <Link to="/reviews">Reviews</Link>
+            <Link to="/faq">FAQ</Link>
             <Link to="/contact">Contact</Link>
           </div>
 
@@ -57,7 +58,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>{settings?.footer?.copyright || '© 2024 Sahanines Interiors. All rights reserved.'}</p>
+          <p>{settings?.footer?.copyright || `© ${new Date().getFullYear()} Sahanines Interiors. All rights reserved.`}</p>
         </div>
       </div>
     </footer>

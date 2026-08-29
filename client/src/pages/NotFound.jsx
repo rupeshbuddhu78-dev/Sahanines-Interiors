@@ -1,10 +1,16 @@
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { SITE_URL } from '../constants'
 
 export default function NotFound() {
   return (
     <>
-      <Helmet><title>Page Not Found | Sahanines Interiors</title></Helmet>
+      <Helmet>
+        <title>Page Not Found | Sahanines Interiors</title>
+        <meta name="description" content="The page you are looking for does not exist. Return to the Sahanines Interiors homepage for false ceiling and interior design services in Guwahati." />
+        <link rel="canonical" href={`${SITE_URL}/`} />
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
       <div className="not-found">
         <div>
           <h1>404</h1>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { SITE_URL } from '../constants'
 import axios from 'axios'
 
 export default function Services() {
@@ -12,16 +13,58 @@ export default function Services() {
     }).catch(console.error)
   }, [])
 
+  const title = 'Our Services | False Ceiling & Interior Solutions in Guwahati | Sahanines Interiors'
+  const description = 'Explore our range of false ceiling and interior services in Guwahati — gypsum ceiling, POP ceiling, PVC ceiling, ceiling lighting, residential and commercial interior solutions by Sahanines Interiors.'
+  const ogImage = 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=1200&q=80'
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/services` }
+    ]
+  }
+
+  const servicesJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: services.map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: s.name,
+      url: `${SITE_URL}/services/${s.slug}`
+    }))
+  }
+
   return (
     <>
       <Helmet>
-        <title>Our Services | False Ceiling & Interior Solutions in Guwahati | Sahanines Interiors</title>
-        <meta name="description" content="Explore our range of false ceiling and interior services in Guwahati including gypsum ceiling, POP ceiling, ceiling lighting, residential and commercial solutions." />
-        <link rel="canonical" href={`${window.location.origin}/services`} />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={`${SITE_URL}/services`} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={`${SITE_URL}/services`} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="og:site_name" content="Sahanines Interiors" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="robots" content="index, follow" />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+        {services.length > 0 && <script type="application/ld+json">{JSON.stringify(servicesJsonLd)}</script>}
       </Helmet>
 
       <section className="page-header">
         <div className="container">
+          <div className="breadcrumbs">
+            <Link to="/">Home</Link><span>/</span>
+            <span>Services</span>
+          </div>
           <h1>Our Services</h1>
           <p>Comprehensive false ceiling and interior solutions for every space</p>
         </div>

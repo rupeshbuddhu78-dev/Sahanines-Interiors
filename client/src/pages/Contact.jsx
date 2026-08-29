@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { Link } from 'react-router-dom'
 import { useSite } from '../context/SiteContext'
+import { SITE_URL } from '../constants'
 import axios from 'axios'
 
 export default function Contact() {
@@ -29,32 +31,65 @@ export default function Contact() {
   const whatsapp = settings?.whatsapp || '917636008047'
   const address = settings?.address?.full || 'House No. 4, Shantipur, Ashram Road, Jyotikuchi, Guwahati, Assam 781009'
 
+  const title = 'Contact Sahanines Interiors | False Ceiling Contractor in Guwahati, Assam'
+  const description = 'Contact Sahanines Interiors for false ceiling and interior work in Guwahati. Call 076360 08047 or visit us at Jyotikuchi, Guwahati, Assam. Free consultation and quotation.'
+  const ogImage = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80'
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'Sahanines Interiors',
-    telephone: phone,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'House No. 4, Shantipur, Ashram Road, Jyotikuchi',
-      addressLocality: 'Guwahati',
-      addressRegion: 'Assam',
-      postalCode: '781009',
-      addressCountry: 'IN'
-    }
+    '@graph': [
+      {
+        '@type': 'LocalBusiness',
+        name: 'Sahanines Interiors',
+        telephone: phone,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'House No. 4, Shantipur, Ashram Road, Jyotikuchi',
+          addressLocality: 'Guwahati',
+          addressRegion: 'Assam',
+          postalCode: '781009',
+          addressCountry: 'IN'
+        },
+        url: SITE_URL,
+        areaServed: { '@type': 'City', name: 'Guwahati' }
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: 'Contact', item: `${SITE_URL}/contact` }
+        ]
+      }
+    ]
   }
 
   return (
     <>
       <Helmet>
-        <title>Contact Us | Sahanines Interiors - False Ceiling Contractor in Guwahati</title>
-        <meta name="description" content="Contact Sahanines Interiors for false ceiling and interior work in Guwahati. Call 076360 08047 or visit us at Jyotikuchi, Guwahati." />
-        <link rel="canonical" href={`${window.location.origin}/contact`} />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={`${SITE_URL}/contact`} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={`${SITE_URL}/contact`} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="og:site_name" content="Sahanines Interiors" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
       <section className="page-header">
         <div className="container">
+          <div className="breadcrumbs">
+            <Link to="/">Home</Link><span>/</span>
+            <span>Contact</span>
+          </div>
           <h1>Contact Us</h1>
           <p>Get in touch for a free consultation and quotation</p>
         </div>
