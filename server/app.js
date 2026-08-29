@@ -181,20 +181,7 @@ async function seedMongo() {
 const app = express();
 app.use(helmet({ 
   crossOriginResourcePolicy: { policy: 'cross-origin' },
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:", "http:", "blob:"],
-      connectSrc: ["'self'", "https:", "http:", "ws:", "wss:"],
-      mediaSrc: ["'self'", "https:", "http:"],
-      objectSrc: ["'none'"],
-      frameSrc: ["'self'", "https://www.google.com"],
-      frameAncestors: ["'self'"]
-    }
-  }
+  contentSecurityPolicy: false
 }));
 app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }));
 app.use(express.json({ limit: '10mb' }));
