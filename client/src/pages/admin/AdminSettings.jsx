@@ -69,6 +69,24 @@ export default function AdminSettings() {
         </div>
 
         <div className="admin-card">
+          <h2>About Page</h2>
+          <div className="admin-form">
+            <div className="form-group">
+              <label>About Page Image</label>
+              <input value={settings.about?.image || ''} onChange={e => handleChange('about.image', e.target.value)} placeholder="Image URL" />
+              <input type="file" accept="image/*" onChange={e => handleUpload(e, 'about.image')} style={{ marginTop: 4 }} />
+              {settings.about?.image && <img src={settings.about.image} alt="About page preview" style={{ width: '100%', maxWidth: 300, marginTop: 8, borderRadius: 8 }} />}
+            </div>
+            <div className="form-group">
+              <label>About Page Header Background Image</label>
+              <input value={settings.about?.headerImage || ''} onChange={e => handleChange('about.headerImage', e.target.value)} placeholder="Background image URL" />
+              <input type="file" accept="image/*" onChange={e => handleUpload(e, 'about.headerImage')} style={{ marginTop: 4 }} />
+              {settings.about?.headerImage && <img src={settings.about.headerImage} alt="Header background preview" style={{ width: '100%', maxWidth: 300, marginTop: 8, borderRadius: 8 }} />}
+            </div>
+          </div>
+        </div>
+
+        <div className="admin-card">
           <h2>Google & Social</h2>
           <div className="admin-form">
             <div className="form-group"><label>Google Rating</label><input type="number" step="0.1" min="0" max="5" value={settings.googleRating} onChange={e => handleChange('googleRating', parseFloat(e.target.value))} /></div>

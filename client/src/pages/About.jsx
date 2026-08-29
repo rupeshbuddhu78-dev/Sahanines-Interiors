@@ -12,8 +12,9 @@ export default function About() {
         <link rel="canonical" href={`${window.location.origin}/about`} />
       </Helmet>
 
-      <section className="page-header">
-        <div className="container">
+      <section className="page-header about-page-header">
+        <div className="about-header-bg" style={{ backgroundImage: `url(${settings?.about?.headerImage || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=80'})` }}></div>
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <h1>About Sahanines Interiors</h1>
           <p>False Ceiling & Interior Specialists in Guwahati, Assam</p>
         </div>
@@ -23,7 +24,7 @@ export default function About() {
         <div className="container">
           <div className="about-grid">
             <div className="about-image">
-              <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80" alt="Sahanines Interiors team at work in Guwahati" width="800" height="600" loading="lazy" />
+              <img src={settings?.about?.image || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80'} alt="Sahanines Interiors team at work in Guwahati" width="800" height="600" loading="lazy" />
             </div>
             <div className="about-content">
               <span className="label">Who We Are</span>
