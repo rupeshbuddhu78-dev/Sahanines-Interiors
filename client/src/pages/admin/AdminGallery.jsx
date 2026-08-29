@@ -7,6 +7,7 @@ const galleryCategories = ['False Ceiling', 'Gypsum Ceiling', 'POP Ceiling', 'Li
 export default function AdminGallery() {
   const [images, setImages] = useState([])
   const [form, setForm] = useState({ image: '', title: '', category: 'False Ceiling', altText: '', caption: '' })
+  const [uploading, setUploading] = useState(false)
 
   const fetchGallery = async () => {
     const res = await axios.get('/api/gallery/all', getToken())
@@ -27,11 +28,20 @@ export default function AdminGallery() {
 
   const handleUpload = async (e) => {
     const file = e.target.files[0]; if (!file) return
-    const fd = new FormData(); fd.append('image', file)
-    const res = await axios.post('/api/upload', fd, { headers: { ...getToken().headers, 'Content-Type': 'multipart/form-data' } })
-    if (res.data.success) {
-      const imageUrl = res.data.url.startsWith('http') ? res.data.url : res.data.url
-      setForm({ ...form, image: imageUrl })
+    setUploading(true)
+    try {
+      const fd = new FormData(); fd.append('image', file)
+      const res = await axios.post('/api/upload', fd, { headers: { ...getToken().headers, 'Content-Type': 'multipart/form-data' } })
+      if (res.data.success) {
+        const imageUrl = res.data.url.startsWith('http') ? res.data.url : res.data.url
+        setForm({ ...form, image: imageUrl })
+        alert('Image uploaded successfully!')
+      }
+    } catch (err) {
+      console.error('Upload error:', err)
+      alert('Upload failed. Please check Cloudinary configuration.')
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -43,9 +53,10 @@ export default function AdminGallery() {
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
             <label>Image</label>
+            {uploading && <div style={{ background: '#fff3cd', padding: '8px 12px', borderRadius: 6, marginBottom: 8, fontSize: '0.9rem' }}>Uploading to Cloudinary...</div>}
             {form.image && <img src={form.image} alt="Preview" style={{ width: '100%', maxWidth: 200, borderRadius: 8, marginBottom: 8, display: 'block' }} />}
             <input value={form.image} onChange={e => setForm({...form, image: e.target.value})} placeholder="Paste image URL" />
-            <input type="file" accept="image/*" onChange={handleUpload} style={{ marginTop: 8 }} />
+            <input type="file" accept="image/*" onChange={handleUpload} style={{ marginTop: 8 }} disabled={uploading} />
           </div>
           <div className="form-group"><label>Title</label><input value={form.title} onChange={e => setForm({...form, title: e.target.value})} placeholder="Image title" /></div>
           <div className="form-group">

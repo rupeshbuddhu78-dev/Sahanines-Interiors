@@ -6,6 +6,7 @@ const getToken = () => ({ headers: { Authorization: `Bearer ${localStorage.getIt
 export default function AdminSettings() {
   const [settings, setSettings] = useState(null)
   const [saved, setSaved] = useState(false)
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     axios.get('/api/settings').then(res => {
@@ -31,9 +32,20 @@ export default function AdminSettings() {
 
   const handleUpload = async (e, field) => {
     const file = e.target.files[0]; if (!file) return
-    const fd = new FormData(); fd.append('image', file)
-    const res = await axios.post('/api/upload', fd, { headers: { ...getToken().headers, 'Content-Type': 'multipart/form-data' } })
-    if (res.data.success) handleChange(field, res.data.url)
+    setUploading(true)
+    try {
+      const fd = new FormData(); fd.append('image', file)
+      const res = await axios.post('/api/upload', fd, { headers: { ...getToken().headers, 'Content-Type': 'multipart/form-data' } })
+      if (res.data.success) {
+        handleChange(field, res.data.url)
+        alert('Image uploaded successfully!')
+      }
+    } catch (err) {
+      console.error('Upload error:', err)
+      alert('Upload failed. Please check Cloudinary configuration.')
+    } finally {
+      setUploading(false)
+    }
   }
 
   if (!settings) return <div className="loading"><div className="spinner"></div></div>
@@ -43,6 +55,10 @@ export default function AdminSettings() {
       <div className="admin-header"><h1>Website Settings</h1></div>
       {saved && <div className="toast toast-success" style={{ position: 'fixed' }}>Settings saved!</div>}
       <form onSubmit={handleSave}>
+        {uploading && <div style={{ background: '#fff3cd', padding: '12px 16px', borderRadius: 8, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="spinner" style={{ width: 20, height: 20, border: '3px solid #ffc107', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+          <span>Uploading image to Cloudinary...</span>
+        </div>}
         <div className="admin-card">
           <h2>Business Information</h2>
           <div className="admin-form">

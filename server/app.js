@@ -232,7 +232,17 @@ app.put('/api/settings', auth, async (req, res) => {
   if (USE_MONGO) {
     let settings = await SiteSettings.findOne();
     if (!settings) settings = new SiteSettings();
-    Object.assign(settings, req.body);
+    const deepMerge = (target, source) => {
+      for (const key in source) {
+        if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+          if (!target[key]) target[key] = {};
+          deepMerge(target[key], source[key]);
+        } else {
+          target[key] = source[key];
+        }
+      }
+    };
+    deepMerge(settings, req.body);
     await settings.save();
     res.json({ success: true, settings });
   } else {

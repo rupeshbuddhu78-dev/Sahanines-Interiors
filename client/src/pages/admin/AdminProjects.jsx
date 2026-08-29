@@ -9,6 +9,7 @@ export default function AdminProjects() {
   const [projects, setProjects] = useState([])
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState({ ...emptyForm })
+  const [uploading, setUploading] = useState(false)
 
   const fetchProjects = async () => {
     const res = await axios.get('/api/projects/all', getToken())
@@ -58,15 +59,26 @@ export default function AdminProjects() {
   const handleUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-    const formData = new FormData()
-    formData.append('image', file)
-    const res = await axios.post('/api/upload', formData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
-        'Content-Type': 'multipart/form-data'
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+      const res = await axios.post('/api/upload', formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      if (res.data.success) {
+        setForm({ ...form, coverImage: res.data.url })
+        alert('Image uploaded successfully!')
       }
-    })
-    if (res.data.success) setForm({ ...form, coverImage: res.data.url })
+    } catch (err) {
+      console.error('Upload error:', err)
+      alert('Upload failed. Please check Cloudinary configuration.')
+    } finally {
+      setUploading(false)
+    }
   }
 
   const cancelEdit = () => {
@@ -95,9 +107,10 @@ export default function AdminProjects() {
           
           <div className="form-group">
             <label>Cover Image</label>
+            {uploading && <div style={{ background: '#fff3cd', padding: '8px 12px', borderRadius: 6, marginBottom: 8, fontSize: '0.9rem' }}>Uploading to Cloudinary...</div>}
             {form.coverImage && <img src={form.coverImage} alt="Current" style={{ width: '100%', maxWidth: 200, borderRadius: 8, marginBottom: 8, display: 'block' }} />}
             <input value={form.coverImage} onChange={e => setForm({...form, coverImage: e.target.value})} placeholder="Paste image URL" />
-            <input type="file" accept="image/*" onChange={handleUpload} style={{ marginTop: 8 }} />
+            <input type="file" accept="image/*" onChange={handleUpload} style={{ marginTop: 8 }} disabled={uploading} />
           </div>
 
           <div className="form-group"><label>Alt Text</label><input value={form.altText} onChange={e => setForm({...form, altText: e.target.value})} /></div>
