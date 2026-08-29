@@ -69,13 +69,16 @@ export default function AdminProjects() {
           'Content-Type': 'multipart/form-data'
         }
       })
-      if (res.data.success) {
-        setForm({ ...form, coverImage: res.data.url })
-        alert('Image uploaded successfully!')
+      console.log('Upload response:', res.data)
+      if (res.data.success && res.data.url) {
+        setForm(prev => ({ ...prev, coverImage: res.data.url }))
+        alert('Image uploaded! URL: ' + res.data.url)
+      } else {
+        alert('Upload response missing URL: ' + JSON.stringify(res.data))
       }
     } catch (err) {
       console.error('Upload error:', err)
-      alert('Upload failed. Please check Cloudinary configuration.')
+      alert('Upload failed: ' + (err.response?.data?.message || err.message))
     } finally {
       setUploading(false)
     }
@@ -108,8 +111,24 @@ export default function AdminProjects() {
           <div className="form-group">
             <label>Cover Image</label>
             {uploading && <div style={{ background: '#fff3cd', padding: '8px 12px', borderRadius: 6, marginBottom: 8, fontSize: '0.9rem' }}>Uploading to Cloudinary...</div>}
-            {form.coverImage && <img src={form.coverImage} alt="Current" style={{ width: '100%', maxWidth: 200, borderRadius: 8, marginBottom: 8, display: 'block' }} />}
-            <input value={form.coverImage} onChange={e => setForm({...form, coverImage: e.target.value})} placeholder="Paste image URL" />
+            {form.coverImage && (
+              <div style={{ marginBottom: 8 }}>
+                <img 
+                  key={form.coverImage}
+                  src={form.coverImage} 
+                  alt="Preview" 
+                  style={{ width: '100%', maxWidth: 200, borderRadius: 8, display: 'block', border: '1px solid #eee' }}
+                  onError={(e) => { 
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'block';
+                  }}
+                />
+                <div style={{ display: 'none', padding: '8px', background: '#fee', borderRadius: 4, fontSize: '0.85rem', color: '#c00' }}>
+                  Image failed to load. URL: {form.coverImage}
+                </div>
+              </div>
+            )}
+            <input value={form.coverImage} onChange={e => setForm(prev => ({...prev, coverImage: e.target.value}))} placeholder="Paste image URL" />
             <input type="file" accept="image/*" onChange={handleUpload} style={{ marginTop: 8 }} disabled={uploading} />
           </div>
 
@@ -134,7 +153,7 @@ export default function AdminProjects() {
           <tbody>
             {projects.map(p => (
               <tr key={p._id}>
-                <td>{p.coverImage && <img src={p.coverImage} alt="" style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 4 }} />}</td>
+                <td>{p.coverImage ? <img src={p.coverImage} alt="" style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 4 }} onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span style="color:#999;font-size:0.8rem">No image</span>'; }} /> : <span style={{ color: '#999', fontSize: '0.8rem' }}>No image</span>}</td>
                 <td>{p.title}</td>
                 <td>{p.category}</td>
                 <td>{p.location}</td>

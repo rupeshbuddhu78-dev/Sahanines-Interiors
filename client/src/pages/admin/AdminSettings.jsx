@@ -36,13 +36,16 @@ export default function AdminSettings() {
     try {
       const fd = new FormData(); fd.append('image', file)
       const res = await axios.post('/api/upload', fd, { headers: { ...getToken().headers, 'Content-Type': 'multipart/form-data' } })
-      if (res.data.success) {
+      console.log('Upload response:', res.data)
+      if (res.data.success && res.data.url) {
         handleChange(field, res.data.url)
-        alert('Image uploaded successfully!')
+        alert('Image uploaded! URL: ' + res.data.url)
+      } else {
+        alert('Upload response missing URL: ' + JSON.stringify(res.data))
       }
     } catch (err) {
       console.error('Upload error:', err)
-      alert('Upload failed. Please check Cloudinary configuration.')
+      alert('Upload failed: ' + (err.response?.data?.message || err.message))
     } finally {
       setUploading(false)
     }
@@ -64,7 +67,12 @@ export default function AdminSettings() {
           <div className="admin-form">
             <div className="form-group"><label>Business Name</label><input value={settings.businessName} onChange={e => handleChange('businessName', e.target.value)} /></div>
             <div className="form-group"><label>Tagline</label><input value={settings.tagline} onChange={e => handleChange('tagline', e.target.value)} /></div>
-            <div className="form-group"><label>Logo</label><input value={settings.logo} onChange={e => handleChange('logo', e.target.value)} /><input type="file" accept="image/*" onChange={e => handleUpload(e, 'logo')} style={{ marginTop: 4 }} /></div>
+            <div className="form-group">
+              <label>Logo</label>
+              <input value={settings.logo} onChange={e => handleChange('logo', e.target.value)} />
+              <input type="file" accept="image/*" onChange={e => handleUpload(e, 'logo')} style={{ marginTop: 4 }} disabled={uploading} />
+              {settings.logo && <img key={settings.logo} src={settings.logo} alt="Logo preview" style={{ maxWidth: 150, marginTop: 8, borderRadius: 4, border: '1px solid #eee' }} onError={(e) => { e.target.style.display = 'none'; }} />}
+            </div>
             <div className="form-group"><label>Phone</label><input value={settings.phone} onChange={e => handleChange('phone', e.target.value)} /></div>
             <div className="form-group"><label>WhatsApp (with country code, no +)</label><input value={settings.whatsapp} onChange={e => handleChange('whatsapp', e.target.value)} /></div>
             <div className="form-group"><label>Email</label><input value={settings.email} onChange={e => handleChange('email', e.target.value)} /></div>
@@ -78,7 +86,12 @@ export default function AdminSettings() {
           <div className="admin-form">
             <div className="form-group"><label>Heading</label><input value={settings.hero.heading} onChange={e => handleChange('hero.heading', e.target.value)} /></div>
             <div className="form-group"><label>Subtitle</label><textarea value={settings.hero.subtitle} onChange={e => handleChange('hero.subtitle', e.target.value)} rows="3" /></div>
-            <div className="form-group"><label>Hero Image</label><input value={settings.hero.image} onChange={e => handleChange('hero.image', e.target.value)} /><input type="file" accept="image/*" onChange={e => handleUpload(e, 'hero.image')} style={{ marginTop: 4 }} /></div>
+            <div className="form-group">
+              <label>Hero Image</label>
+              <input value={settings.hero.image} onChange={e => handleChange('hero.image', e.target.value)} />
+              <input type="file" accept="image/*" onChange={e => handleUpload(e, 'hero.image')} style={{ marginTop: 4 }} disabled={uploading} />
+              {settings.hero.image && <img key={settings.hero.image} src={settings.hero.image} alt="Hero preview" style={{ maxWidth: 300, marginTop: 8, borderRadius: 8, border: '1px solid #eee' }} onError={(e) => { e.target.style.display = 'none'; }} />}
+            </div>
             <div className="form-group"><label>Primary CTA Text</label><input value={settings.hero.ctaPrimary} onChange={e => handleChange('hero.ctaPrimary', e.target.value)} /></div>
             <div className="form-group"><label>Secondary CTA Text</label><input value={settings.hero.ctaSecondary} onChange={e => handleChange('hero.ctaSecondary', e.target.value)} /></div>
           </div>
@@ -90,14 +103,40 @@ export default function AdminSettings() {
             <div className="form-group">
               <label>About Page Image</label>
               <input value={settings.about?.image || ''} onChange={e => handleChange('about.image', e.target.value)} placeholder="Image URL" />
-              <input type="file" accept="image/*" onChange={e => handleUpload(e, 'about.image')} style={{ marginTop: 4 }} />
-              {settings.about?.image && <img src={settings.about.image} alt="About page preview" style={{ width: '100%', maxWidth: 300, marginTop: 8, borderRadius: 8 }} />}
+              <input type="file" accept="image/*" onChange={e => handleUpload(e, 'about.image')} style={{ marginTop: 4 }} disabled={uploading} />
+              {settings.about?.image && (
+                <div style={{ marginTop: 8 }}>
+                  <img 
+                    key={settings.about.image}
+                    src={settings.about.image} 
+                    alt="About page preview" 
+                    style={{ width: '100%', maxWidth: 300, borderRadius: 8, border: '1px solid #eee' }}
+                    onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
+                  />
+                  <div style={{ display: 'none', padding: '8px', background: '#fee', borderRadius: 4, fontSize: '0.85rem', color: '#c00' }}>
+                    Image failed to load
+                  </div>
+                </div>
+              )}
             </div>
             <div className="form-group">
               <label>About Page Header Background Image</label>
               <input value={settings.about?.headerImage || ''} onChange={e => handleChange('about.headerImage', e.target.value)} placeholder="Background image URL" />
-              <input type="file" accept="image/*" onChange={e => handleUpload(e, 'about.headerImage')} style={{ marginTop: 4 }} />
-              {settings.about?.headerImage && <img src={settings.about.headerImage} alt="Header background preview" style={{ width: '100%', maxWidth: 300, marginTop: 8, borderRadius: 8 }} />}
+              <input type="file" accept="image/*" onChange={e => handleUpload(e, 'about.headerImage')} style={{ marginTop: 4 }} disabled={uploading} />
+              {settings.about?.headerImage && (
+                <div style={{ marginTop: 8 }}>
+                  <img 
+                    key={settings.about.headerImage}
+                    src={settings.about.headerImage} 
+                    alt="Header background preview" 
+                    style={{ width: '100%', maxWidth: 300, borderRadius: 8, border: '1px solid #eee' }}
+                    onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
+                  />
+                  <div style={{ display: 'none', padding: '8px', background: '#fee', borderRadius: 4, fontSize: '0.85rem', color: '#c00' }}>
+                    Image failed to load
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

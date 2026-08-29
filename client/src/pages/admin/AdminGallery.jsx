@@ -32,14 +32,16 @@ export default function AdminGallery() {
     try {
       const fd = new FormData(); fd.append('image', file)
       const res = await axios.post('/api/upload', fd, { headers: { ...getToken().headers, 'Content-Type': 'multipart/form-data' } })
-      if (res.data.success) {
-        const imageUrl = res.data.url.startsWith('http') ? res.data.url : res.data.url
-        setForm({ ...form, image: imageUrl })
-        alert('Image uploaded successfully!')
+      console.log('Upload response:', res.data)
+      if (res.data.success && res.data.url) {
+        setForm(prev => ({ ...prev, image: res.data.url }))
+        alert('Image uploaded! URL: ' + res.data.url)
+      } else {
+        alert('Upload response missing URL: ' + JSON.stringify(res.data))
       }
     } catch (err) {
       console.error('Upload error:', err)
-      alert('Upload failed. Please check Cloudinary configuration.')
+      alert('Upload failed: ' + (err.response?.data?.message || err.message))
     } finally {
       setUploading(false)
     }
@@ -54,8 +56,24 @@ export default function AdminGallery() {
           <div className="form-group">
             <label>Image</label>
             {uploading && <div style={{ background: '#fff3cd', padding: '8px 12px', borderRadius: 6, marginBottom: 8, fontSize: '0.9rem' }}>Uploading to Cloudinary...</div>}
-            {form.image && <img src={form.image} alt="Preview" style={{ width: '100%', maxWidth: 200, borderRadius: 8, marginBottom: 8, display: 'block' }} />}
-            <input value={form.image} onChange={e => setForm({...form, image: e.target.value})} placeholder="Paste image URL" />
+            {form.image && (
+              <div style={{ marginBottom: 8 }}>
+                <img 
+                  key={form.image}
+                  src={form.image} 
+                  alt="Preview" 
+                  style={{ width: '100%', maxWidth: 200, borderRadius: 8, display: 'block', border: '1px solid #eee' }}
+                  onError={(e) => { 
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'block';
+                  }}
+                />
+                <div style={{ display: 'none', padding: '8px', background: '#fee', borderRadius: 4, fontSize: '0.85rem', color: '#c00' }}>
+                  Image failed to load. URL: {form.image}
+                </div>
+              </div>
+            )}
+            <input value={form.image} onChange={e => setForm(prev => ({...prev, image: e.target.value}))} placeholder="Paste image URL" />
             <input type="file" accept="image/*" onChange={handleUpload} style={{ marginTop: 8 }} disabled={uploading} />
           </div>
           <div className="form-group"><label>Title</label><input value={form.title} onChange={e => setForm({...form, title: e.target.value})} placeholder="Image title" /></div>
@@ -79,7 +97,7 @@ export default function AdminGallery() {
           <tbody>
             {images.map(img => (
               <tr key={img._id}>
-                <td><img src={img.image} alt={img.altText || img.title} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }} /></td>
+                <td>{img.image ? <img src={img.image} alt={img.altText || img.title} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }} onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span style="color:#999;font-size:0.8rem">No image</span>'; }} /> : <span style={{ color: '#999', fontSize: '0.8rem' }}>No image</span>}</td>
                 <td>{img.title || '-'}</td>
                 <td><span style={{ background: '#f0f0f0', padding: '4px 10px', borderRadius: 50, fontSize: '0.8rem' }}>{img.category || 'General'}</span></td>
                 <td><button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDelete(img._id)}>Delete</button></td>

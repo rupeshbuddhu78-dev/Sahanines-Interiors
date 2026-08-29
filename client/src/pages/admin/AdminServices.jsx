@@ -78,13 +78,17 @@ export default function AdminServices() {
           'Content-Type': 'multipart/form-data'
         }
       })
-      if (res.data.success) {
-        setForm({ ...form, image: res.data.url })
-        alert('Image uploaded successfully!')
+      console.log('Upload response:', res.data)
+      if (res.data.success && res.data.url) {
+        const imageUrl = res.data.url
+        setForm(prev => ({ ...prev, image: imageUrl }))
+        alert('Image uploaded! URL: ' + imageUrl)
+      } else {
+        alert('Upload response missing URL: ' + JSON.stringify(res.data))
       }
     } catch (err) {
       console.error('Upload error:', err)
-      alert('Upload failed. Please check Cloudinary configuration.')
+      alert('Upload failed: ' + (err.response?.data?.message || err.message))
     } finally {
       setUploading(false)
     }
@@ -109,8 +113,25 @@ export default function AdminServices() {
           <div className="form-group">
             <label>Image</label>
             {uploading && <div style={{ background: '#fff3cd', padding: '8px 12px', borderRadius: 6, marginBottom: 8, fontSize: '0.9rem' }}>Uploading to Cloudinary...</div>}
-            {form.image && <img src={form.image} alt="Current" style={{ width: '100%', maxWidth: 200, borderRadius: 8, marginBottom: 8, display: 'block' }} />}
-            <input value={form.image} onChange={e => setForm({...form, image: e.target.value})} placeholder="Paste image URL" />
+            {form.image && (
+              <div style={{ marginBottom: 8 }}>
+                <img 
+                  key={form.image}
+                  src={form.image} 
+                  alt="Preview" 
+                  style={{ width: '100%', maxWidth: 200, borderRadius: 8, display: 'block', border: '1px solid #eee' }}
+                  onError={(e) => { 
+                    console.error('Image failed to load:', form.image);
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'block';
+                  }}
+                />
+                <div style={{ display: 'none', padding: '8px', background: '#fee', borderRadius: 4, fontSize: '0.85rem', color: '#c00' }}>
+                  Image failed to load. URL: {form.image}
+                </div>
+              </div>
+            )}
+            <input value={form.image} onChange={e => setForm(prev => ({...prev, image: e.target.value}))} placeholder="Paste image URL" />
             <input type="file" accept="image/*" onChange={handleUpload} style={{ marginTop: 8 }} disabled={uploading} />
           </div>
 
@@ -144,7 +165,7 @@ export default function AdminServices() {
           <tbody>
             {services.map(s => (
               <tr key={s._id}>
-                <td>{s.image && <img src={s.image} alt="" style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 4 }} />}</td>
+                <td>{s.image ? <img src={s.image} alt="" style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 4 }} onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span style="color:#999;font-size:0.8rem">No image</span>'; }} /> : <span style={{ color: '#999', fontSize: '0.8rem' }}>No image</span>}</td>
                 <td>{s.name}</td>
                 <td>{s.sortOrder}</td>
                 <td>{s.isActive ? '✅' : '❌'}</td>
