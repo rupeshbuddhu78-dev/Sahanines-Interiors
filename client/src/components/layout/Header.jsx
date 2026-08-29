@@ -65,9 +65,9 @@ export default function Header() {
             {link.label}
           </Link>
         ))}
-        <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <Link to="/contact" className="btn btn-primary" style={{ justifyContent: 'center' }}>Get Free Quote</Link>
-          <a href={`tel:${settings?.phone || '07636008047'}`} className="btn btn-outline-dark" style={{ justifyContent: 'center' }}>Call Now</a>
+        <div className="mobile-cta">
+          <Link to="/contact" className="btn btn-primary">Get Free Quote</Link>
+          <a href={`tel:${settings?.phone || '07636008047'}`} className="btn btn-outline-dark">Call Now</a>
         </div>
       </div>
     </header>
