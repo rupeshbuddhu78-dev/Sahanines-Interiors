@@ -137,7 +137,7 @@ export default function Home() {
               <div className="label">Services Offered</div>
             </div>
             <div className="trust-bar-item">
-              <Counter end={projects.length} duration={1800} suffix="+" />
+              <Counter end={500} duration={2000} suffix="+" />
               <div className="label">Projects Completed</div>
             </div>
           </div>
