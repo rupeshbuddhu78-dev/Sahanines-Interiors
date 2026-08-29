@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const getToken = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } })
+const galleryCategories = ['False Ceiling', 'Gypsum Ceiling', 'POP Ceiling', 'Lighting', 'Residential', 'Commercial']
 
 export default function AdminGallery() {
   const [images, setImages] = useState([])
-  const [form, setForm] = useState({ image: '', title: '', category: 'General', altText: '', caption: '' })
+  const [form, setForm] = useState({ image: '', title: '', category: 'False Ceiling', altText: '', caption: '' })
 
   const fetchGallery = async () => {
     const res = await axios.get('/api/gallery/all', getToken())
@@ -15,8 +16,8 @@ export default function AdminGallery() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await axios.post('/api/gallery', form, getToken())
-    setForm({ image: '', title: '', category: 'General', altText: '', caption: '' })
+    await axios.post('/api/gallery', { ...form, isActive: true }, getToken())
+    setForm({ image: '', title: '', category: 'False Ceiling', altText: '', caption: '' })
     fetchGallery()
   }
 
@@ -28,7 +29,10 @@ export default function AdminGallery() {
     const file = e.target.files[0]; if (!file) return
     const fd = new FormData(); fd.append('image', file)
     const res = await axios.post('/api/upload', fd, { headers: { ...getToken().headers, 'Content-Type': 'multipart/form-data' } })
-    if (res.data.success) setForm({ ...form, image: res.data.url })
+    if (res.data.success) {
+      const imageUrl = res.data.url.startsWith('http') ? res.data.url : res.data.url
+      setForm({ ...form, image: imageUrl })
+    }
   }
 
   return (
@@ -37,27 +41,41 @@ export default function AdminGallery() {
       <div className="admin-card">
         <h2>Add Image</h2>
         <form onSubmit={handleSubmit} className="admin-form">
-          <div className="form-group"><label>Image URL</label><input value={form.image} onChange={e => setForm({...form, image: e.target.value})} required /></div>
-          <div className="form-group"><label>Upload Image</label><input type="file" accept="image/*" onChange={handleUpload} /></div>
-          {form.image && <img src={form.image} alt="" style={{ width: 120, borderRadius: 8, marginBottom: 12 }} />}
-          <div className="form-group"><label>Title</label><input value={form.title} onChange={e => setForm({...form, title: e.target.value})} /></div>
-          <div className="form-group"><label>Category</label><input value={form.category} onChange={e => setForm({...form, category: e.target.value})} /></div>
-          <div className="form-group"><label>Alt Text</label><input value={form.altText} onChange={e => setForm({...form, altText: e.target.value})} /></div>
-          <div className="form-group"><label>Caption</label><input value={form.caption} onChange={e => setForm({...form, caption: e.target.value})} /></div>
+          <div className="form-group">
+            <label>Image</label>
+            {form.image && <img src={form.image} alt="Preview" style={{ width: '100%', maxWidth: 200, borderRadius: 8, marginBottom: 8, display: 'block' }} />}
+            <input value={form.image} onChange={e => setForm({...form, image: e.target.value})} placeholder="Paste image URL" />
+            <input type="file" accept="image/*" onChange={handleUpload} style={{ marginTop: 8 }} />
+          </div>
+          <div className="form-group"><label>Title</label><input value={form.title} onChange={e => setForm({...form, title: e.target.value})} placeholder="Image title" /></div>
+          <div className="form-group">
+            <label>Category *</label>
+            <select value={form.category} onChange={e => setForm({...form, category: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #ddd', fontSize: '0.95rem' }}>
+              {galleryCategories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group"><label>Alt Text</label><input value={form.altText} onChange={e => setForm({...form, altText: e.target.value})} placeholder="Describe the image" /></div>
+          <div className="form-group"><label>Caption</label><input value={form.caption} onChange={e => setForm({...form, caption: e.target.value})} placeholder="Optional caption" /></div>
           <button type="submit" className="admin-btn admin-btn-primary">Add Image</button>
         </form>
       </div>
       <div className="admin-card">
         <h2>Gallery Images ({images.length})</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
-          {images.map(img => (
-            <div key={img._id} style={{ position: 'relative' }}>
-              <img src={img.image} alt={img.altText || img.title} style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 8 }} />
-              <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDelete(img._id)} style={{ position: 'absolute', top: 4, right: 4, fontSize: '0.7rem' }}>×</button>
-              <p style={{ fontSize: '0.75rem', marginTop: 4 }}>{img.title}</p>
-            </div>
-          ))}
-        </div>
+        <table className="admin-table">
+          <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Actions</th></tr></thead>
+          <tbody>
+            {images.map(img => (
+              <tr key={img._id}>
+                <td><img src={img.image} alt={img.altText || img.title} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }} /></td>
+                <td>{img.title || '-'}</td>
+                <td><span style={{ background: '#f0f0f0', padding: '4px 10px', borderRadius: 50, fontSize: '0.8rem' }}>{img.category || 'General'}</span></td>
+                <td><button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDelete(img._id)}>Delete</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   )
