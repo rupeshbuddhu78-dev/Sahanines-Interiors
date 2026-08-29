@@ -9,6 +9,22 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const mongoose = require('mongoose');
+const cloudinary = require('cloudinary').v2;
+
+// Configure Cloudinary if credentials are available
+if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+}
+
+const isCloudinaryConfigured = () => {
+  return process.env.CLOUDINARY_CLOUD_NAME && 
+         process.env.CLOUDINARY_API_KEY && 
+         process.env.CLOUDINARY_API_SECRET;
+};
 
 const JWT_SECRET = process.env.JWT_SECRET || 'sahanines-secret-key-2024';
 const PORT = process.env.PORT || 3000;
@@ -571,9 +587,39 @@ app.delete('/api/enquiries/:id', auth, async (req, res) => {
 });
 
 // Upload
-app.post('/api/upload', auth, upload.single('image'), (req, res) => {
+app.post('/api/upload', auth, upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ success: false, message: 'No file' });
-  res.json({ success: true, url: `/uploads/${req.file.filename}`, filename: req.file.filename });
+  
+  try {
+    // If Cloudinary is configured, upload to Cloudinary
+    if (isCloudinaryConfigured()) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'sahanines-interiors',
+        resource_type: 'image'
+      });
+      
+      // Delete local file after uploading to Cloudinary
+      fs.unlinkSync(req.file.path);
+      
+      res.json({ 
+        success: true, 
+        url: result.secure_url, 
+        filename: result.public_id,
+        storage: 'cloudinary'
+      });
+    } else {
+      // Fallback to local storage if Cloudinary not configured
+      res.json({ 
+        success: true, 
+        url: `/uploads/${req.file.filename}`, 
+        filename: req.file.filename,
+        storage: 'local'
+      });
+    }
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ success: false, message: 'Upload error: ' + error.message });
+  }
 });
 
 // Sitemap
