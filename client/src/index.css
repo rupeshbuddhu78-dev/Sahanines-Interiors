@@ -453,7 +453,7 @@ p { color: var(--text-light); }
   flex-direction: column;
   justify-content: flex-end;
   padding: 24px;
-  opacity: 0;
+  opacity: 1;
   transition: var(--transition);
 }
 .project-card:hover .project-card-overlay { opacity: 1; }

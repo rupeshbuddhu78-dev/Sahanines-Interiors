@@ -37,6 +37,10 @@ const siteSettingsSchema = new mongoose.Schema({
     description: { type: String, default: 'Professional false ceiling and interior solutions in Guwahati, Assam. Quality materials, modern designs, and clean finishing.' },
     copyright: { type: String, default: '© 2024 Sahanines Interiors. All rights reserved.' }
   },
+  about: {
+    image: { type: String, default: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80' },
+    headerImage: { type: String, default: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1600&q=80' }
+  },
   theme: {
     primaryColor: { type: String, default: '#1a1a2e' },
     secondaryColor: { type: String, default: '#c9a96e' },
