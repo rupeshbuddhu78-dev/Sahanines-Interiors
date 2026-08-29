@@ -123,7 +123,7 @@ export default function Home() {
         <div className="container">
           <div className="about-grid fade-up">
             <div className="about-image">
-              <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80" alt="Sahanines Interiors - False Ceiling & Interior Specialists in Guwahati" width="800" height="600" loading="lazy" />
+              <img src={settings?.about?.image || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80'} alt="Sahanines Interiors - False Ceiling & Interior Specialists in Guwahati" width="800" height="600" loading="lazy" />
             </div>
             <div className="about-content">
               <span className="label">About Us</span>
