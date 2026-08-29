@@ -10,6 +10,17 @@ export default function Gallery() {
   const [lightbox, setLightbox] = useState(null)
   const categories = ['All', 'False Ceiling', 'Gypsum Ceiling', 'POP Ceiling', 'Lighting', 'Residential', 'Commercial']
 
+  // Helper to extract image URL from either string or object format
+  const getImageUrl = (img) => {
+    if (!img) return ''
+    if (typeof img === 'string') return img
+    if (typeof img === 'object') {
+      if (img.url) return img.url
+      if (img.secure_url) return img.secure_url
+    }
+    return ''
+  }
+
   useEffect(() => {
     const url = activeCategory === 'All' ? '/api/gallery' : `/api/gallery?category=${activeCategory}`
     axios.get(url).then(res => {
@@ -72,12 +83,23 @@ export default function Gallery() {
             ))}
           </div>
           <div className="gallery-grid">
-            {images.map(img => (
-              <div key={img._id} className="gallery-item" onClick={() => setLightbox(img.image)}>
-                <img src={img.image} alt={img.altText || img.title || 'False ceiling work in Guwahati'} width="400" height="400" loading="lazy" />
-                <div className="gallery-item-overlay"><span>+</span></div>
-              </div>
-            ))}
+            {images.map(img => {
+              const imgUrl = getImageUrl(img.image)
+              return (
+                <div key={img._id} className="gallery-item" onClick={() => imgUrl && setLightbox(imgUrl)}>
+                  {imgUrl ? (
+                    <>
+                      <img src={imgUrl} alt={img.altText || img.title || 'False ceiling work in Guwahati'} width="400" height="400" loading="lazy" />
+                      <div className="gallery-item-overlay"><span>+</span></div>
+                    </>
+                  ) : (
+                    <div style={{ width: '100%', height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f0f0', color: '#999' }}>
+                      No image
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
           {images.length === 0 && <p style={{ textAlign: 'center', padding: 40 }}>No images in this category.</p>}
         </div>
@@ -87,6 +109,20 @@ export default function Gallery() {
         <div className="lightbox" onClick={() => setLightbox(null)}>
           <button className="lightbox-close" onClick={() => setLightbox(null)} aria-label="Close lightbox">×</button>
           <img src={lightbox} alt="Gallery image" onClick={e => e.stopPropagation()} />
+        </div>
+      )}
+
+      {/* Debug: Show image data structure */}
+      {images.length > 0 && (
+        <div style={{ position: 'fixed', bottom: 10, left: 10, background: 'rgba(0,0,0,0.7)', color: 'white', padding: 10, borderRadius: 8, fontSize: '0.75rem', maxWidth: 300, zIndex: 9999 }}>
+          <strong>Image format check:</strong><br/>
+          First image type: {typeof images[0].image}<br/>
+          {typeof images[0].image === 'object' && (
+            <>
+              Keys: {Object.keys(images[0].image).join(', ')}<br/>
+              URL: {images[0].image.url || 'N/A'}
+            </>
+          )}
         </div>
       )}
     </>

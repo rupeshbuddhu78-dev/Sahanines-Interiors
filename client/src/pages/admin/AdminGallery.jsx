@@ -9,6 +9,17 @@ export default function AdminGallery() {
   const [form, setForm] = useState({ image: '', title: '', category: 'False Ceiling', altText: '', caption: '' })
   const [uploading, setUploading] = useState(false)
 
+  // Helper to extract image URL from either string or object format
+  const getImageUrl = (img) => {
+    if (!img) return ''
+    if (typeof img === 'string') return img
+    if (typeof img === 'object') {
+      if (img.url) return img.url
+      if (img.secure_url) return img.secure_url
+    }
+    return ''
+  }
+
   const fetchGallery = async () => {
     const res = await axios.get('/api/gallery/all', getToken())
     if (res.data.success) setImages(res.data.images)
@@ -95,14 +106,17 @@ export default function AdminGallery() {
         <table className="admin-table">
           <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Actions</th></tr></thead>
           <tbody>
-            {images.map(img => (
-              <tr key={img._id}>
-                <td>{img.image ? <img src={img.image} alt={img.altText || img.title} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }} onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span style="color:#999;font-size:0.8rem">No image</span>'; }} /> : <span style={{ color: '#999', fontSize: '0.8rem' }}>No image</span>}</td>
-                <td>{img.title || '-'}</td>
-                <td><span style={{ background: '#f0f0f0', padding: '4px 10px', borderRadius: 50, fontSize: '0.8rem' }}>{img.category || 'General'}</span></td>
-                <td><button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDelete(img._id)}>Delete</button></td>
-              </tr>
-            ))}
+            {images.map(img => {
+              const imgUrl = getImageUrl(img.image)
+              return (
+                <tr key={img._id}>
+                  <td>{imgUrl ? <img src={imgUrl} alt={img.altText || img.title} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }} onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span style="color:#999;font-size:0.8rem">No image</span>'; }} /> : <span style={{ color: '#999', fontSize: '0.8rem' }}>No image</span>}</td>
+                  <td>{img.title || '-'}</td>
+                  <td><span style={{ background: '#f0f0f0', padding: '4px 10px', borderRadius: 50, fontSize: '0.8rem' }}>{img.category || 'General'}</span></td>
+                  <td><button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDelete(img._id)}>Delete</button></td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
