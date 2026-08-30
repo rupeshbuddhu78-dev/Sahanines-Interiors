@@ -75,7 +75,7 @@ export default function Projects() {
             {projects.map(project => (
               <div key={project._id} className="project-card">
                 <div className="project-card-image">
-                  <img src={project.coverImage || 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=600&q=80'} alt={project.altText || project.title} width="600" height="450" loading="lazy" />
+                  {project.coverImage && <img src={project.coverImage} alt={project.altText || project.title} width="600" height="450" loading="lazy" />}
                 </div>
                 <div className="project-card-overlay">
                   <span className="category">{project.category}</span>

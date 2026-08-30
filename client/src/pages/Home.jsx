@@ -36,7 +36,7 @@ export default function Home() {
     return () => observer.disconnect()
   }, [services, projects, testimonials])
 
-  const heroImage = settings?.hero?.image || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=80'
+  const heroImage = settings?.hero?.image || ''
 
   const title = 'Sahanines Interiors | False Ceiling & Interior Design in Guwahati, Assam'
   const description = 'Sahanines Interiors provides professional false ceiling, gypsum ceiling, POP ceiling, ceiling lighting and interior design solutions in Guwahati, Assam. Contact us for a free quote.'
@@ -96,7 +96,7 @@ export default function Home() {
 
       {/* Hero */}
       <section className="hero">
-        <div className="hero-bg" style={{ backgroundImage: `url(${heroImage})` }} role="img" aria-label="Premium false ceiling interior"></div>
+        {heroImage && <div className="hero-bg" style={{ backgroundImage: `url(${heroImage})` }} role="img" aria-label="Premium false ceiling interior"></div>}
         <div className="hero-overlay"></div>
         <div className="container">
           <div className="hero-content">
@@ -149,7 +149,7 @@ export default function Home() {
         <div className="container">
           <div className="about-grid fade-up">
             <div className="about-image">
-              <img src={settings?.about?.image || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80'} alt="Sahanines Interiors - False Ceiling & Interior Specialists in Guwahati" width="800" height="600" loading="lazy" />
+              {settings?.about?.image && <img src={settings.about.image} alt="Sahanines Interiors - False Ceiling & Interior Specialists in Guwahati" width="800" height="600" loading="lazy" />}
             </div>
             <div className="about-content">
               <span className="label">About Us</span>
@@ -180,7 +180,7 @@ export default function Home() {
             {services.map((service, i) => (
               <div key={service._id} className="service-card fade-up" style={{ transitionDelay: `${i * 0.1}s` }}>
                 <div className="service-card-image">
-                  <img src={service.image || 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=600&q=80'} alt={service.altText || service.name} width="600" height="375" loading="lazy" />
+                  {service.image && <img src={service.image} alt={service.altText || service.name} width="600" height="375" loading="lazy" />}
                 </div>
                 <div className="service-card-body">
                   <h3>{service.name}</h3>
@@ -236,7 +236,7 @@ export default function Home() {
             {projects.map((project, i) => (
               <div key={project._id} className="project-card fade-up" style={{ transitionDelay: `${i * 0.1}s` }}>
                 <div className="project-card-image">
-                  <img src={project.coverImage || 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=600&q=80'} alt={project.altText || project.title} width="600" height="450" loading="lazy" />
+                  {project.coverImage && <img src={project.coverImage} alt={project.altText || project.title} width="600" height="450" loading="lazy" />}
                 </div>
                 <div className="project-card-overlay">
                   <span className="category">{project.category}</span>

@@ -76,7 +76,7 @@ export default function Services() {
             {services.map(service => (
               <div key={service._id} className="service-card">
                 <div className="service-card-image">
-                  <img src={service.image || 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=600&q=80'} alt={service.altText || service.name} width="600" height="375" loading="lazy" />
+                  {service.image && <img src={service.image} alt={service.altText || service.name} width="600" height="375" loading="lazy" />}
                 </div>
                 <div className="service-card-body">
                   <h3>{service.name}</h3>
