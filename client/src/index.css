@@ -30,7 +30,7 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
-img { max-width: 100%; height: auto; display: block; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+img { max-width: 100%; height: auto; display: block; -webkit-backface-visibility: hidden; backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0); }
 a { text-decoration: none; color: inherit; transition: var(--transition); }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
 ul, ol { list-style: none; }
@@ -315,6 +315,7 @@ p { color: var(--text-light); }
   aspect-ratio: 4/3;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  contain: layout style paint;
 }
 .about-image img { width: 100%; height: 100%; object-fit: cover; -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); }
 .about-content .label {
@@ -368,6 +369,7 @@ p { color: var(--text-light); }
   overflow: hidden;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  contain: layout style paint;
 }
 .service-card-image img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); }
 .service-card:hover .service-card-image img { transform: scale(1.05); }
@@ -453,6 +455,7 @@ p { color: var(--text-light); }
   overflow: hidden;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  contain: layout style paint;
 }
 .project-card-image img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); }
 .project-card:hover .project-card-image img { transform: scale(1.08); }
@@ -493,6 +496,7 @@ p { color: var(--text-light); }
   overflow: hidden;
   cursor: pointer;
   position: relative;
+  contain: layout style paint;
 }
 .gallery-item img {
   width: 100%;
@@ -847,7 +851,8 @@ p { color: var(--text-light); }
 }
 
 /* === ANIMATIONS === */
-.fade-up {
+/* Only apply fade-up opacity:0 when JS is loaded - prevents iOS blink */
+.js-loaded .fade-up {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.6s ease, transform 0.6s ease;
@@ -856,10 +861,15 @@ p { color: var(--text-light); }
   -webkit-transform: translate3d(0,30px,0);
   transform: translate3d(0,30px,0);
 }
-.fade-up.visible {
+.js-loaded .fade-up.visible {
   opacity: 1;
   -webkit-transform: translate3d(0,0,0);
   transform: translate3d(0,0,0);
+}
+/* Without JS, elements are always visible */
+.fade-up {
+  opacity: 1;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1128,6 +1138,7 @@ p { color: var(--text-light); }
   .section { padding: 60px 0; }
   .hero-content { padding: 100px 0 60px; }
   .hero-trust { gap: 16px; }
+  .hero-bg { animation: none !important; }
   .trust-bar-inner { gap: 24px; }
   .services-grid { grid-template-columns: 1fr; }
   .projects-grid { grid-template-columns: 1fr; }

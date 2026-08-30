@@ -1,11 +1,15 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, memo } from 'react'
 
-export default function Counter({ end, duration = 2000, decimals = 0, suffix = '' }) {
+const Counter = memo(function Counter({ end, duration = 2000, decimals = 0, suffix = '' }) {
   const [count, setCount] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const ref = useRef(null)
+  const rafRef = useRef(null)
 
   useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -16,7 +20,7 @@ export default function Counter({ end, duration = 2000, decimals = 0, suffix = '
       { threshold: 0.3 }
     )
 
-    if (ref.current) observer.observe(ref.current)
+    observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
@@ -37,20 +41,26 @@ export default function Counter({ end, duration = 2000, decimals = 0, suffix = '
       setCount(current)
 
       if (progress < 1) {
-        requestAnimationFrame(animate)
+        rafRef.current = requestAnimationFrame(animate)
       } else {
         setCount(end)
       }
     }
 
-    requestAnimationFrame(animate)
+    rafRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
   }, [isVisible, end, duration])
 
   const displayValue = decimals > 0 ? count.toFixed(decimals) : Math.floor(count)
 
   return (
-    <div ref={ref} className="number">
+    <div ref={ref} className="number" style={{ contain: 'layout style' }}>
       {displayValue}{suffix}
     </div>
   )
-}
+})
+
+export default Counter

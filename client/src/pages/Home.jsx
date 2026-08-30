@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useSite } from '../context/SiteContext'
@@ -37,12 +37,29 @@ export default function Home() {
     fetchData()
   }, [])
 
+  // Use a stable observer ref - only create once, never re-create on data change
+  const observerRef = useRef(null)
+  
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible') })
+    // Create observer once
+    observerRef.current = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible')
+          observerRef.current.unobserve(entry.target) // Stop observing once visible
+        }
+      })
     }, { threshold: 0.1 })
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el))
-    return () => observer.disconnect()
+    
+    return () => { if (observerRef.current) observerRef.current.disconnect() }
+  }, [])
+
+  // Observe new fade-up elements whenever data changes (without disconnecting/recreating)
+  useEffect(() => {
+    if (!observerRef.current) return
+    document.querySelectorAll('.fade-up:not(.visible)').forEach(el => {
+      observerRef.current.observe(el)
+    })
   }, [services, projects, testimonials])
 
   const heroImage = settings?.hero?.image || ''
