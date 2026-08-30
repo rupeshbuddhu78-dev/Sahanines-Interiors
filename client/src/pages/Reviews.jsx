@@ -51,8 +51,8 @@ export default function Reviews() {
     }).catch(console.error)
   }, [])
 
-  const title = 'Client Reviews | Sahanines Interiors - 5.0★ Rated on Google with 319+ Reviews | False Ceiling Guwahati'
-  const description = 'Read 319+ genuine Google reviews for Sahanines Interiors. Rated 5.0★ for false ceiling, gypsum ceiling, POP ceiling, and interior design services in Guwahati, Assam.'
+  const title = 'Sahanines Interiors Reviews | False Ceiling & Interior Design Guwahati'
+  const description = 'Read genuine Google reviews for Sahanines Interiors. Rated 5.0★ with 319+ reviews for false ceiling, gypsum, POP ceiling and interior design services in Guwahati.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {

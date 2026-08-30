@@ -24,7 +24,7 @@ export default function ServiceDetail() {
   if (!service) return <div className="loading"><div className="spinner"></div></div>
 
   const title = service.seoTitle || `${service.name} in Guwahati | Sahanines Interiors`
-  const description = service.seoDescription || service.shortDescription
+  const description = service.seoDescription || service.shortDescription || `${service.name} services in Guwahati by Sahanines Interiors.`
   const ogImage = service.image || settings?.seo?.ogImage || ''
 
   const jsonLd = {

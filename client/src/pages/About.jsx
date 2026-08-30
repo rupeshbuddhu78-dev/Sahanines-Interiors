@@ -6,8 +6,8 @@ import { SITE_URL } from '../constants'
 export default function About() {
   const { settings } = useSite()
 
-  const title = 'About Sahanines Interiors | False Ceiling & Interior Experts in Guwahati'
-  const description = 'Learn about Sahanines Interiors — professional false ceiling and interior design service providers based in Jyotikuchi, Guwahati, Assam. Quality materials, modern designs, and customer-focused service.'
+  const title = 'About Sahanines Interiors | False Ceiling Specialist in Guwahati'
+  const description = 'Sahanines Interiors is a Guwahati-based false ceiling and interior design company. Based in Jyotikuchi, we serve residential and commercial clients across Guwahati, Assam with quality craftsmanship.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const breadcrumbJsonLd = {
@@ -47,8 +47,8 @@ export default function About() {
             <Link to="/">Home</Link><span>/</span>
             <span>About</span>
           </div>
-          <h1>About Sahanines Interiors</h1>
-          <p>False Ceiling & Interior Specialists in Guwahati, Assam</p>
+          <h1>About Sahanines Interiors — False Ceiling Specialist in Guwahati</h1>
+          <p>Professional false ceiling contractor and interior design company serving Guwahati, Assam</p>
         </div>
       </section>
 

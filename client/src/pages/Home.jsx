@@ -64,8 +64,8 @@ export default function Home() {
 
   const heroImage = settings?.hero?.image || ''
 
-  const title = 'Sahanines Interiors | False Ceiling & Interior Design in Guwahati, Assam'
-  const description = 'Sahanines Interiors provides professional false ceiling, gypsum ceiling, POP ceiling, ceiling lighting and interior design solutions in Guwahati, Assam. Contact us for a free quote.'
+  const title = 'Sahanines Interiors | Best False Ceiling & Interior Design in Guwahati'
+  const description = 'Sahanines Interiors — Guwahati\'s trusted false ceiling specialist. Expert gypsum, POP, PVC ceiling installation, ceiling lighting & interior design. Free consultation. Call 076360 08047.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
@@ -86,8 +86,35 @@ export default function Home() {
         },
         url: SITE_URL,
         areaServed: { '@type': 'City', name: 'Guwahati' },
-        description: 'Professional false ceiling and interior design services in Guwahati, Assam.',
-        priceRange: '$$'
+        description: 'Professional false ceiling contractor and interior design service provider in Guwahati, Assam. Specializing in gypsum, POP, PVC ceilings, ceiling lighting and residential and commercial interior solutions.',
+        priceRange: '$$',
+        hasOfferCatalog: {
+          '@type': 'OfferCatalog',
+          name: 'False Ceiling & Interior Services',
+          itemListElement: [
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'False Ceiling Installation' } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Gypsum False Ceiling' } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'POP False Ceiling' } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'PVC Ceiling Installation' } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Ceiling Lighting Design' } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Interior Ceiling Design' } }
+          ]
+        }
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${SITE_URL}/#organization`,
+        name: 'Sahanines Interiors',
+        url: SITE_URL,
+        telephone: settings?.phone || '076360 08047',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'House No. 4, Shantipur, Ashram Road, Jyotikuchi',
+          addressLocality: 'Guwahati',
+          addressRegion: 'Assam',
+          postalCode: '781009',
+          addressCountry: 'IN'
+        }
       },
       {
         '@type': 'WebSite',
@@ -126,8 +153,8 @@ export default function Home() {
         <div className="hero-overlay"></div>
         <div className="container">
           <div className="hero-content">
-            <h1>{settings?.hero?.heading || 'Premium False Ceiling & Interior Solutions in Guwahati'}</h1>
-            <p>{settings?.hero?.subtitle || 'Modern false ceiling designs, gypsum and POP ceiling work, lighting solutions and professional interior finishing by Sahanines Interiors.'}</p>
+            <h1>{settings?.hero?.heading || 'False Ceiling & Interior Design Specialist in Guwahati'}</h1>
+            <p>{settings?.hero?.subtitle || 'Sahanines Interiors — professional false ceiling contractor in Guwahati offering modern gypsum, POP, PVC ceiling designs, integrated lighting solutions and complete interior finishing for homes and offices.'}</p>
             <div className="hero-buttons">
               <Link to="/contact" className="btn btn-primary btn-lg">{settings?.hero?.ctaPrimary || 'Get Free Quote'}</Link>
               <Link to="/projects" className="btn btn-outline btn-lg">{settings?.hero?.ctaSecondary || 'View Our Projects'}</Link>

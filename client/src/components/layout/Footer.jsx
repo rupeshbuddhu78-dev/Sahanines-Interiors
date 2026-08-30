@@ -35,13 +35,15 @@ export default function Footer() {
           </div>
 
           <div className="footer-col">
-            <h4>Services</h4>
+            <h4>Our Services</h4>
             <Link to="/services/false-ceiling">False Ceiling</Link>
             <Link to="/services/gypsum-false-ceiling">Gypsum Ceiling</Link>
             <Link to="/services/pop-false-ceiling">POP Ceiling</Link>
+            <Link to="/services/pvc-ceiling">PVC Ceiling</Link>
             <Link to="/services/ceiling-lighting">Ceiling Lighting</Link>
-            <Link to="/services/residential-false-ceiling">Residential</Link>
-            <Link to="/services/commercial-false-ceiling">Commercial</Link>
+            <Link to="/services/interior-ceiling-design">Interior Ceiling Design</Link>
+            <Link to="/services/residential-false-ceiling">Residential Ceiling</Link>
+            <Link to="/services/commercial-false-ceiling">Commercial Ceiling</Link>
           </div>
 
           <div className="footer-col">

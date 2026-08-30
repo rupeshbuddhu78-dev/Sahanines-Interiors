@@ -33,8 +33,8 @@ export default function FAQ() {
     }).catch(console.error).finally(() => setLoading(false))
   }, [])
 
-  const title = 'FAQ | False Ceiling Questions Answered | Sahanines Interiors Guwahati'
-  const description = 'Find answers to common questions about false ceiling services, gypsum and POP ceilings, lighting integration, pricing, and more from Sahanines Interiors in Guwahati, Assam.'
+  const title = 'False Ceiling & Interior Design FAQ | Sahanines Interiors Guwahati'
+  const description = 'Answers to common questions about false ceiling services, gypsum, POP, PVC ceilings, lighting integration, pricing and installation in Guwahati from Sahanines Interiors.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {

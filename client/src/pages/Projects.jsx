@@ -19,8 +19,8 @@ export default function Projects() {
     }).catch(console.error)
   }, [activeCategory])
 
-  const title = 'Our Projects | False Ceiling Work in Guwahati | Sahanines Interiors'
-  const description = 'Browse our portfolio of false ceiling and interior projects in Guwahati, Assam. Residential, commercial, gypsum, POP ceiling and lighting work by Sahanines Interiors.'
+  const title = 'False Ceiling & Interior Projects in Guwahati | Sahanines Interiors'
+  const description = 'Browse our portfolio of false ceiling and interior projects across Guwahati — residential, commercial, gypsum, POP, PVC ceiling and lighting work by Sahanines Interiors.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
@@ -59,8 +59,8 @@ export default function Projects() {
             <Link to="/">Home</Link><span>/</span>
             <span>Projects</span>
           </div>
-          <h1>Our Projects</h1>
-          <p>Explore our portfolio of false ceiling and interior projects across Guwahati</p>
+          <h1>False Ceiling & Interior Projects in Guwahati</h1>
+          <p>Explore our portfolio of completed false ceiling and interior design projects across Guwahati, Assam</p>
         </div>
       </section>
 

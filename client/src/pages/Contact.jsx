@@ -31,8 +31,8 @@ export default function Contact() {
   const whatsapp = settings?.whatsapp || '917636008047'
   const address = settings?.address?.full || 'House No. 4, Shantipur, Ashram Road, Jyotikuchi, Guwahati, Assam 781009'
 
-  const title = 'Contact Sahanines Interiors | False Ceiling Contractor in Guwahati, Assam'
-  const description = 'Contact Sahanines Interiors for false ceiling and interior work in Guwahati. Call 076360 08047 or visit us at Jyotikuchi, Guwahati, Assam. Free consultation and quotation.'
+  const title = 'Contact Sahanines Interiors | False Ceiling Contractor Guwahati'
+  const description = 'Get in touch with Sahanines Interiors for false ceiling and interior work in Guwahati. Call 076360 08047, WhatsApp, or visit us at Jyotikuchi, Guwahati. Free consultation & quotation.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {

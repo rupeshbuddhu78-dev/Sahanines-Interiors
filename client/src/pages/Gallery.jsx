@@ -30,8 +30,8 @@ export default function Gallery() {
     }).catch(console.error)
   }, [activeCategory])
 
-  const title = 'Gallery | False Ceiling & Interior Work Photos | Sahanines Interiors Guwahati'
-  const description = 'View our gallery of false ceiling and interior design work in Guwahati. Browse photos of gypsum, POP, lighting, residential and commercial ceiling projects by Sahanines Interiors.'
+  const title = 'False Ceiling Designs & Gallery | Sahanines Interiors Guwahati'
+  const description = 'Browse our gallery of false ceiling designs in Guwahati — gypsum, POP, PVC, ceiling lighting, residential and commercial interior work by Sahanines Interiors.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
@@ -70,8 +70,8 @@ export default function Gallery() {
             <Link to="/">Home</Link><span>/</span>
             <span>Gallery</span>
           </div>
-          <h1>Our Gallery</h1>
-          <p>Browse our collection of false ceiling and interior work</p>
+          <h1>False Ceiling Designs & Gallery</h1>
+          <p>Browse our collection of false ceiling and interior design work across Guwahati</p>
         </div>
       </section>
 
@@ -110,21 +110,7 @@ export default function Gallery() {
       {lightbox && (
         <div className="lightbox" onClick={() => setLightbox(null)}>
           <button className="lightbox-close" onClick={() => setLightbox(null)} aria-label="Close lightbox">×</button>
-          <img src={lightbox} alt="Gallery image" onClick={e => e.stopPropagation()} />
-        </div>
-      )}
-
-      {/* Debug: Show image data structure */}
-      {images.length > 0 && (
-        <div style={{ position: 'fixed', bottom: 10, left: 10, background: 'rgba(0,0,0,0.7)', color: 'white', padding: 10, borderRadius: 8, fontSize: '0.75rem', maxWidth: 300, zIndex: 9999 }}>
-          <strong>Image format check:</strong><br/>
-          First image type: {typeof images[0].image}<br/>
-          {typeof images[0].image === 'object' && (
-            <>
-              Keys: {Object.keys(images[0].image).join(', ')}<br/>
-              URL: {images[0].image.url || 'N/A'}
-            </>
-          )}
+          <img src={lightbox} alt="False ceiling design by Sahanines Interiors" onClick={e => e.stopPropagation()} />
         </div>
       )}
     </>
