@@ -33,7 +33,7 @@ export default function Contact() {
 
   const title = 'Contact Sahanines Interiors | False Ceiling Contractor in Guwahati, Assam'
   const description = 'Contact Sahanines Interiors for false ceiling and interior work in Guwahati. Call 076360 08047 or visit us at Jyotikuchi, Guwahati, Assam. Free consultation and quotation.'
-  const ogImage = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80'
+  const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -72,14 +72,14 @@ export default function Contact() {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={`${SITE_URL}/contact`} />
-        <meta property="og:image" content={ogImage} />
+        {ogImage && <meta property="og:image" content={ogImage} />}
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:site_name" content="Sahanines Interiors" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImage} />
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>

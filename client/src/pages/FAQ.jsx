@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
+import { useSite } from '../context/SiteContext'
 import { SITE_URL } from '../constants'
 import axios from 'axios'
 
@@ -19,6 +20,7 @@ const defaultFAQs = [
 ]
 
 export default function FAQ() {
+  const { settings } = useSite()
   const [faqs, setFaqs] = useState(defaultFAQs)
   const [openIndex, setOpenIndex] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -33,7 +35,7 @@ export default function FAQ() {
 
   const title = 'FAQ | False Ceiling Questions Answered | Sahanines Interiors Guwahati'
   const description = 'Find answers to common questions about false ceiling services, gypsum and POP ceilings, lighting integration, pricing, and more from Sahanines Interiors in Guwahati, Assam.'
-  const ogImage = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80'
+  const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -65,14 +67,14 @@ export default function FAQ() {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={`${SITE_URL}/faq`} />
-        <meta property="og:image" content={ogImage} />
+        {ogImage && <meta property="og:image" content={ogImage} />}
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:site_name" content="Sahanines Interiors" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImage} />
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>

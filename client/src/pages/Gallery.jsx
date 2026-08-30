@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
+import { useSite } from '../context/SiteContext'
 import { SITE_URL } from '../constants'
 import axios from 'axios'
 
 export default function Gallery() {
+  const { settings } = useSite()
   const [images, setImages] = useState([])
   const [activeCategory, setActiveCategory] = useState('All')
   const [lightbox, setLightbox] = useState(null)
@@ -30,7 +32,7 @@ export default function Gallery() {
 
   const title = 'Gallery | False Ceiling & Interior Work Photos | Sahanines Interiors Guwahati'
   const description = 'View our gallery of false ceiling and interior design work in Guwahati. Browse photos of gypsum, POP, lighting, residential and commercial ceiling projects by Sahanines Interiors.'
-  const ogImage = 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=1200&q=80'
+  const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -50,14 +52,14 @@ export default function Gallery() {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={`${SITE_URL}/gallery`} />
-        <meta property="og:image" content={ogImage} />
+        {ogImage && <meta property="og:image" content={ogImage} />}
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:site_name" content="Sahanines Interiors" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImage} />
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>

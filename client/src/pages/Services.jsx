@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { useSite } from '../context/SiteContext'
 import { SITE_URL } from '../constants'
 import axios from 'axios'
 
 export default function Services() {
+  const { settings } = useSite()
   const [services, setServices] = useState([])
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export default function Services() {
 
   const title = 'Our Services | False Ceiling & Interior Solutions in Guwahati | Sahanines Interiors'
   const description = 'Explore our range of false ceiling and interior services in Guwahati — gypsum ceiling, POP ceiling, PVC ceiling, ceiling lighting, residential and commercial interior solutions by Sahanines Interiors.'
-  const ogImage = 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=1200&q=80'
+  const ogImage = settings?.seo?.ogImage || ''
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -46,14 +48,14 @@ export default function Services() {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={`${SITE_URL}/services`} />
-        <meta property="og:image" content={ogImage} />
+        {ogImage && <meta property="og:image" content={ogImage} />}
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:site_name" content="Sahanines Interiors" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImage} />
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
         {services.length > 0 && <script type="application/ld+json">{JSON.stringify(servicesJsonLd)}</script>}

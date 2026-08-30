@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { useSite } from '../context/SiteContext'
 import { SITE_URL } from '../constants'
 import axios from 'axios'
 
 export default function ServiceDetail() {
   const { slug } = useParams()
+  const { settings } = useSite()
   const [service, setService] = useState(null)
   const [relatedServices, setRelatedServices] = useState([])
   const [openFaq, setOpenFaq] = useState(null)
@@ -23,7 +25,7 @@ export default function ServiceDetail() {
 
   const title = service.seoTitle || `${service.name} in Guwahati | Sahanines Interiors`
   const description = service.seoDescription || service.shortDescription
-  const ogImage = service.image || 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=1200&q=80'
+  const ogImage = service.image || settings?.seo?.ogImage || ''
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -68,14 +70,14 @@ export default function ServiceDetail() {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={`${SITE_URL}/services/${slug}`} />
-        <meta property="og:image" content={ogImage} />
+        {ogImage && <meta property="og:image" content={ogImage} />}
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:site_name" content="Sahanines Interiors" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImage} />
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
