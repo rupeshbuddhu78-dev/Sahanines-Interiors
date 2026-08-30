@@ -81,6 +81,38 @@ async function seedMongo() {
     { name: 'Commercial False Ceiling', slug: 'commercial-false-ceiling', shortDescription: 'Commercial solutions.', description: 'Office and shop ceilings.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80', isActive: true, sortOrder: 7 }
   ]);
 
+  await FAQ.create([
+    { question: 'What is a false ceiling?', answer: 'A false ceiling is a secondary ceiling installed below the main ceiling. It improves aesthetics, provides better insulation, hides wiring and pipes, and allows integration of modern lighting solutions.', isPublished: true, sortOrder: 1 },
+    { question: 'What types of false ceilings do you provide?', answer: 'We provide Gypsum false ceilings, POP (Plaster of Paris) false ceilings, PVC ceilings, wooden ceilings, metal ceilings, and custom designer ceilings. Each type has its own benefits depending on your requirements.', isPublished: true, sortOrder: 2 },
+    { question: 'What is the difference between Gypsum and POP ceiling?', answer: 'Gypsum ceilings come in ready-made boards and are quicker to install with a smooth finish. POP ceilings are applied as a paste and allow more intricate designs and curves. Gypsum is more durable and moisture-resistant, while POP is more cost-effective for complex designs.', isPublished: true, sortOrder: 3 },
+    { question: 'How long does false ceiling installation take?', answer: 'Installation time depends on the room size and design complexity. A standard room (10x12 ft) typically takes 2-4 days. Complex designs with lighting integration may take 5-7 days.', isPublished: true, sortOrder: 4 },
+    { question: 'Do you provide LED lighting integration?', answer: 'Yes, we specialize in integrating LED strip lights, recessed lights, cove lighting, and decorative lighting into false ceilings. We provide complete lighting solutions including installation.', isPublished: true, sortOrder: 5 },
+    { question: 'What is the cost of false ceiling in Guwahati?', answer: 'The cost varies based on material, design complexity, and room size. Gypsum ceilings start from ₹65-85 per sq.ft, POP ceilings from ₹55-75 per sq.ft. Contact us for a free quotation based on your specific requirements.', isPublished: true, sortOrder: 6 },
+    { question: 'Do you provide warranty on your work?', answer: 'Yes, we provide warranty on both materials and workmanship. Gypsum boards come with manufacturer warranty, and we provide 1-2 years warranty on our installation work.', isPublished: true, sortOrder: 7 },
+    { question: 'Which areas in Guwahati do you serve?', answer: 'We serve all areas of Guwahati including Jyotikuchi, Shantipur, GS Road, Dispur, Khanapara, Christianbasti, Fancy Bazar, Aminjari, and surrounding areas. We also take projects in nearby towns.', isPublished: true, sortOrder: 8 },
+    { question: 'Can false ceilings help with sound insulation?', answer: 'Yes, false ceilings can significantly reduce noise transmission. We use acoustic materials and proper insulation to improve soundproofing, which is especially useful for bedrooms, home theaters, and offices.', isPublished: true, sortOrder: 9 },
+    { question: 'How do I get a quotation?', answer: 'You can call us at 076360 08047, WhatsApp us, or fill out the contact form on our website. We provide free site visits and quotations for projects in Guwahati.', isPublished: true, sortOrder: 10 }
+  ]);
+
+  await Testimonial.create([
+    { name: 'Rahul Sharma', review: 'Excellent work by Sahanines Interiors! They completed our living room false ceiling with LED lighting. Very professional team, clean work, and finished on time. Highly recommended!', rating: 5, isPublished: true },
+    { name: 'Priyam Das', review: 'Very satisfied with the gypsum ceiling work in our bedroom. The team was punctual, materials used were of good quality, and the finishing is perfect. Good value for money.', rating: 5, isPublished: true },
+    { name: 'Ankita Mehta', review: 'Got POP ceiling work done for our drawing room. The design is exactly what we wanted. The team is skilled and the work quality is top-notch. Thank you Sahanines Interiors!', rating: 5, isPublished: true },
+    { name: 'Bikash Kalita', review: 'Professional service from start to finish. They helped us choose the right ceiling design for our office and the installation was flawless. Good communication throughout the project.', rating: 5, isPublished: true },
+    { name: 'Mridul Hazarika', review: 'We got false ceiling work done for our shop. The team completed the work quickly without disrupting our business. Very happy with the result and the pricing was reasonable.', rating: 5, isPublished: true }
+  ]);
+
+  await Project.create([
+    { title: 'Modern Living Room Ceiling', slug: 'modern-living-room-ceiling', category: 'False Ceiling', location: 'Jyotikuchi, Guwahati', description: 'Modern gypsum false ceiling with integrated LED strip lighting and recessed spots.', coverImage: 'https://images.unsplash.com/photo-1618221195775-dd6882f1b695?w=800&q=80', isFeatured: true, isActive: true, sortOrder: 1 },
+    { title: 'Gypsum Ceiling for Premium Bedroom', slug: 'gypsum-ceiling-premium-bedroom', category: 'Gypsum Ceiling', location: 'Shantipur, Guwahati', description: 'Elegant gypsum false ceiling with cove lighting and modern design.', coverImage: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&q=80', isFeatured: true, isActive: true, sortOrder: 2 },
+    { title: 'Office Cabin Ceiling Work', slug: 'office-cabin-ceiling-work', category: 'Commercial', location: 'GS Road, Guwahati', description: 'Professional false ceiling installation for a corporate office cabin.', coverImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80', isFeatured: true, isActive: true, sortOrder: 3 },
+    { title: 'Decorative POP Ceiling', slug: 'decorative-pop-ceiling', category: 'POP Ceiling', location: 'Dispur, Guwahati', description: 'Intricate POP ceiling design with decorative mouldings and patterns.', coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80', isActive: true, sortOrder: 4 },
+    { title: 'LED Lighting Integration', slug: 'led-lighting-integration', category: 'Lighting', location: 'Khanapara, Guwahati', description: 'Complete ceiling lighting redesign with LED strip lights and spot lights.', coverImage: 'https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&q=80', isFeatured: true, isActive: true, sortOrder: 5 },
+    { title: 'Apartment Complex Ceiling Work', slug: 'apartment-complex-ceiling', category: 'Residential', location: 'Aminjari, Guwahati', description: 'False ceiling work for a residential apartment complex.', coverImage: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80', isActive: true, sortOrder: 6 },
+    { title: 'Showroom Ceiling Design', slug: 'showroom-ceiling-design', category: 'Commercial', location: 'Fancy Bazar, Guwahati', description: 'Eye-catching false ceiling design for a retail showroom.', coverImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80', isActive: true, sortOrder: 7 },
+    { title: 'Dining Room Ceiling', slug: 'dining-room-ceiling', category: 'Residential', location: 'Christianbasti, Guwahati', description: 'An elegant dining room ceiling with circular design and ambient lighting.', coverImage: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80', isActive: true, sortOrder: 8 }
+  ]);
+
   console.log('✅ MongoDB seeded with default data');
 }
 
