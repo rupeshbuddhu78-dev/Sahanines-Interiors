@@ -151,6 +151,33 @@ app.post('/api/auth/login', async (req, res) => {
   res.json({ success: true, token, admin: { name: admin.name, email: admin.email } });
 });
 
+// Change Password
+app.put('/api/auth/change-password', auth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ success: false, message: 'Current password and new password are required' });
+  }
+  if (newPassword.length < 6) {
+    return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+  }
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const admin = await Admin.findById(decoded.id);
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Admin not found' });
+    }
+    if (!bcrypt.compareSync(currentPassword, admin.password)) {
+      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+    }
+    admin.password = bcrypt.hashSync(newPassword, 12);
+    await admin.save();
+    res.json({ success: true, message: 'Password changed successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to change password' });
+  }
+});
+
 // Settings
 app.get('/api/settings', async (req, res) => {
   let settings = await SiteSettings.findOne();

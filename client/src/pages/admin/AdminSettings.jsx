@@ -7,6 +7,9 @@ export default function AdminSettings() {
   const [settings, setSettings] = useState(null)
   const [saved, setSaved] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' })
+  const [passwordMsg, setPasswordMsg] = useState({ type: '', text: '' })
+  const [changingPassword, setChangingPassword] = useState(false)
 
   useEffect(() => {
     axios.get('/api/settings').then(res => {
@@ -28,6 +31,43 @@ export default function AdminSettings() {
     await axios.put('/api/settings', settings, getToken())
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault()
+    setPasswordMsg({ type: '', text: '' })
+    
+    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      setPasswordMsg({ type: 'error', text: 'All fields are required' })
+      return
+    }
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordMsg({ type: 'error', text: 'New password must be at least 6 characters' })
+      return
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordMsg({ type: 'error', text: 'New passwords do not match' })
+      return
+    }
+    
+    setChangingPassword(true)
+    try {
+      const res = await axios.put('/api/auth/change-password', {
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword
+      }, getToken())
+      
+      if (res.data.success) {
+        setPasswordMsg({ type: 'success', text: 'Password changed successfully!' })
+        setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      } else {
+        setPasswordMsg({ type: 'error', text: res.data.message || 'Failed to change password' })
+      }
+    } catch (err) {
+      setPasswordMsg({ type: 'error', text: err.response?.data?.message || 'Failed to change password' })
+    } finally {
+      setChangingPassword(false)
+    }
   }
 
   const handleUpload = async (e, field) => {
@@ -57,6 +97,61 @@ export default function AdminSettings() {
     <div>
       <div className="admin-header"><h1>Website Settings</h1></div>
       {saved && <div className="toast toast-success" style={{ position: 'fixed' }}>Settings saved!</div>}
+      
+      {/* Change Password Section */}
+      <div className="admin-card" style={{ marginBottom: 24 }}>
+        <h2>🔒 Change Password</h2>
+        <form onSubmit={handleChangePassword} className="admin-form">
+          {passwordMsg.text && (
+            <div style={{ 
+              padding: '12px 16px', 
+              borderRadius: 8, 
+              marginBottom: 16, 
+              background: passwordMsg.type === 'success' ? '#d4edda' : '#f8d7da',
+              color: passwordMsg.type === 'success' ? '#155724' : '#721c24',
+              border: `1px solid ${passwordMsg.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`
+            }}>
+              {passwordMsg.text}
+            </div>
+          )}
+          <div className="form-group">
+            <label>Current Password</label>
+            <input 
+              type="password" 
+              value={passwordForm.currentPassword} 
+              onChange={e => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+              placeholder="Enter current password"
+            />
+          </div>
+          <div className="form-group">
+            <label>New Password</label>
+            <input 
+              type="password" 
+              value={passwordForm.newPassword} 
+              onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+              placeholder="Enter new password (min 6 characters)"
+            />
+          </div>
+          <div className="form-group">
+            <label>Confirm New Password</label>
+            <input 
+              type="password" 
+              value={passwordForm.confirmPassword} 
+              onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+              placeholder="Confirm new password"
+            />
+          </div>
+          <button 
+            type="submit" 
+            className="admin-btn admin-btn-primary"
+            disabled={changingPassword}
+            style={{ marginTop: 8 }}
+          >
+            {changingPassword ? 'Changing Password...' : 'Change Password'}
+          </button>
+        </form>
+      </div>
+
       <form onSubmit={handleSave}>
         {uploading && <div style={{ background: '#fff3cd', padding: '12px 16px', borderRadius: 8, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
           <div className="spinner" style={{ width: 20, height: 20, border: '3px solid #ffc107', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
