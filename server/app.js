@@ -487,6 +487,107 @@ app.get(/^\/(?!api|uploads).*/, async (req, res) => {
     const settings = await SiteSettings.findOne();
     
     const baseUrl = process.env.SITE_URL || 'https://best-false-ceiling-specialist-of-guwahati-sahaninesinteriors.in';
+    const currentPath = req.path;
+    const currentUrl = `${baseUrl}${currentPath}`;
+    
+    // Define SEO metadata for each route
+    const seoData = {
+      '/': {
+        title: 'Sahanines Interiors | Best False Ceiling & Interior Design in Guwahati',
+        description: 'Sahanines Interiors — Guwahati\'s trusted false ceiling contractor and service provider. Expert gypsum, POP, PVC ceiling installation by experienced false ceiling designers. Free consultation. Call 076360 08047.'
+      },
+      '/about': {
+        title: 'About Sahanines Interiors | False Ceiling Contractor & Service Provider in Guwahati',
+        description: 'Sahanines Interiors is a Guwahati-based false ceiling contractor and service provider. Our team of false ceiling designers serves residential and commercial clients across Guwahati, Assam with quality craftsmanship.'
+      },
+      '/services': {
+        title: 'False Ceiling Services in Guwahati | Gypsum, POP, PVC | Sahanines Interiors',
+        description: 'Sahanines Interiors is a trusted false ceiling service provider in Guwahati. Explore our gypsum, POP, PVC ceiling, and interior design services delivered by experienced false ceiling contractors and designers.'
+      },
+      '/projects': {
+        title: 'False Ceiling Projects in Guwahati | Gypsum, POP, PVC Work | Sahanines Interiors',
+        description: 'Browse our portfolio of false ceiling projects in Guwahati by Sahanines Interiors — residential, commercial, gypsum, POP, PVC ceiling and lighting work from a trusted false ceiling contractor.'
+      },
+      '/gallery': {
+        title: 'False Ceiling Designs & Gallery | False Ceiling Designers in Guwahati',
+        description: 'Browse our gallery of false ceiling designs in Guwahati by expert false ceiling designers — gypsum, POP, PVC, ceiling lighting, residential and commercial interior work by Sahanines Interiors.'
+      },
+      '/reviews': {
+        title: 'Sahanines Interiors Reviews | Best False Ceiling Contractor in Guwahati',
+        description: 'Read genuine Google reviews for Sahanines Interiors. Rated 5.0★ with 319+ reviews for false ceiling, gypsum, POP, PVC ceiling and interior design services. Trusted false ceiling contractor in Guwahati.'
+      },
+      '/faq': {
+        title: 'False Ceiling FAQ | Gypsum, POP, PVC Ceiling Questions | Sahanines Interiors Guwahati',
+        description: 'Answers to common questions about false ceiling in Guwahati — gypsum, POP, PVC ceilings, lighting integration, pricing and installation from Sahanines Interiors, trusted false ceiling service provider.'
+      },
+      '/contact': {
+        title: 'Contact Sahanines Interiors | False Ceiling Contractor in Guwahati',
+        description: 'Contact Sahanines Interiors — false ceiling contractor and service provider in Guwahati. Call 076360 08047, WhatsApp, or visit us at Jyotikuchi, Guwahati. Free consultation & quotation for gypsum, POP, PVC ceiling work.'
+      }
+    };
+    
+    // Check if this is a service detail page
+    let pageSeo = seoData[currentPath];
+    
+    if (!pageSeo && currentPath.startsWith('/services/')) {
+      // Dynamic service page - fetch from DB
+      const slug = currentPath.replace('/services/', '');
+      const service = await Service.findOne({ slug, isActive: true });
+      
+      if (service) {
+        pageSeo = {
+          title: service.seoTitle || `${service.name} in Guwahati | Sahanines Interiors`,
+          description: service.seoDescription || service.shortDescription || `${service.name} services in Guwahati by Sahanines Interiors — trusted false ceiling contractor and designer.`
+        };
+      }
+    }
+    
+    // If no specific SEO data found, use homepage defaults
+    if (!pageSeo) {
+      pageSeo = seoData['/'];
+    }
+    
+    // Replace canonical URL
+    html = html.replace(
+      /<link rel="canonical" href="[^"]*" \/>/,
+      `<link rel="canonical" href="${currentUrl}" />`
+    );
+    
+    // Replace title
+    html = html.replace(
+      /<title>[^<]*<\/title>/,
+      `<title>${pageSeo.title}</title>`
+    );
+    
+    // Replace meta description
+    html = html.replace(
+      /<meta name="description" content="[^"]*" \/>/,
+      `<meta name="description" content="${pageSeo.description}" />`
+    );
+    
+    // Replace OG tags
+    html = html.replace(
+      /<meta property="og:title" content="[^"]*" \/>/,
+      `<meta property="og:title" content="${pageSeo.title}" />`
+    );
+    html = html.replace(
+      /<meta property="og:description" content="[^"]*" \/>/,
+      `<meta property="og:description" content="${pageSeo.description}" />`
+    );
+    html = html.replace(
+      /<meta property="og:url" content="[^"]*" \/>/,
+      `<meta property="og:url" content="${currentUrl}" />`
+    );
+    
+    // Replace Twitter tags
+    html = html.replace(
+      /<meta name="twitter:title" content="[^"]*" \/>/,
+      `<meta name="twitter:title" content="${pageSeo.title}" />`
+    );
+    html = html.replace(
+      /<meta name="twitter:description" content="[^"]*" \/>/,
+      `<meta name="twitter:description" content="${pageSeo.description}" />`
+    );
     
     if (settings) {
       const ogImage = settings.seo?.ogImage || `${baseUrl}/logo.jpg`;
@@ -509,7 +610,7 @@ app.get(/^\/(?!api|uploads).*/, async (req, res) => {
     }
     
     // Set noindex for admin routes
-    if (req.path.startsWith('/admin')) {
+    if (currentPath.startsWith('/admin')) {
       html = html.replace('<meta name="robots" content="index, follow" />', '<meta name="robots" content="noindex, nofollow" />');
     }
     
