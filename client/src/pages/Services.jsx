@@ -15,8 +15,8 @@ export default function Services() {
     }).catch(console.error)
   }, [])
 
-  const title = 'False Ceiling Services in Guwahati | Sahanines Interiors'
-  const description = 'Explore our false ceiling and interior services in Guwahati — gypsum, POP, PVC ceiling, ceiling lighting, residential and commercial solutions by Sahanines Interiors.'
+  const title = 'False Ceiling Services in Guwahati | Gypsum, POP, PVC | Sahanines Interiors'
+  const description = 'Sahanines Interiors is a trusted false ceiling service provider in Guwahati. Explore our gypsum, POP, PVC ceiling, and interior design services delivered by experienced false ceiling contractors and designers.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const breadcrumbJsonLd = {
@@ -68,7 +68,7 @@ export default function Services() {
             <span>Services</span>
           </div>
           <h1>False Ceiling & Interior Services in Guwahati</h1>
-          <p>Comprehensive false ceiling and interior design solutions for residential and commercial spaces across Guwahati, Assam</p>
+          <p>Comprehensive false ceiling and interior design solutions from a trusted service provider for residential and commercial spaces across Guwahati, Assam</p>
         </div>
       </section>
 
@@ -95,14 +95,14 @@ export default function Services() {
         <div className="container">
           <div className="section-header">
             <span className="label">Why Choose Our Services</span>
-            <h2>Professional Ceiling & Interior Solutions in Guwahati</h2>
+            <h2>Why Choose Our False Ceiling Contractors & Designers</h2>
           </div>
           <div style={{ maxWidth: 800, margin: '0 auto' }}>
             <p style={{ fontSize: '1.05rem', lineHeight: 1.8, marginBottom: 20 }}>
-              Sahanines Interiors offers a complete range of false ceiling and interior design services in Guwahati, Assam. Whether you need a modern gypsum false ceiling for your living room, a decorative POP ceiling for your bedroom, or a durable PVC ceiling for your office, our team delivers quality craftsmanship with attention to every detail.
+              Sahanines Interiors is a leading false ceiling service provider in Guwahati, Assam. Whether you need a modern gypsum false ceiling for your living room, a decorative POP ceiling for your bedroom, or a durable PVC ceiling for your office, our false ceiling contractors deliver quality craftsmanship with attention to every detail.
             </p>
             <p style={{ fontSize: '1.05rem', lineHeight: 1.8, marginBottom: 20 }}>
-              Our services include everything from design consultation to material selection, installation, and finishing. We integrate LED lighting, cove lighting, and recessed lights into ceiling designs to create stunning visual effects. We serve both residential and commercial clients across Guwahati.
+              Our false ceiling designers in Guwahati handle everything from design consultation to material selection, installation, and finishing. We integrate LED lighting, cove lighting, and recessed lights into ceiling designs to create stunning visual effects. We serve both residential and commercial clients across Guwahati.
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginTop: 24 }}>
               {['Modern Designs', 'Quality Materials', 'LED Integration', 'Timely Delivery', 'Free Consultation', 'Guwahati Based'].map((item, i) => (

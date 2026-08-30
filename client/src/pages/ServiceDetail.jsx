@@ -24,7 +24,7 @@ export default function ServiceDetail() {
   if (!service) return <div className="loading"><div className="spinner"></div></div>
 
   const title = service.seoTitle || `${service.name} in Guwahati | Sahanines Interiors`
-  const description = service.seoDescription || service.shortDescription || `${service.name} services in Guwahati by Sahanines Interiors.`
+  const description = service.seoDescription || service.shortDescription || `${service.name} services in Guwahati by Sahanines Interiors — trusted false ceiling contractor and designer.`
   const ogImage = service.image || settings?.seo?.ogImage || ''
 
   const jsonLd = {
@@ -101,8 +101,9 @@ export default function ServiceDetail() {
               {service.image && (
                 <img src={service.image} alt={service.altText || service.name} style={{ width: '100%', borderRadius: 12, marginBottom: 32 }} width="800" height="500" loading="lazy" />
               )}
-              <h2>About This Service</h2>
+              <h2>About Our {service.name} Service</h2>
               <p>{service.description}</p>
+              <p style={{ marginTop: 16 }}>As experienced false ceiling contractors in Guwahati, Sahanines Interiors ensures every project meets the highest standards of quality and design.</p>
 
               {service.applications && service.applications.length > 0 && (
                 <>

@@ -30,8 +30,8 @@ export default function Gallery() {
     }).catch(console.error)
   }, [activeCategory])
 
-  const title = 'False Ceiling Designs & Gallery | Sahanines Interiors Guwahati'
-  const description = 'Browse our gallery of false ceiling designs in Guwahati — gypsum, POP, PVC, ceiling lighting, residential and commercial interior work by Sahanines Interiors.'
+  const title = 'False Ceiling Designs & Gallery | False Ceiling Designers in Guwahati'
+  const description = 'Browse our gallery of false ceiling designs in Guwahati by expert false ceiling designers — gypsum, POP, PVC, ceiling lighting, residential and commercial interior work by Sahanines Interiors.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
@@ -71,7 +71,7 @@ export default function Gallery() {
             <span>Gallery</span>
           </div>
           <h1>False Ceiling Designs & Gallery</h1>
-          <p>Browse our collection of false ceiling and interior design work across Guwahati</p>
+          <p>Browse our collection of false ceiling designs by our team of false ceiling designers in Guwahati</p>
         </div>
       </section>
 

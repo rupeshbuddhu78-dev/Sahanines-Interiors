@@ -19,8 +19,8 @@ export default function Projects() {
     }).catch(console.error)
   }, [activeCategory])
 
-  const title = 'False Ceiling & Interior Projects in Guwahati | Sahanines Interiors'
-  const description = 'Browse our portfolio of false ceiling and interior projects across Guwahati — residential, commercial, gypsum, POP, PVC ceiling and lighting work by Sahanines Interiors.'
+  const title = 'False Ceiling Projects in Guwahati | Gypsum, POP, PVC Work | Sahanines Interiors'
+  const description = 'Browse our portfolio of false ceiling projects in Guwahati by Sahanines Interiors — residential, commercial, gypsum, POP, PVC ceiling and lighting work from a trusted false ceiling contractor.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {

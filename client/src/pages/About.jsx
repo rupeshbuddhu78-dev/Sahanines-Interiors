@@ -6,8 +6,8 @@ import { SITE_URL } from '../constants'
 export default function About() {
   const { settings } = useSite()
 
-  const title = 'About Sahanines Interiors | False Ceiling Specialist in Guwahati'
-  const description = 'Sahanines Interiors is a Guwahati-based false ceiling and interior design company. Based in Jyotikuchi, we serve residential and commercial clients across Guwahati, Assam with quality craftsmanship.'
+  const title = 'About Sahanines Interiors | False Ceiling Contractor & Service Provider in Guwahati'
+  const description = 'Sahanines Interiors is a Guwahati-based false ceiling contractor and service provider. Our team of false ceiling designers serves residential and commercial clients across Guwahati, Assam with quality craftsmanship.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const breadcrumbJsonLd = {
@@ -47,8 +47,8 @@ export default function About() {
             <Link to="/">Home</Link><span>/</span>
             <span>About</span>
           </div>
-          <h1>About Sahanines Interiors — False Ceiling Specialist in Guwahati</h1>
-          <p>Professional false ceiling contractor and interior design company serving Guwahati, Assam</p>
+          <h1>About Sahanines Interiors — False Ceiling Contractor & Service Provider in Guwahati</h1>
+          <p>Professional false ceiling contractor and interior design company serving Guwahati, Assam since inception</p>
         </div>
       </section>
 
@@ -60,8 +60,8 @@ export default function About() {
             </div>
             <div className="about-content">
               <span className="label">Who We Are</span>
-              <h2>Sahanines Interiors — False Ceiling & Interior Specialists in Guwahati</h2>
-              <p>Sahanines Interiors provides professional false ceiling and interior solutions in Guwahati, Assam, with a focus on modern designs, quality materials, clean finishing and customer satisfaction.</p>
+              <h2>Sahanines Interiors — False Ceiling Designers & Interior Specialists in Guwahati</h2>
+              <p>Sahanines Interiors is a trusted false ceiling service provider in Guwahati, Assam, delivering modern designs, quality materials, clean finishing and complete customer satisfaction. Our false ceiling designers in Guwahati handle every project — from initial consultation to final finishing — with precision and care.</p>
               <p>We are based at House No. 4, Shantipur, Ashram Road, Jyotikuchi, Guwahati, and serve clients across the city and nearby areas. Our work spans residential homes, commercial offices, retail spaces, and more.</p>
               <p>Every project we undertake reflects our commitment to quality craftsmanship and attention to detail. From the initial consultation to the final finishing, we ensure a smooth and professional experience.</p>
               <div className="about-features">
@@ -84,7 +84,7 @@ export default function About() {
             <h2>Serving Guwahati & Nearby Areas</h2>
           </div>
           <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
-            <p style={{ fontSize: '1.05rem', marginBottom: 24 }}>We provide false ceiling and interior services across Guwahati, including Jyotikuchi, Shantipur, GS Road, Dispur, Khanapara, Christianbasti, Fancy Bazar, Aminjari, and surrounding localities.</p>
+            <p style={{ fontSize: '1.05rem', marginBottom: 24 }}>As a dedicated false ceiling contractor in Guwahati, we provide installation and design services across the city, including Jyotikuchi, Shantipur, GS Road, Dispur, Khanapara, Christianbasti, Fancy Bazar, Aminjari, and surrounding localities.</p>
             <Link to="/contact" className="btn btn-primary">Discuss Your Project</Link>
           </div>
         </div>

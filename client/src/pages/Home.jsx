@@ -65,7 +65,7 @@ export default function Home() {
   const heroImage = settings?.hero?.image || ''
 
   const title = 'Sahanines Interiors | Best False Ceiling & Interior Design in Guwahati'
-  const description = 'Sahanines Interiors — Guwahati\'s trusted false ceiling specialist. Expert gypsum, POP, PVC ceiling installation, ceiling lighting & interior design. Free consultation. Call 076360 08047.'
+  const description = 'Sahanines Interiors — Guwahati\'s trusted false ceiling contractor and interior design specialist. Expert gypsum, POP, PVC ceiling installation by experienced false ceiling designers. Free consultation. Call 076360 08047.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
@@ -86,7 +86,7 @@ export default function Home() {
         },
         url: SITE_URL,
         areaServed: { '@type': 'City', name: 'Guwahati' },
-        description: 'Professional false ceiling contractor and interior design service provider in Guwahati, Assam. Specializing in gypsum, POP, PVC ceilings, ceiling lighting and residential and commercial interior solutions.',
+        description: 'Leading false ceiling contractor and interior design service provider in Guwahati, Assam. Specializing in gypsum, POP, PVC ceilings, ceiling lighting and residential and commercial interior solutions. Team of experienced false ceiling designers.',
         priceRange: '$$',
         logo: `${SITE_URL}/logo.jpg`,
         image: `${SITE_URL}/logo.jpg`,
@@ -157,7 +157,7 @@ export default function Home() {
         <div className="container">
           <div className="hero-content">
             <h1>{settings?.hero?.heading || 'False Ceiling & Interior Design Specialist in Guwahati'}</h1>
-            <p>{settings?.hero?.subtitle || 'Sahanines Interiors — professional false ceiling contractor in Guwahati offering modern gypsum, POP, PVC ceiling designs, integrated lighting solutions and complete interior finishing for homes and offices.'}</p>
+            <p>{settings?.hero?.subtitle || 'Sahanines Interiors — professional false ceiling contractor in Guwahati offering modern gypsum, POP, PVC ceiling designs, integrated lighting solutions and complete interior finishing for homes and offices. Trusted false ceiling service provider with a team of skilled designers.'}</p>
             <div className="hero-buttons">
               <Link to="/contact" className="btn btn-primary btn-lg">{settings?.hero?.ctaPrimary || 'Get Free Quote'}</Link>
               <Link to="/projects" className="btn btn-outline btn-lg">{settings?.hero?.ctaSecondary || 'View Our Projects'}</Link>
@@ -209,9 +209,9 @@ export default function Home() {
             </div>
             <div className="about-content">
               <span className="label">About Us</span>
-              <h2>Sahanines Interiors — False Ceiling & Interior Specialists in Guwahati</h2>
-              <p>Sahanines Interiors provides professional false ceiling and interior solutions in Guwahati, Assam, with a focus on modern designs, quality materials, clean finishing and customer satisfaction.</p>
-              <p>Based in Jyotikuchi, we serve residential and commercial clients across Guwahati including Shantipur, Ashram Road, and nearby areas. Our team is committed to delivering ceiling and interior work that meets the highest standards of craftsmanship.</p>
+              <h2>Sahanines Interiors — False Ceiling Designers & Interior Specialists in Guwahati</h2>
+              <p>Sahanines Interiors is a leading false ceiling service provider in Guwahati, Assam, delivering modern designs, quality materials, clean finishing and complete customer satisfaction. Our team of false ceiling designers in Guwahati handles every project with precision and care.</p>
+              <p>Based in Jyotikuchi, we serve residential and commercial clients across Guwahati including Shantipur, Ashram Road, and nearby areas. As one of the best false ceiling contractors in the city, we are committed to delivering ceiling and interior work that meets the highest standards of craftsmanship.</p>
               <div className="about-features">
                 <div className="about-feature"><span className="icon">✓</span> Modern Designs</div>
                 <div className="about-feature"><span className="icon">✓</span> Quality Materials</div>
@@ -229,8 +229,8 @@ export default function Home() {
         <div className="container">
           <div className="section-header fade-up">
             <span className="label">Our Services</span>
-            <h2>Professional Ceiling & Interior Solutions</h2>
-            <p>From modern false ceilings to integrated lighting, we offer comprehensive interior solutions tailored to your space.</p>
+            <h2>Our False Ceiling & Interior Services</h2>
+            <p>From modern false ceilings to integrated lighting, our false ceiling contractors in Guwahati offer comprehensive interior solutions tailored to your space.</p>
           </div>
           <div className="services-grid">
             {services.map((service, i) => (
@@ -261,7 +261,7 @@ export default function Home() {
           </div>
           <div className="why-grid">
             {[
-              { icon: '✦', title: 'Modern Ceiling Designs', desc: 'Contemporary designs that complement your interior style' },
+              { icon: '✦', title: 'Expert Ceiling Designers', desc: 'Skilled false ceiling designers creating contemporary looks for your space' },
               { icon: '✦', title: 'Quality Materials', desc: 'We use only premium, verified materials for every project' },
               { icon: '✦', title: 'Clean Finishing', desc: 'Attention to detail in every edge, joint and surface' },
               { icon: '✦', title: 'Professional Installation', desc: 'Skilled craftsmen with proven expertise in ceiling work' },
@@ -335,7 +335,7 @@ export default function Home() {
       <section className="cta-section">
         <div className="container fade-up">
           <h2>Ready to Transform Your Space?</h2>
-          <p>Get in touch with us to discuss your false ceiling and interior requirements. We provide free consultations and quotations.</p>
+          <p>Get in touch with Guwahati's trusted false ceiling contractor to discuss your requirements. We provide free consultations and quotations for all ceiling and interior projects.</p>
           <div className="cta-buttons">
             <Link to="/contact" className="btn btn-primary btn-lg">Get Free Quote</Link>
             <a href={`tel:${settings?.phone || '07636008047'}`} className="btn btn-outline btn-lg">Call Now</a>
