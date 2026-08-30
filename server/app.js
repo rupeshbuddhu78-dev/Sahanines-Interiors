@@ -436,13 +436,76 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve React build
+// Serve React build - inject OG meta tags from DB for social media crawlers
 const clientBuild = path.join(__dirname, '..', 'client', 'dist');
-app.use(express.static(clientBuild));
-app.get(/^\/(?!api|uploads).*/, (req, res) => {
+
+// Serve static assets (JS, CSS, images) but NOT index.html - we handle that dynamically
+app.use(express.static(clientBuild, {
+  index: false, // Don't serve index.html automatically
+  extensions: false, // Don't try adding extensions
+  setHeaders: (res, filePath) => {
+    // Set cache headers for static assets
+    if (filePath.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
+
+// Block direct access to index.html - always serve dynamic version
+app.get('/index.html', (req, res, next) => {
+  req.url = '/'; // Rewrite to root so it goes through our dynamic handler
+  next();
+});
+
+app.get(/^\/(?!api|uploads).*/, async (req, res) => {
   const indexPath = path.join(clientBuild, 'index.html');
-  if (fs.existsSync(indexPath)) res.sendFile(indexPath);
-  else res.status(404).send('Not found');
+  if (!fs.existsSync(indexPath)) return res.status(404).send('Not found');
+  
+  try {
+    let html = fs.readFileSync(indexPath, 'utf8');
+    const settings = await SiteSettings.findOne();
+    
+    if (settings) {
+      const ogImage = settings.seo?.ogImage || '';
+      const title = settings.seo?.defaultTitle || settings.businessName || 'Sahanines Interiors';
+      const description = settings.seo?.defaultDescription || '';
+      const siteName = settings.businessName || 'Sahanines Interiors';
+      
+      // Build OG meta tags to inject before </head>
+      let ogTags = '';
+      if (ogImage) {
+        ogTags += `<meta property="og:image" content="${ogImage}" />\n`;
+        ogTags += `<meta name="twitter:image" content="${ogImage}" />`;
+      }
+      
+      // Inject OG tags before </head>
+      if (ogTags) {
+        html = html.replace('</head>', `${ogTags}\n</head>`);
+      }
+      
+      // Update title and description if available
+      if (title) {
+        html = html.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`);
+        html = html.replace(/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="${title}" />`);
+        html = html.replace(/<meta name="twitter:title" content="[^"]*" \/>/, `<meta name="twitter:title" content="${title}" />`);
+      }
+      if (description) {
+        html = html.replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${description}" />`);
+        html = html.replace(/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${description}" />`);
+        html = html.replace(/<meta name="twitter:description" content="[^"]*" \/>/, `<meta name="twitter:description" content="${description}" />`);
+      }
+      
+      // Update site name
+      if (siteName) {
+        html = html.replace(/<meta property="og:site_name" content="[^"]*" \/>/, `<meta property="og:site_name" content="${siteName}" />`);
+      }
+    }
+    
+    res.header('Content-Type', 'text/html').send(html);
+  } catch (err) {
+    // If DB error, just serve static HTML
+    res.sendFile(indexPath);
+  }
 });
 
 // Error handler
