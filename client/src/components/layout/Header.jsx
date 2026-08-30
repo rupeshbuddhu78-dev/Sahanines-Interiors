@@ -48,7 +48,7 @@ export default function Header() {
         <div className="container">
           <div className="header-inner">
             <Link to="/" className="logo">
-              <img src="/logo.jpg" alt="Sahanines Interiors" width="160" height="50" style={{ height: 'auto', maxWidth: '160px' }} />
+              <span style={{ color: '#c9a96e', fontWeight: 700, fontSize: '1.5rem', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>Interiors</span>
             </Link>
 
             <nav className="nav-links" aria-label="Main navigation">
