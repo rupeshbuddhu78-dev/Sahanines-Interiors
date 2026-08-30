@@ -403,7 +403,7 @@ app.post('/api/upload', auth, upload.single('image'), async (req, res) => {
   }
 });
 
-// Sitemap (dynamic - supplements static sitemap.xml in client/public/)
+// Dynamic sitemap - includes all public pages + active services from DB
 app.get('/sitemap.xml', async (req, res) => {
   const base = process.env.SITE_URL || 'https://best-false-ceiling-specialist-of-guwahati-sahaninesinteriors.in';
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
@@ -466,18 +466,25 @@ app.get(/^\/(?!api|uploads).*/, async (req, res) => {
     let html = fs.readFileSync(indexPath, 'utf8');
     const settings = await SiteSettings.findOne();
     
+    const baseUrl = process.env.SITE_URL || 'https://best-false-ceiling-specialist-of-guwahati-sahaninesinteriors.in';
+    
     if (settings) {
-      const ogImage = settings.seo?.ogImage || '';
+      const ogImage = settings.seo?.ogImage || `${baseUrl}/logo.jpg`;
       const siteName = settings.businessName || 'Sahanines Interiors';
       
-      // Only inject OG image if not already present in the static HTML
-      if (ogImage && !html.includes('og:image')) {
+      // Always inject OG image (DB value or logo fallback) if not already in static HTML
+      if (!html.includes('og:image')) {
         html = html.replace('</head>', `<meta property="og:image" content="${ogImage}" />\n<meta name="twitter:image" content="${ogImage}" />\n</head>`);
       }
       
       // Update site name if different
       if (siteName && siteName !== 'Sahanines Interiors') {
         html = html.replace(/<meta property="og:site_name" content="[^"]*" \/>/, `<meta property="og:site_name" content="${siteName}" />`);
+      }
+    } else {
+      // No settings in DB — still ensure og:image exists with logo fallback
+      if (!html.includes('og:image')) {
+        html = html.replace('</head>', `<meta property="og:image" content="${baseUrl}/logo.jpg" />\n<meta name="twitter:image" content="${baseUrl}/logo.jpg" />\n</head>`);
       }
     }
     
