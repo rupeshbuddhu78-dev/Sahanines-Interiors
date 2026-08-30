@@ -51,7 +51,8 @@ export default function Contact() {
           addressCountry: 'IN'
         },
         url: SITE_URL,
-        areaServed: { '@type': 'City', name: 'Guwahati' }
+        areaServed: { '@type': 'City', name: 'Guwahati' },
+        logo: `${SITE_URL}/logo.jpg`
       },
       {
         '@type': 'BreadcrumbList',

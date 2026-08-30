@@ -13,7 +13,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-col">
             <div className="footer-logo">
-              {settings?.businessName || 'Sahanines'} <span>Interiors</span>
+              <img src="/logo.jpg" alt="Sahanines Interiors" width="180" height="56" style={{ height: 'auto', maxWidth: '180px' }} />
             </div>
             <p>{settings?.footer?.description || 'Professional false ceiling and interior solutions in Guwahati, Assam.'}</p>
             <div className="footer-social">

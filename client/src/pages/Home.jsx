@@ -88,6 +88,8 @@ export default function Home() {
         areaServed: { '@type': 'City', name: 'Guwahati' },
         description: 'Professional false ceiling contractor and interior design service provider in Guwahati, Assam. Specializing in gypsum, POP, PVC ceilings, ceiling lighting and residential and commercial interior solutions.',
         priceRange: '$$',
+        logo: `${SITE_URL}/logo.jpg`,
+        image: `${SITE_URL}/logo.jpg`,
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
           name: 'False Ceiling & Interior Services',
@@ -114,7 +116,8 @@ export default function Home() {
           addressRegion: 'Assam',
           postalCode: '781009',
           addressCountry: 'IN'
-        }
+        },
+        logo: `${SITE_URL}/logo.jpg`
       },
       {
         '@type': 'WebSite',
