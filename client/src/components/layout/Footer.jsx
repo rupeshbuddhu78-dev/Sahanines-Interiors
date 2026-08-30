@@ -49,11 +49,9 @@ export default function Footer() {
             <p style={{ marginBottom: 12 }}>{address}</p>
             <a href={`tel:${phone}`} style={{ display: 'block', marginBottom: 8 }}>Phone: {phone}</a>
             <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
-            {settings?.googleBusinessUrl && (
-              <a href={settings.googleBusinessUrl} target="_blank" rel="noopener noreferrer" style={{ marginTop: 8, display: 'inline-block' }}>
-                View us on Google
-              </a>
-            )}
+            <a href="https://maps.app.goo.gl/okLX3ymbhFS1ZgvK7" target="_blank" rel="noopener noreferrer" style={{ marginTop: 8, display: 'inline-block' }}>
+              View us on Google Maps
+            </a>
           </div>
         </div>
 

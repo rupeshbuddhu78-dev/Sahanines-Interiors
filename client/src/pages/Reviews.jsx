@@ -102,7 +102,7 @@ export default function Reviews() {
             <div style={{ fontSize: '3rem', color: 'var(--secondary)', marginBottom: 8 }}>★★★★★</div>
             <h2 style={{ fontSize: '1.5rem' }}>{settings?.googleRating || 5.0} out of 5</h2>
             <p>Based on {settings?.googleReviewsCount || 319} Google reviews</p>
-            <a href="https://www.google.com/maps/place/Sahanines+Interiors" target="_blank" rel="noopener noreferrer" className="btn btn-outline-dark" style={{ marginTop: 16 }}>
+            <a href="https://maps.app.goo.gl/okLX3ymbhFS1ZgvK7" target="_blank" rel="noopener noreferrer" className="btn btn-outline-dark" style={{ marginTop: 16 }}>
               View us on Google Maps
             </a>
           </div>
