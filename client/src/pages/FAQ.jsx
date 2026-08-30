@@ -4,14 +4,30 @@ import { Link } from 'react-router-dom'
 import { SITE_URL } from '../constants'
 import axios from 'axios'
 
+// Default FAQs - always shown if no FAQs in database
+const defaultFAQs = [
+  { _id: 'default-1', question: 'What is a false ceiling?', answer: 'A false ceiling is a secondary ceiling installed below the main ceiling. It improves aesthetics, provides better insulation, hides wiring and pipes, and allows integration of modern lighting solutions.', sortOrder: 1 },
+  { _id: 'default-2', question: 'What types of false ceilings do you provide?', answer: 'We provide Gypsum false ceilings, POP (Plaster of Paris) false ceilings, PVC ceilings, wooden ceilings, metal ceilings, and custom designer ceilings. Each type has its own benefits depending on your requirements.', sortOrder: 2 },
+  { _id: 'default-3', question: 'What is the difference between Gypsum and POP ceiling?', answer: 'Gypsum ceilings come in ready-made boards and are quicker to install with a smooth finish. POP ceilings are applied as a paste and allow more intricate designs and curves. Gypsum is more durable and moisture-resistant, while POP is more cost-effective for complex designs.', sortOrder: 3 },
+  { _id: 'default-4', question: 'How long does false ceiling installation take?', answer: 'Installation time depends on the room size and design complexity. A standard room (10x12 ft) typically takes 2-4 days. Complex designs with lighting integration may take 5-7 days.', sortOrder: 4 },
+  { _id: 'default-5', question: 'Do you provide LED lighting integration?', answer: 'Yes, we specialize in integrating LED strip lights, recessed lights, cove lighting, and decorative lighting into false ceilings. We provide complete lighting solutions including installation.', sortOrder: 5 },
+  { _id: 'default-6', question: 'What is the cost of false ceiling in Guwahati?', answer: 'The cost varies based on material, design complexity, and room size. Gypsum ceilings start from ₹65-85 per sq.ft, POP ceilings from ₹55-75 per sq.ft. Contact us for a free quotation based on your specific requirements.', sortOrder: 6 },
+  { _id: 'default-7', question: 'Do you provide warranty on your work?', answer: 'Yes, we provide warranty on both materials and workmanship. Gypsum boards come with manufacturer warranty, and we provide 1-2 years warranty on our installation work.', sortOrder: 7 },
+  { _id: 'default-8', question: 'Which areas in Guwahati do you serve?', answer: 'We serve all areas of Guwahati including Jyotikuchi, Shantipur, GS Road, Dispur, Khanapara, Christianbasti, Fancy Bazar, Aminjari, and surrounding areas. We also take projects in nearby towns.', sortOrder: 8 },
+  { _id: 'default-9', question: 'Can false ceilings help with sound insulation?', answer: 'Yes, false ceilings can significantly reduce noise transmission. We use acoustic materials and proper insulation to improve soundproofing, which is especially useful for bedrooms, home theaters, and offices.', sortOrder: 9 },
+  { _id: 'default-10', question: 'How do I get a quotation?', answer: 'You can call us at 076360 08047, WhatsApp us, or fill out the contact form on our website. We provide free site visits and quotations for projects in Guwahati.', sortOrder: 10 }
+]
+
 export default function FAQ() {
-  const [faqs, setFaqs] = useState([])
+  const [faqs, setFaqs] = useState(defaultFAQs)
   const [openIndex, setOpenIndex] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     axios.get('/api/faqs').then(res => {
-      if (res.data.success) setFaqs(res.data.faqs)
+      if (res.data.success && res.data.faqs.length > 0) {
+        setFaqs(res.data.faqs)
+      }
     }).catch(console.error).finally(() => setLoading(false))
   }, [])
 
@@ -28,19 +44,16 @@ export default function FAQ() {
           { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
           { '@type': 'ListItem', position: 2, name: 'FAQ', item: `${SITE_URL}/faq` }
         ]
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: faqs.map(faq => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: { '@type': 'Answer', text: faq.answer }
+        }))
       }
     ]
-  }
-
-  if (faqs.length > 0) {
-    jsonLd['@graph'].push({
-      '@type': 'FAQPage',
-      mainEntity: faqs.map(faq => ({
-        '@type': 'Question',
-        name: faq.question,
-        acceptedAnswer: { '@type': 'Answer', text: faq.answer }
-      }))
-    })
   }
 
   return (
@@ -83,7 +96,7 @@ export default function FAQ() {
                 <div className="spinner"></div>
                 <p style={{ marginTop: 16, color: '#666' }}>Loading FAQs...</p>
               </div>
-            ) : faqs.length > 0 ? (
+            ) : (
               <>
                 <div style={{ 
                   background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', 
@@ -197,20 +210,6 @@ export default function FAQ() {
                   </div>
                 </div>
               </>
-            ) : (
-              <div style={{ 
-                textAlign: 'center', 
-                padding: 60,
-                background: '#f9f9f9',
-                borderRadius: 16
-              }}>
-                <div style={{ fontSize: '3rem', marginBottom: 16 }}>❓</div>
-                <h3 style={{ marginBottom: 12 }}>FAQs Coming Soon</h3>
-                <p style={{ color: '#666', marginBottom: 24 }}>
-                  We're working on adding frequently asked questions. In the meantime, feel free to contact us directly.
-                </p>
-                <Link to="/contact" className="btn btn-primary">Contact Us</Link>
-              </div>
             )}
           </div>
         </div>
