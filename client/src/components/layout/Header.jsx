@@ -47,8 +47,8 @@ export default function Header() {
       <header className={`header ${scrolled ? 'scrolled' : ''}`}>
         <div className="container">
           <div className="header-inner">
-            <Link to="/" className="logo">
-              <span style={{ color: '#c9a96e', fontWeight: 700, fontSize: '1.5rem', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>Interiors</span>
+            <Link to="/" className="logo" style={{ textDecoration: 'none' }}>
+              <span style={{ fontWeight: 700, fontSize: '1.5rem', fontFamily: 'var(--font-heading)', color: 'var(--primary)', letterSpacing: '0.02em' }}>Sahanines <span style={{ color: '#c9a96e' }}>Interiors</span></span>
             </Link>
 
             <nav className="nav-links" aria-label="Main navigation">
