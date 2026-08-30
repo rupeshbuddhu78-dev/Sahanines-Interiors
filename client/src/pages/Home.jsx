@@ -6,11 +6,18 @@ import { SITE_URL } from '../constants'
 import axios from 'axios'
 import Counter from '../components/common/Counter'
 
+// Default Google Reviews - shown if no testimonials in database
+const defaultTestimonials = [
+  { _id: 'default-1', name: 'MOINA Begum', review: 'Sahanines Interiors is truly a reliable name for professional false ceiling work in Guwahati. Their designs are modern, attractive, and beautifully executed. I really appreciate the quality of materials, neat finishing, and attention to detail.', rating: 5 },
+  { _id: 'default-2', name: 'Naman Maloo', review: 'I highly recommend Sahanines Interiors for professional false ceiling and interior design services. Abhisekh Sahani deserves special appreciation for his excellent guidance, professional approach, and commitment to customer satisfaction.', rating: 5 },
+  { _id: 'default-3', name: 'Rifa Tamanna', review: 'Sahanines Interiors exceeded my expectations with their false ceiling work. The design suggestions were creative, and the finishing was flawless. They installed a beautiful gypsum false ceiling with perfect lighting arrangements.', rating: 5 }
+]
+
 export default function Home() {
   const { settings } = useSite()
   const [services, setServices] = useState([])
   const [projects, setProjects] = useState([])
-  const [testimonials, setTestimonials] = useState([])
+  const [testimonials, setTestimonials] = useState(defaultTestimonials)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +29,9 @@ export default function Home() {
         ])
         if (servRes.data.success) setServices(servRes.data.services)
         if (projRes.data.success) setProjects(projRes.data.projects.slice(0, 6))
-        if (testRes.data.success) setTestimonials(testRes.data.testimonials.slice(0, 3))
+        if (testRes.data.success && testRes.data.testimonials.length > 0) {
+          setTestimonials(testRes.data.testimonials.slice(0, 3))
+        }
       } catch (err) { console.error(err) }
     }
     fetchData()
@@ -111,7 +120,7 @@ export default function Home() {
                 <span className="stars">★★★★★</span> {settings?.googleRating || 5.0} Google Rating
               </div>
               <div className="hero-trust-item">
-                {settings?.googleReviewsCount || 318}+ Customer Reviews
+                {settings?.googleReviewsCount || 319}+ Customer Reviews
               </div>
               <div className="hero-trust-item">Professional Work</div>
               <div className="hero-trust-item">Quality Finishing</div>
@@ -129,7 +138,7 @@ export default function Home() {
               <div className="label">Google Rating</div>
             </div>
             <div className="trust-bar-item">
-              <Counter end={settings?.googleReviewsCount || 318} duration={2000} suffix="+" />
+              <Counter end={settings?.googleReviewsCount || 319} duration={2000} suffix="+" />
               <div className="label">Happy Customers</div>
             </div>
             <div className="trust-bar-item">
@@ -258,7 +267,7 @@ export default function Home() {
           <div className="section-header fade-up">
             <span className="label">Client Reviews</span>
             <h2>What Our Clients Say</h2>
-            <p>Rated {settings?.googleRating || 5.0} on Google with {settings?.googleReviewsCount || 318}+ reviews</p>
+            <p>Rated {settings?.googleRating || 5.0} on Google with {settings?.googleReviewsCount || 319}+ reviews</p>
           </div>
           <div className="testimonials-grid">
             {testimonials.map((t, i) => (
@@ -270,7 +279,7 @@ export default function Home() {
             ))}
           </div>
           <div style={{ textAlign: 'center', marginTop: 40 }}>
-            <Link to="/reviews" className="btn btn-outline-dark">See More Reviews</Link>
+            <Link to="/reviews" className="btn btn-outline-dark">See All 319+ Reviews</Link>
           </div>
         </div>
       </section>
