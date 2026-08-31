@@ -125,6 +125,51 @@ export default function Home() {
         url: SITE_URL,
         name: 'Sahanines Interiors',
         publisher: { '@id': `${SITE_URL}/#business` }
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is the cost of false ceiling in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'The cost of false ceiling in Guwahati varies based on material, design complexity and room size. Gypsum ceilings typically range from ₹65-120 per sq ft, POP ceilings from ₹55-100 per sq ft, and PVC panels from ₹45-90 per sq ft. Contact us for an accurate quotation based on your specific requirements.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Which is better — gypsum or POP false ceiling?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Both materials have their advantages. Gypsum boards offer quick installation, fire resistance and a smooth finish — ideal for modern interiors. POP allows more intricate custom designs and is cost-effective for complex shapes. The choice depends on your design preference, room type and budget.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'How long does false ceiling installation take?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Installation time depends on room size and design complexity. A standard room with a simple gypsum ceiling can be completed in 2-3 days. More elaborate designs with POP or multi-layer ceilings may take 5-7 days. We provide a clear timeline before starting any project.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Do you provide false ceiling repair services in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, we provide false ceiling repair and maintenance services in Guwahati. This includes fixing cracks, replacing damaged panels, repainting, and upgrading old ceilings with modern designs and lighting.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Can false ceilings help reduce room temperature?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, false ceilings provide thermal insulation by creating an air gap between the original ceiling and the false ceiling. This helps reduce heat transfer, keeping rooms cooler in summer and warmer in winter, which can lower AC costs.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Is PVC ceiling waterproof?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, PVC ceiling panels are completely waterproof and moisture-resistant. They are ideal for bathrooms, kitchens, balconies and other areas exposed to water or high humidity. PVC panels are also termite-proof and require no painting.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Do you integrate lighting with false ceilings?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, we specialize in integrating LED strip lights, cove lighting, recessed downlights, and pendant fixtures into false ceiling designs. Lighting integration is one of our key services and we handle the complete electrical work.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Which area of Guwahati do you serve?',
+            acceptedAnswer: { '@type': 'Answer', text: 'We provide false ceiling and interior services across all areas of Guwahati, Assam. Whether you are in the city center or outskirts, our team can visit your location for consultation and installation.' }
+          }
+        ]
       }
     ]
   }
@@ -384,6 +429,82 @@ export default function Home() {
           </div>
           <div style={{ textAlign: 'center', marginTop: 40 }}>
             <Link to="/reviews" className="btn btn-outline-dark">See All 319+ Reviews</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* False Ceiling Materials & Comparison */}
+      <section className="section" id="ceiling-materials">
+        <div className="container">
+          <div className="section-header fade-up">
+            <span className="label">Materials Guide</span>
+            <h2>False Ceiling Materials — Gypsum vs POP vs PVC</h2>
+            <p>Choosing the right material for your false ceiling in Guwahati depends on your room type, budget, design preference and maintenance requirements.</p>
+          </div>
+          <div style={{ maxWidth: 860, margin: '0 auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 24, marginTop: 32 }}>
+              <div style={{ padding: 24, background: 'white', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: 12, color: 'var(--primary)' }}>Gypsum Board</h3>
+                <ul style={{ fontSize: '0.95rem', lineHeight: 1.8, paddingLeft: 20 }}>
+                  <li>Smooth, clean finish</li>
+                  <li>Fire-resistant</li>
+                  <li>Good sound insulation</li>
+                  <li>Quick installation</li>
+                  <li>Best for: Living rooms, bedrooms, offices</li>
+                </ul>
+              </div>
+              <div style={{ padding: 24, background: 'white', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: 12, color: 'var(--primary)' }}>POP (Plaster of Paris)</h3>
+                <ul style={{ fontSize: '0.95rem', lineHeight: 1.8, paddingLeft: 20 }}>
+                  <li>Intricate custom designs</li>
+                  <li>Seamless monolithic finish</li>
+                  <li>Cost-effective for complex shapes</li>
+                  <li>Paintable in any colour</li>
+                  <li>Best for: Drawing rooms, banquet halls</li>
+                </ul>
+              </div>
+              <div style={{ padding: 24, background: 'white', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: 12, color: 'var(--primary)' }}>PVC Panels</h3>
+                <ul style={{ fontSize: '0.95rem', lineHeight: 1.8, paddingLeft: 20 }}>
+                  <li>Waterproof & moisture-resistant</li>
+                  <li>Termite-proof</li>
+                  <li>No painting needed</li>
+                  <li>Easy to clean & maintain</li>
+                  <li>Best for: Bathrooms, kitchens, commercial</li>
+                </ul>
+              </div>
+            </div>
+            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginTop: 32, textAlign: 'center' }}>
+              Not sure which material is right for your space? <Link to="/contact" style={{ color: 'var(--secondary)', fontWeight: 500 }}>Contact us for free guidance</Link> — we'll help you choose based on your room, budget and design needs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Frequently Asked Questions - FAQ Schema for Rich Snippets */}
+      <section className="section bg-alt" id="faq">
+        <div className="container">
+          <div className="section-header fade-up">
+            <span className="label">FAQ</span>
+            <h2>False Ceiling Questions — Answered</h2>
+            <p>Common questions about false ceiling installation in Guwahati</p>
+          </div>
+          <div style={{ maxWidth: 800, margin: '0 auto' }}>
+            {[
+              { q: 'What is the cost of false ceiling in Guwahati?', a: 'The cost of false ceiling in Guwahati varies based on material, design complexity and room size. Gypsum ceilings typically range from ₹65-120 per sq ft, POP ceilings from ₹55-100 per sq ft, and PVC panels from ₹45-90 per sq ft. Contact us for an accurate quotation based on your specific requirements.' },
+              { q: 'Which is better — gypsum or POP false ceiling?', a: 'Both materials have their advantages. Gypsum boards offer quick installation, fire resistance and a smooth finish — ideal for modern interiors. POP allows more intricate custom designs and is cost-effective for complex shapes. The choice depends on your design preference, room type and budget. We can guide you during our free consultation.' },
+              { q: 'How long does false ceiling installation take?', a: 'Installation time depends on room size and design complexity. A standard room with a simple gypsum ceiling can be completed in 2-3 days. More elaborate designs with POP or multi-layer ceilings may take 5-7 days. We provide a clear timeline before starting any project.' },
+              { q: 'Do you provide false ceiling repair services in Guwahati?', a: 'Yes, we provide false ceiling repair and maintenance services in Guwahati. This includes fixing cracks, replacing damaged panels, repainting, and upgrading old ceilings with modern designs and lighting.' },
+              { q: 'Can false ceilings help reduce room temperature?', a: 'Yes, false ceilings provide thermal insulation by creating an air gap between the original ceiling and the false ceiling. This helps reduce heat transfer, keeping rooms cooler in summer and warmer in winter, which can lower AC costs.' },
+              { q: 'Is PVC ceiling waterproof?', a: 'Yes, PVC ceiling panels are completely waterproof and moisture-resistant. They are ideal for bathrooms, kitchens, balconies and other areas exposed to water or high humidity. PVC panels are also termite-proof and require no painting.' },
+              { q: 'Do you integrate lighting with false ceilings?', a: 'Yes, we specialize in integrating LED strip lights, cove lighting, recessed downlights, and pendant fixtures into false ceiling designs. Lighting integration is one of our key services and we handle the complete electrical work.' },
+              { q: 'Which area of Guwahati do you serve?', a: 'We provide false ceiling and interior services across all areas of Guwahati, Assam. Whether you are in the city center or outskirts, our team can visit your location for consultation and installation.' }
+            ].map((faq, i) => (
+              <div key={i} style={{ marginBottom: 20, padding: 20, background: 'white', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                <h3 style={{ fontSize: '1.05rem', marginBottom: 8, color: 'var(--primary)' }}>{faq.q}</h3>
+                <p style={{ fontSize: '0.98rem', lineHeight: 1.7, color: 'var(--text-secondary, #555)' }}>{faq.a}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

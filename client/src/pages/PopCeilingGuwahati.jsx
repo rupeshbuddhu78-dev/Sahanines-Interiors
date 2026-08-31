@@ -23,6 +23,26 @@ export default function PopCeilingGuwahati() {
           { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
           { '@type': 'ListItem', position: 2, name: 'POP Ceiling Guwahati', item: `${SITE_URL}/pop-ceiling-guwahati` }
         ]
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is the cost of POP ceiling in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'POP ceiling cost in Guwahati ranges from ₹55 to ₹100 per sq ft. Simple designs cost less, while intricate mouldings, curves and multi-level designs cost more. Sahanines Interiors provides free quotations for POP ceiling work.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'How long does a POP ceiling last?',
+            acceptedAnswer: { '@type': 'Answer', text: 'A well-installed POP ceiling can last 15-20 years or more. POP is durable and maintains its appearance over time. Proper installation by experienced craftsmen ensures longevity.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Can POP ceiling be done in bedrooms?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, POP ceilings are excellent for bedrooms. You can create beautiful designs with cove lighting, peripheral mouldings, and central decorative elements. POP allows complete customization to match your bedroom interior.' }
+          }
+        ]
       }
     ]
   }
@@ -100,6 +120,20 @@ export default function PopCeilingGuwahati() {
                 <span style={{ fontSize: '0.9rem', color: 'var(--secondary)' }}>View PVC panels →</span>
               </Link>
             </div>
+
+            <h2 style={{ marginTop: 40 }}>Frequently Asked Questions</h2>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>What is the cost of POP ceiling in Guwahati?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              POP ceiling cost in Guwahati ranges from ₹55 to ₹100 per sq ft. Simple designs cost less, while intricate mouldings, curves and multi-level designs cost more. Sahanines Interiors provides free quotations for POP ceiling work.
+            </p>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>How long does a POP ceiling last?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              A well-installed POP ceiling can last 15-20 years or more. POP is durable and maintains its appearance over time. Proper installation by experienced craftsmen ensures longevity.
+            </p>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Can POP ceiling be done in bedrooms?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Yes, POP ceilings are excellent for bedrooms. You can create beautiful designs with cove lighting, peripheral mouldings, and central decorative elements. POP allows complete customization to match your bedroom interior.
+            </p>
           </div>
         </div>
       </section>

@@ -23,6 +23,26 @@ export default function InteriorDesignGuwahati() {
           { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
           { '@type': 'ListItem', position: 2, name: 'Interior Design Guwahati', item: `${SITE_URL}/interior-design-guwahati` }
         ]
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What interior design services do you offer in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Sahanines Interiors offers complete interior design services in Guwahati including false ceiling design and installation, ceiling lighting, wall treatments, colour consultation, space planning, woodwork, and complete finishing for homes and offices.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'How much does interior design cost in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Interior design cost in Guwahati varies based on scope, materials and room size. We provide free consultations and transparent quotations. Contact Sahanines Interiors to discuss your specific requirements and budget.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Do you do both residential and commercial interior design?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, Sahanines Interiors handles both residential and commercial interior design in Guwahati. We design homes, apartments, offices, shops, restaurants, hotels and commercial buildings.' }
+          }
+        ]
       }
     ]
   }
@@ -96,6 +116,20 @@ export default function InteriorDesignGuwahati() {
                 <span style={{ fontSize: '0.9rem', color: 'var(--secondary)' }}>See our work →</span>
               </Link>
             </div>
+
+            <h2 style={{ marginTop: 40 }}>Frequently Asked Questions</h2>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>What interior design services do you offer in Guwahati?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Sahanines Interiors offers complete interior design services in Guwahati including false ceiling design and installation, ceiling lighting, wall treatments, colour consultation, space planning, woodwork, and complete finishing for homes and offices.
+            </p>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>How much does interior design cost in Guwahati?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Interior design cost in Guwahati varies based on scope, materials and room size. We provide free consultations and transparent quotations. Contact Sahanines Interiors to discuss your specific requirements and budget.
+            </p>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Do you do both residential and commercial interior design?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Yes, Sahanines Interiors handles both residential and commercial interior design in Guwahati. We design homes, apartments, offices, shops, restaurants, hotels and commercial buildings.
+            </p>
           </div>
         </div>
       </section>

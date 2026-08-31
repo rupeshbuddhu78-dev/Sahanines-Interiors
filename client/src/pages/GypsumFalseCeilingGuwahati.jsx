@@ -23,6 +23,26 @@ export default function GypsumFalseCeilingGuwahati() {
           { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
           { '@type': 'ListItem', position: 2, name: 'Gypsum False Ceiling Guwahati', item: `${SITE_URL}/gypsum-false-ceiling-guwahati` }
         ]
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is the price of gypsum false ceiling in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Gypsum false ceiling price in Guwahati ranges from ₹65 to ₹120 per sq ft. The exact cost depends on design complexity, number of layers, lighting integration, and finishing. Sahanines Interiors provides free quotations for gypsum ceiling work.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Is gypsum ceiling good for Guwahati weather?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, gypsum ceilings work well in Guwahati\'s climate. Standard gypsum boards are suitable for living rooms, bedrooms and offices. For areas with high moisture like bathrooms, moisture-resistant gypsum boards are available.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'How many types of gypsum ceiling designs are available?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Gypsum ceilings offer many design options: flat single-layer, multi-layered with cove lighting, peripheral ceilings, geometric patterns, bedroom designs with fan cutouts, and office grid systems. Sahanines Interiors helps you choose the best design for your space.' }
+          }
+        ]
       }
     ]
   }
@@ -104,6 +124,20 @@ export default function GypsumFalseCeilingGuwahati() {
                 <span style={{ fontSize: '0.9rem', color: 'var(--secondary)' }}>Explore POP designs →</span>
               </Link>
             </div>
+
+            <h2 style={{ marginTop: 40 }}>Frequently Asked Questions</h2>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>What is the price of gypsum false ceiling in Guwahati?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Gypsum false ceiling price in Guwahati ranges from ₹65 to ₹120 per sq ft. The exact cost depends on design complexity, number of layers, lighting integration, and finishing. Sahanines Interiors provides free quotations for gypsum ceiling work.
+            </p>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Is gypsum ceiling good for Guwahati weather?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Yes, gypsum ceilings work well in Guwahati's climate. Standard gypsum boards are suitable for living rooms, bedrooms and offices. For areas with high moisture like bathrooms, moisture-resistant gypsum boards are available.
+            </p>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>How many types of gypsum ceiling designs are available?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Gypsum ceilings offer many design options: flat single-layer, multi-layered with cove lighting, peripheral ceilings, geometric patterns, bedroom designs with fan cutouts, and office grid systems. Sahanines Interiors helps you choose the best design for your space.
+            </p>
           </div>
         </div>
       </section>

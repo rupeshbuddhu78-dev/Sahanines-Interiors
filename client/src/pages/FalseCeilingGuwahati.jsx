@@ -23,6 +23,26 @@ export default function FalseCeilingGuwahati() {
           { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
           { '@type': 'ListItem', position: 2, name: 'False Ceiling Contractor in Guwahati', item: `${SITE_URL}/false-ceiling-guwahati` }
         ]
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is the cost of false ceiling installation in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'False ceiling cost in Guwahati ranges from ₹45-120 per sq ft depending on material and design. Gypsum boards cost ₹65-120/sq ft, POP costs ₹55-100/sq ft, and PVC panels cost ₹45-90/sq ft. Contact Sahanines Interiors for an accurate quotation.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'How long does false ceiling installation take in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'A standard room false ceiling takes 2-3 days for gypsum and 3-5 days for POP. Complex designs may take 5-7 days. Sahanines Interiors provides a clear timeline before starting any project in Guwahati.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Which false ceiling material is best for Guwahati climate?',
+            acceptedAnswer: { '@type': 'Answer', text: 'For Guwahati\'s humid climate, gypsum boards work well for most rooms. For bathrooms and kitchens, PVC panels are recommended due to their waterproof properties. POP is suitable for drawing rooms and halls where intricate designs are desired.' }
+          }
+        ]
       }
     ]
   }
@@ -93,10 +113,42 @@ export default function FalseCeilingGuwahati() {
               <li style={{ marginBottom: 8 }}><strong>Finishing & Handover:</strong> We complete all finishing work including painting, lighting integration and cleanup.</li>
             </ol>
 
+            <h2>False Ceiling Cost in Guwahati</h2>
+            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 16 }}>
+              The cost of false ceiling in Guwahati depends on the material, design complexity, and room size. Here's a general price range:
+            </p>
+            <ul style={{ fontSize: '1.02rem', lineHeight: 1.8, paddingLeft: 20, marginBottom: 24 }}>
+              <li><strong>Gypsum Board:</strong> ₹65 - ₹120 per sq ft</li>
+              <li><strong>POP (Plaster of Paris):</strong> ₹55 - ₹100 per sq ft</li>
+              <li><strong>PVC Panels:</strong> ₹45 - ₹90 per sq ft</li>
+            </ul>
+            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 24 }}>
+              These are approximate rates. Actual cost depends on design complexity, ceiling height, lighting integration, and finishing requirements. Contact us for an accurate quotation.
+            </p>
+
             <h2>Areas We Serve in Guwahati</h2>
             <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 20 }}>
               We provide false ceiling installation services across Guwahati, Assam, including residential and commercial properties. Our team is equipped to handle projects of all sizes throughout the city.
             </p>
+
+            {/* FAQ Section */}
+            <h2>Frequently Asked Questions</h2>
+            <div style={{ marginTop: 16 }}>
+              <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>What is the cost of false ceiling installation in Guwahati?</h3>
+              <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+                False ceiling cost in Guwahati ranges from ₹45-120 per sq ft depending on material and design. Gypsum boards cost ₹65-120/sq ft, POP costs ₹55-100/sq ft, and PVC panels cost ₹45-90/sq ft. Contact Sahanines Interiors for an accurate quotation.
+              </p>
+
+              <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>How long does false ceiling installation take in Guwahati?</h3>
+              <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+                A standard room false ceiling takes 2-3 days for gypsum and 3-5 days for POP. Complex designs may take 5-7 days. Sahanines Interiors provides a clear timeline before starting any project in Guwahati.
+              </p>
+
+              <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Which false ceiling material is best for Guwahati climate?</h3>
+              <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+                For Guwahati's humid climate, gypsum boards work well for most rooms. For bathrooms and kitchens, PVC panels are recommended due to their waterproof properties. POP is suitable for drawing rooms and halls where intricate designs are desired.
+              </p>
+            </div>
           </div>
         </div>
       </section>

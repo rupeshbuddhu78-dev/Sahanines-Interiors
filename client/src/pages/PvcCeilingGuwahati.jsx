@@ -23,6 +23,26 @@ export default function PvcCeilingGuwahati() {
           { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
           { '@type': 'ListItem', position: 2, name: 'PVC Ceiling Guwahati', item: `${SITE_URL}/pvc-ceiling-guwahati` }
         ]
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is the price of PVC ceiling in Guwahati?',
+            acceptedAnswer: { '@type': 'Answer', text: 'PVC ceiling price in Guwahati ranges from ₹45 to ₹90 per sq ft. The cost depends on panel quality, design, and finish. PVC is the most affordable false ceiling option. Sahanines Interiors provides free quotations.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Is PVC ceiling safe for homes?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, PVC ceiling panels are completely safe for homes. They are non-toxic, fire-retardant, and do not emit harmful gases. PVC is widely used in homes, offices and commercial spaces across India.' }
+          },
+          {
+            '@type': 'Question',
+            name: 'Can PVC ceiling be used in bathrooms?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, PVC ceilings are ideal for bathrooms because they are 100% waterproof. Unlike gypsum or POP, PVC panels are not affected by water, steam or humidity. They are the best ceiling option for bathrooms and kitchens.' }
+          }
+        ]
       }
     ]
   }
@@ -101,6 +121,20 @@ export default function PvcCeilingGuwahati() {
                 <span style={{ fontSize: '0.9rem', color: 'var(--secondary)' }}>Explore POP designs →</span>
               </Link>
             </div>
+
+            <h2 style={{ marginTop: 40 }}>Frequently Asked Questions</h2>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>What is the price of PVC ceiling in Guwahati?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              PVC ceiling price in Guwahati ranges from ₹45 to ₹90 per sq ft. The cost depends on panel quality, design, and finish. PVC is the most affordable false ceiling option. Sahanines Interiors provides free quotations.
+            </p>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Is PVC ceiling safe for homes?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Yes, PVC ceiling panels are completely safe for homes. They are non-toxic, fire-retardant, and do not emit harmful gases. PVC is widely used in homes, offices and commercial spaces across India.
+            </p>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Can PVC ceiling be used in bathrooms?</h3>
+            <p style={{ fontSize: '0.98rem', lineHeight: 1.7, marginBottom: 20, color: '#555' }}>
+              Yes, PVC ceilings are ideal for bathrooms because they are 100% waterproof. Unlike gypsum or POP, PVC panels are not affected by water, steam or humidity. They are the best ceiling option for bathrooms and kitchens.
+            </p>
           </div>
         </div>
       </section>
