@@ -13,7 +13,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-col">
             <div className="footer-logo">
-              <img src="/logo.jpg" alt="Sahanines Interiors" width="180" height="56" style={{ height: 'auto', maxWidth: '180px' }} />
+              <img src="/logo.jpg" alt="Sahanines Interiors - False Ceiling Service Provider in Guwahati, Assam" width="180" height="56" style={{ height: 'auto', maxWidth: '180px' }} />
             </div>
             <p>{settings?.footer?.description || 'Professional false ceiling and interior solutions in Guwahati, Assam.'}</p>
             <div className="footer-social">
@@ -44,6 +44,15 @@ export default function Footer() {
             <Link to="/services/interior-ceiling-design">Interior Ceiling Design</Link>
             <Link to="/services/residential-false-ceiling">Residential Ceiling</Link>
             <Link to="/services/commercial-false-ceiling">Commercial Ceiling</Link>
+          </div>
+
+          <div className="footer-col">
+            <h4>Service Areas</h4>
+            <Link to="/false-ceiling-guwahati">False Ceiling Guwahati</Link>
+            <Link to="/gypsum-false-ceiling-guwahati">Gypsum Ceiling Guwahati</Link>
+            <Link to="/pop-ceiling-guwahati">POP Ceiling Guwahati</Link>
+            <Link to="/pvc-ceiling-guwahati">PVC Ceiling Guwahati</Link>
+            <Link to="/interior-design-guwahati">Interior Design Guwahati</Link>
           </div>
 
           <div className="footer-col">

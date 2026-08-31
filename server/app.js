@@ -415,7 +415,12 @@ app.get('/sitemap.xml', async (req, res) => {
     { path: '/gallery', priority: '0.7', changefreq: 'weekly' },
     { path: '/reviews', priority: '0.8', changefreq: 'monthly' },
     { path: '/faq', priority: '0.6', changefreq: 'monthly' },
-    { path: '/contact', priority: '0.9', changefreq: 'monthly' }
+    { path: '/contact', priority: '0.9', changefreq: 'monthly' },
+    { path: '/false-ceiling-guwahati', priority: '0.9', changefreq: 'monthly' },
+    { path: '/gypsum-false-ceiling-guwahati', priority: '0.9', changefreq: 'monthly' },
+    { path: '/pop-ceiling-guwahati', priority: '0.9', changefreq: 'monthly' },
+    { path: '/pvc-ceiling-guwahati', priority: '0.9', changefreq: 'monthly' },
+    { path: '/interior-design-guwahati', priority: '0.8', changefreq: 'monthly' }
   ];
   staticPages.forEach(p => { xml += `  <url><loc>${base}${p.path}</loc><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>\n`; });
   
@@ -516,8 +521,8 @@ app.get(/^\/(?!api|uploads).*/, async (req, res) => {
     // Define SEO metadata for each route
     const seoData = {
       '/': {
-        title: 'Sahanines Interiors | Best False Ceiling & Interior Design in Guwahati',
-        description: 'Sahanines Interiors — Guwahati\'s trusted false ceiling contractor and service provider. Expert gypsum, POP, PVC ceiling installation by experienced false ceiling designers. Free consultation. Call 076360 08047.'
+        title: 'Best False Ceiling Service in Guwahati | Gypsum, POP & PVC Ceiling | Sahanines Interiors',
+        description: 'Looking for the best false ceiling service in Guwahati? Sahanines Interiors provides gypsum, POP and PVC ceiling installation and interior solutions.'
       },
       '/about': {
         title: 'About Sahanines Interiors | False Ceiling Contractor & Service Provider in Guwahati',
@@ -546,6 +551,26 @@ app.get(/^\/(?!api|uploads).*/, async (req, res) => {
       '/contact': {
         title: 'Contact Sahanines Interiors | False Ceiling Contractor in Guwahati',
         description: 'Contact Sahanines Interiors — false ceiling contractor and service provider in Guwahati. Call 076360 08047, WhatsApp, or visit us at Jyotikuchi, Guwahati. Free consultation & quotation for gypsum, POP, PVC ceiling work.'
+      },
+      '/false-ceiling-guwahati': {
+        title: 'False Ceiling Contractor in Guwahati | Installation & Design | Sahanines Interiors',
+        description: 'Professional false ceiling contractor in Guwahati. Sahanines Interiors installs gypsum, POP and PVC ceilings for homes and offices. Free consultation. Call 076360 08047.'
+      },
+      '/gypsum-false-ceiling-guwahati': {
+        title: 'Gypsum False Ceiling in Guwahati | Installation & Design | Sahanines Interiors',
+        description: 'Gypsum false ceiling installation in Guwahati by Sahanines Interiors. Smooth finish, fire-resistant, sound insulation. Expert gypsum ceiling contractors. Call 076360 08047.'
+      },
+      '/pop-ceiling-guwahati': {
+        title: 'POP Ceiling Design in Guwahati | Plaster of Paris Installation | Sahanines Interiors',
+        description: 'Custom POP false ceiling design and installation in Guwahati. Intricate mouldings, curves and decorative patterns. Expert POP ceiling contractors. Call 076360 08047.'
+      },
+      '/pvc-ceiling-guwahati': {
+        title: 'PVC Ceiling Installation in Guwahati | Waterproof PVC Panels | Sahanines Interiors',
+        description: 'PVC false ceiling installation in Guwahati. Waterproof, termite-proof, low maintenance PVC panels for bathrooms, kitchens and offices. Call 076360 08047.'
+      },
+      '/interior-design-guwahati': {
+        title: 'Interior Design Service in Guwahati | Home & Office Interiors | Sahanines Interiors',
+        description: 'Interior design service in Guwahati by Sahanines Interiors. Complete home and office interior solutions including ceiling design, lighting and finishing. Call 076360 08047.'
       }
     };
     

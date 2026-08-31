@@ -19,6 +19,13 @@ import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
 
+// SEO Landing Pages
+import FalseCeilingGuwahati from './pages/FalseCeilingGuwahati'
+import GypsumFalseCeilingGuwahati from './pages/GypsumFalseCeilingGuwahati'
+import PopCeilingGuwahati from './pages/PopCeilingGuwahati'
+import PvcCeilingGuwahati from './pages/PvcCeilingGuwahati'
+import InteriorDesignGuwahati from './pages/InteriorDesignGuwahati'
+
 // Admin
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminLayout from './pages/admin/AdminLayout'
@@ -67,6 +74,11 @@ function App() {
         <Route path="/reviews" element={<><Header /><Reviews /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
         <Route path="/faq" element={<><Header /><FAQ /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
         <Route path="/contact" element={<><Header /><Contact /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
+        <Route path="/false-ceiling-guwahati" element={<><Header /><FalseCeilingGuwahati /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
+        <Route path="/gypsum-false-ceiling-guwahati" element={<><Header /><GypsumFalseCeilingGuwahati /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
+        <Route path="/pop-ceiling-guwahati" element={<><Header /><PopCeilingGuwahati /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
+        <Route path="/pvc-ceiling-guwahati" element={<><Header /><PvcCeilingGuwahati /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
+        <Route path="/interior-design-guwahati" element={<><Header /><InteriorDesignGuwahati /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
         <Route path="*" element={<><Header /><NotFound /><Footer /></>} />
       </Routes>
     </>
