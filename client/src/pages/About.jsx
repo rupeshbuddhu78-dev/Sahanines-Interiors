@@ -6,7 +6,7 @@ import { SITE_URL } from '../constants'
 export default function About() {
   const { settings } = useSite()
 
-  const title = 'About Sahanines Interiors | False Ceiling Contractor & Service Provider in Guwahati'
+  const title = 'False Ceiling Contractor & Service Provider in Guwahati | About Sahanines Interiors'
   const description = 'Sahanines Interiors is a Guwahati-based false ceiling contractor and service provider. Our team of false ceiling designers serves residential and commercial clients across Guwahati, Assam with quality craftsmanship.'
   const ogImage = settings?.seo?.ogImage || ''
 
