@@ -424,32 +424,6 @@ app.get('/sitemap.xml', async (req, res) => {
   ];
   staticPages.forEach(p => { xml += `  <url><loc>${base}${p.path}</loc><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>\n`; });
   
-  // Get active services from DB
-  const services = await Service.find({ isActive: true });
-  const serviceSlugs = new Set(services.map(s => s.slug));
-  
-  // Ensure these core service pages are always in sitemap (even if not yet in DB)
-  const coreServices = [
-    'false-ceiling',
-    'gypsum-false-ceiling',
-    'pop-false-ceiling',
-    'pvc-ceiling',
-    'ceiling-lighting',
-    'interior-ceiling-design',
-    'residential-false-ceiling',
-    'commercial-false-ceiling'
-  ];
-  
-  // Add core services if not already in DB results
-  coreServices.forEach(slug => {
-    if (!serviceSlugs.has(slug)) {
-      xml += `  <url><loc>${base}/services/${slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n`;
-    }
-  });
-  
-  // Add all active services from DB
-  services.forEach(s => { xml += `  <url><loc>${base}/services/${s.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n`; });
-  
   xml += '</urlset>';
   res.header('Content-Type', 'application/xml').send(xml);
 });
