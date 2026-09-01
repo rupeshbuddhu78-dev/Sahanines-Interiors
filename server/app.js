@@ -521,8 +521,8 @@ app.get(/^\/(?!api|uploads).*/, async (req, res) => {
     // Define SEO metadata for each route
     const seoData = {
       '/': {
-        title: 'Best False Ceiling Service in Guwahati | Gypsum, POP & PVC Ceiling | Sahanines Interiors',
-        description: 'Looking for the best false ceiling service in Guwahati? Sahanines Interiors provides gypsum, POP and PVC ceiling installation and interior solutions.'
+        title: 'Best False Ceiling Service in Guwahati | Sahanines Interiors',
+        description: 'Looking for professional false ceiling service in Guwahati? Sahanines Interiors provides gypsum, POP and PVC ceiling installation and interior solutions.'
       },
       '/about': {
         title: 'About Sahanines Interiors | False Ceiling Contractor & Service Provider in Guwahati',

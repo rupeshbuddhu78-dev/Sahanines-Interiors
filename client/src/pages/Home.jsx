@@ -61,8 +61,8 @@ export default function Home() {
 
   const heroImage = settings?.hero?.image || ''
 
-  const title = 'Best False Ceiling Service in Guwahati | Gypsum, POP & PVC Ceiling | Sahanines Interiors'
-  const description = 'Looking for the best false ceiling service in Guwahati? Sahanines Interiors provides gypsum, POP and PVC ceiling installation and interior solutions.'
+  const title = 'Best False Ceiling Service in Guwahati | Sahanines Interiors'
+  const description = 'Looking for professional false ceiling service in Guwahati? Sahanines Interiors provides gypsum, POP and PVC ceiling installation and interior solutions.'
   const ogImage = settings?.seo?.ogImage || ''
 
   const jsonLd = {
@@ -201,8 +201,8 @@ export default function Home() {
         <div className="hero-overlay"></div>
         <div className="container">
           <div className="hero-content">
-            <h1>Best False Ceiling Service in Guwahati</h1>
-            <p>Sahanines Interiors provides professional false ceiling installation and interior design services across Guwahati, Assam. We specialize in gypsum, POP and PVC ceiling solutions with modern designs, quality materials and clean finishing for homes, offices and commercial spaces.</p>
+            <h1>False Ceiling Service in Guwahati</h1>
+            <p>Sahanines Interiors provides professional false ceiling installation and interior design services for homes, offices and commercial spaces in Guwahati, Assam.</p>
             <div className="hero-buttons">
               <Link to="/contact" className="btn btn-primary btn-lg">{settings?.hero?.ctaPrimary || 'Get Free Quote'}</Link>
               <Link to="/projects" className="btn btn-outline btn-lg">{settings?.hero?.ctaSecondary || 'View Our Projects'}</Link>
@@ -295,6 +295,59 @@ export default function Home() {
               PVC ceiling panels are a practical and durable choice for spaces that need moisture resistance and easy maintenance. PVC panels are waterproof, termite-proof, lightweight, and available in a wide range of colours and finishes including wood grain and marble textures. They require no painting and are ideal for bathrooms, kitchens, balconies and commercial spaces across Guwahati.
             </p>
             <Link to="/pvc-ceiling-guwahati" style={{ color: 'var(--secondary)', fontWeight: 500, display: 'inline-block', marginBottom: 32 }}>View our PVC ceiling options →</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* False Ceiling for Homes and Offices */}
+      <section className="section" id="homes-offices">
+        <div className="container">
+          <div className="section-header fade-up">
+            <span className="label">Residential & Commercial</span>
+            <h2>False Ceiling for Homes and Offices in Guwahati</h2>
+            <p>Whether it's your living room or your office cabin, a well-designed false ceiling adds value, comfort and visual appeal to any space.</p>
+          </div>
+          <div style={{ maxWidth: 860, margin: '0 auto' }}>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: 12 }}>Home False Ceiling in Guwahati</h3>
+            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 24 }}>
+              Your home deserves a ceiling that matches your style and enhances your living experience. Sahanines Interiors designs and installs false ceilings for all rooms — living rooms, bedrooms, drawing rooms, kitchens and dining areas. We create ceilings that complement your furniture, lighting and overall interior theme. From simple clean designs for a minimal look to elaborate multi-layer ceilings with cove lighting for a luxurious feel, we handle every home project with care and precision.
+            </p>
+            <Link to="/false-ceiling-guwahati" style={{ color: 'var(--secondary)', fontWeight: 500, display: 'inline-block', marginBottom: 32 }}>Explore home false ceiling options →</Link>
+
+            <h3 style={{ fontSize: '1.25rem', marginBottom: 12 }}>Office False Ceiling in Guwahati</h3>
+            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 24 }}>
+              A professional office ceiling creates the right impression for clients and a productive environment for your team. Sahanines Interiors provides office false ceiling solutions including grid ceilings for open workspaces, designer ceilings for cabins and conference rooms, and acoustic ceilings for noise reduction. We integrate lighting, AC vents, fire safety systems and cable management into the ceiling design for a clean, functional workspace.
+            </p>
+            <Link to="/interior-design-guwahati" style={{ color: 'var(--secondary)', fontWeight: 500, display: 'inline-block', marginBottom: 32 }}>View our commercial interior services →</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Interior Design Services in Guwahati */}
+      <section className="section bg-alt" id="interior-design">
+        <div className="container">
+          <div className="section-header fade-up">
+            <span className="label">Beyond Ceilings</span>
+            <h2>Interior Design Services in Guwahati</h2>
+            <p>Sahanines Interiors offers complete interior design solutions — from ceiling to floor — for homes and offices across Guwahati, Assam.</p>
+          </div>
+          <div style={{ maxWidth: 860, margin: '0 auto' }}>
+            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 20 }}>
+              While false ceilings are our core expertise, we provide a complete range of interior design services to transform your entire space. Our interior design team in Guwahati handles ceiling design, lighting planning, wall treatments, colour consultation, and space planning to create cohesive, beautiful interiors.
+            </p>
+            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 20 }}>
+              Whether you are building a new home, renovating an apartment, or setting up a new office, we work with you from concept to completion. We understand local preferences, climate considerations and material availability in Guwahati to deliver interiors that are practical, durable and visually stunning.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginTop: 24 }}>
+              {['Ceiling Design', 'Lighting Planning', 'Wall Treatments', 'Colour Consultation', 'Space Planning', 'Complete Finishing'].map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', background: 'white', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <span style={{ color: 'var(--secondary)' }}>✓</span> {item}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 32 }}>
+              <Link to="/interior-design-guwahati" className="btn btn-outline-dark">Learn More About Interior Design →</Link>
+            </div>
           </div>
         </div>
       </section>
