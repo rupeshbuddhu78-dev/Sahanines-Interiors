@@ -465,20 +465,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Video Guides — Horizontal Scroll Section */}
-      {guides.filter(g => g.videoUrl).length > 0 && (
-        <section className="section" id="video-guides">
-          <div className="video-guides-section fade-up">
-            <div className="video-guides-header">
-              <span className="label">Video Guides</span>
-              <h2>False Ceiling Video Guides by Sahanines Interiors</h2>
-              <p>Watch our ongoing site tours and expert false ceiling construction videos in Guwahati. See our craftsmanship and quality of work before you book.</p>
+      {/* False Ceiling Guides — Horizontal Video Scroll */}
+      {guides.length > 0 && (
+        <section className="section bg-alt" id="false-ceiling-guides">
+          <div className="container">
+            <div className="section-header fade-up">
+              <span className="label">Expert Guides</span>
+              <h2>False Ceiling Guides in Guwahati — Questions You Must Ask Your Contractor Before False Ceiling Construction</h2>
+              <p>Planning a false ceiling for your home or office in Guwahati? These expert guides by Sahanines Interiors will help you make informed decisions, choose the right materials and ask the right questions to your false ceiling contractor in Guwahati before construction begins.</p>
             </div>
-            <div className="video-scroll-container">
-              {guides.filter(g => g.videoUrl).slice(0, 6).map((guide, i) => (
+            {/* Horizontal scroll — max 6 videos, swipe right on mobile */}
+            <div className="video-scroll-container fade-up">
+              {guides.slice(0, 6).map((guide, i) => (
                 <div key={guide._id} className="video-scroll-card" style={{ transitionDelay: `${i * 0.08}s` }}>
                   <video
-                    src={guide.videoUrl}
+                    src={guide.videoUrl || ''}
                     controls
                     preload="metadata"
                     playsInline
@@ -490,83 +491,11 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* False Ceiling Guides & Contractor Questions — SEO Section for Guwahati */}
-      {guides.length > 0 && (
-        <section className="section bg-alt" id="false-ceiling-guides">
-          <div className="container">
-            <div className="section-header fade-up">
-              <span className="label">Expert Guides</span>
-              <h2>False Ceiling Guides in Guwahati — Questions You Must Ask Your Contractor Before False Ceiling Construction</h2>
-              <p>Planning a false ceiling for your home or office in Guwahati? These expert guides by Sahanines Interiors will help you make informed decisions, choose the right materials and ask the right questions to your false ceiling contractor in Guwahati before construction begins.</p>
-            </div>
-            {/* Desktop: 2 columns grid, Mobile: 1 column */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))',
-              gap: 24,
-              maxWidth: 1200,
-              margin: '0 auto'
-            }}>
-              {guides.map((guide, i) => (
-                <div key={guide._id} className="fade-up" style={{
-                  transitionDelay: `${i * 0.08}s`,
-                  padding: 28,
-                  background: 'white',
-                  borderRadius: 12,
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}>
-                  <h3 style={{ fontSize: '1.3rem', marginBottom: 14, color: 'var(--primary)', lineHeight: 1.4 }}>{guide.title}</h3>
-                  <p style={{ fontSize: '0.98rem', lineHeight: 1.7, color: '#444', marginBottom: guide.advantages?.length > 0 ? 16 : 0, flex: 1 }}>{guide.description}</p>
-
-                  {guide.advantages?.length > 0 && (
-                    <div style={{ marginTop: 16 }}>
-                      <h4 style={{ fontSize: '1rem', marginBottom: 10, color: 'var(--primary)' }}>Key Advantages</h4>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {guide.advantages.map((adv, j) => (
-                          <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 12px', background: '#f8f9fa', borderRadius: 6, fontSize: '0.9rem', lineHeight: 1.4 }}>
-                            <span style={{ color: 'var(--secondary)', fontWeight: 700, flexShrink: 0 }}>✓</span>
-                            <span>{adv}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {guide.videoUrl && (
-                    <div style={{ marginTop: 20, textAlign: 'center' }}>
-                      <video
-                        src={guide.videoUrl}
-                        controls
-                        preload="metadata"
-                        playsInline
-                        style={{
-                          width: '100%',
-                          maxWidth: 280,
-                          aspectRatio: '9/16',
-                          borderRadius: 12,
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-                          objectFit: 'cover',
-                          background: '#000'
-                        }}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
             <div style={{ textAlign: 'center', marginTop: 32 }}>
               <p style={{ fontSize: '1.02rem', lineHeight: 1.8, maxWidth: 700, margin: '0 auto 16px' }}>
                 Need expert guidance for your false ceiling project in Guwahati? Sahanines Interiors provides free consultation and quotation for gypsum, POP and PVC false ceiling installation across Guwahati, Assam.
               </p>
-              <Link to="/contact" className="btn btn-outline-dark">Get Free Consultation for Your False Ceiling in Guwahati</Link>
+              <Link to="/guides" className="btn btn-outline-dark">View All Guides</Link>
             </div>
           </div>
         </section>
