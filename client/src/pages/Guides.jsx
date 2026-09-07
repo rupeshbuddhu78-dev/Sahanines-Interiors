@@ -13,7 +13,7 @@ export default function Guides() {
       try {
         const res = await axios.get('/api/false-ceiling-guides')
         if (res.data.success) {
-          setGuides(res.data.guides.slice(0, 6))
+          setGuides(res.data.guides)
         }
       } catch (err) {
         console.error(err)
@@ -62,87 +62,86 @@ export default function Guides() {
         <div className="container">
           {loading ? (
             <p style={{ textAlign: 'center', padding: 40 }}>Loading guides...</p>
-          ) : guides.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: 60 }}>
-              <h2 style={{ fontSize: '1.5rem', marginBottom: 12, color: 'var(--primary)' }}>No Guides Published Yet</h2>
-              <p style={{ color: '#666', lineHeight: 1.7 }}>
-                Our expert false ceiling guides for Guwahati are coming soon. In the meantime, contact us for free consultation on false ceiling installation.
-              </p>
-              <Link to="/contact" className="btn btn-primary btn-lg" style={{ marginTop: 20, display: 'inline-block' }}>Get Free Consultation</Link>
-            </div>
           ) : (
-            /* Desktop: 2 columns grid, Mobile: 1 column */
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))',
-              gap: 24,
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+              gap: 28,
               maxWidth: 1200,
               margin: '0 auto'
             }}>
               {guides.map((guide, i) => (
-                <div key={guide._id} className="fade-up" style={{
+                <div key={guide._id} className="guide-card fade-up" style={{
                   transitionDelay: `${i * 0.08}s`,
-                  padding: 28,
                   background: 'white',
-                  borderRadius: 12,
+                  borderRadius: 16,
+                  overflow: 'hidden',
                   boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                  border: '1px solid rgba(0,0,0,0.04)',
                   display: 'flex',
                   flexDirection: 'column'
                 }}>
-                  <h2 style={{ fontSize: '1.3rem', marginBottom: 14, color: 'var(--primary)', lineHeight: 1.4 }}>
-                    {guide.title}
-                  </h2>
-                  <p style={{ fontSize: '0.98rem', lineHeight: 1.7, color: '#444', marginBottom: guide.advantages?.length > 0 ? 16 : 0, flex: 1 }}>
-                    {guide.description}
-                  </p>
+                  <div style={{
+                    width: '100%',
+                    background: '#000',
+                    cursor: 'pointer'
+                  }}>
+                    <video
+                      src={guide.videoUrl || ''}
+                      controls
+                      preload="metadata"
+                      playsInline
+                      style={{
+                        width: '100%',
+                        aspectRatio: '9/16',
+                        maxHeight: 480,
+                        objectFit: 'cover',
+                        display: 'block',
+                        background: '#000'
+                      }}
+                      onClick={(e) => {
+                        const video = e.target;
+                        if (video.requestFullscreen) video.requestFullscreen();
+                        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+                        else if (video.msRequestFullscreen) video.msRequestFullscreen();
+                      }}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
 
-                  {guide.advantages?.length > 0 && (
-                    <div style={{ marginTop: 16 }}>
-                      <h3 style={{ fontSize: '1rem', marginBottom: 10, color: 'var(--primary)' }}>
-                        Key Advantages
-                      </h3>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {guide.advantages.map((adv, j) => (
-                          <div key={j} style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: 8,
-                            padding: '8px 12px',
-                            background: '#f8f9fa',
-                            borderRadius: 6,
-                            fontSize: '0.9rem',
-                            lineHeight: 1.4
-                          }}>
-                            <span style={{ color: 'var(--secondary)', fontWeight: 700, flexShrink: 0 }}>✓</span>
-                            <span>{adv}</span>
-                          </div>
-                        ))}
+                  <div style={{ padding: '20px 24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <h2 style={{ fontSize: '1.2rem', marginBottom: 12, color: 'var(--primary)', lineHeight: 1.4, fontWeight: 600 }}>
+                      {guide.title}
+                    </h2>
+                    <p style={{ fontSize: '0.95rem', lineHeight: 1.7, color: '#444', flex: 1 }}>
+                      {guide.description}
+                    </p>
+
+                    {guide.advantages?.length > 0 && (
+                      <div style={{ marginTop: 16 }}>
+                        <h3 style={{ fontSize: '0.95rem', marginBottom: 10, color: 'var(--primary)', fontWeight: 600 }}>
+                          Key Points
+                        </h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          {guide.advantages.map((adv, j) => (
+                            <div key={j} style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: 8,
+                              padding: '8px 12px',
+                              background: '#f8f9fa',
+                              borderRadius: 8,
+                              fontSize: '0.88rem',
+                              lineHeight: 1.4
+                            }}>
+                              <span style={{ color: 'var(--secondary)', fontWeight: 700, flexShrink: 0 }}>✓</span>
+                              <span>{adv}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-
-                  {guide.videoUrl && (
-                    <div style={{ marginTop: 20, textAlign: 'center' }}>
-                      <video
-                        src={guide.videoUrl}
-                        controls
-                        preload="metadata"
-                        playsInline
-                        style={{
-                          width: '100%',
-                          maxWidth: 280,
-                          aspectRatio: '9/16',
-                          borderRadius: 12,
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-                          objectFit: 'cover',
-                          background: '#000'
-                        }}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

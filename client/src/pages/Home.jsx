@@ -315,16 +315,29 @@ export default function Home() {
             <div className="video-scroll-container fade-up">
               {guides.slice(0, 6).map((guide, i) => (
                 <div key={guide._id} className="video-scroll-card" style={{ transitionDelay: `${i * 0.08}s` }}>
-                  <video
-                    src={guide.videoUrl || ''}
-                    controls
-                    preload="metadata"
-                    playsInline
-                    className="video-scroll-player"
-                  >
-                    Your browser does not support the video tag.
-                  </video>
-                  <div className="video-scroll-title">{guide.title}</div>
+                  <div className="video-scroll-wrapper">
+                    <video
+                      src={guide.videoUrl || ''}
+                      controls
+                      preload="metadata"
+                      playsInline
+                      className="video-scroll-player"
+                      onClick={(e) => {
+                        const video = e.target;
+                        if (video.requestFullscreen) video.requestFullscreen();
+                        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+                        else if (video.msRequestFullscreen) video.msRequestFullscreen();
+                      }}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                  <div className="video-scroll-info">
+                    <h3 className="video-scroll-title">{guide.title}</h3>
+                    {guide.description && (
+                      <p className="video-scroll-desc">{guide.description}</p>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
