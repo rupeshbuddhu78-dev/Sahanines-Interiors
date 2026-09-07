@@ -463,7 +463,7 @@ const videoUpload = multer({
     if (/mp4|mov|webm|avi|mkv|wmv|flv/.test(ext) || /video/.test(mime)) cb(null, true);
     else cb(new Error('Only video files allowed'));
   },
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB
+  limits: { fileSize: 200 * 1024 * 1024 } // 200MB
 });
 
 app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res) => {
