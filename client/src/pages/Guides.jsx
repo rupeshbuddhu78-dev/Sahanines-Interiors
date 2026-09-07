@@ -44,6 +44,25 @@ export default function Guides() {
     })
   }, [guides])
 
+  // Auto-pause videos when they scroll out of viewport
+  useEffect(() => {
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          const video = entry.target.querySelector('video')
+          if (video && !video.paused) {
+            video.pause()
+          }
+        }
+      })
+    }, { threshold: 0.3 })
+
+    const cards = document.querySelectorAll('.guide-card-video')
+    cards.forEach(card => videoObserver.observe(card))
+
+    return () => videoObserver.disconnect()
+  }, [guides])
+
   const toggleExpand = (id) => {
     setExpandedGuide(expandedGuide === id ? null : id)
   }

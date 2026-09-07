@@ -62,6 +62,25 @@ export default function Home() {
     })
   }, [services, projects, testimonials, guides])
 
+  // Auto-pause videos when they scroll out of viewport
+  useEffect(() => {
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          const video = entry.target.querySelector('video')
+          if (video && !video.paused) {
+            video.pause()
+          }
+        }
+      })
+    }, { threshold: 0.3 })
+
+    const videoCards = document.querySelectorAll('.video-scroll-card')
+    videoCards.forEach(card => videoObserver.observe(card))
+
+    return () => videoObserver.disconnect()
+  }, [guides])
+
   const heroImage = settings?.hero?.image || ''
 
   const title = 'Best False Ceiling Service in Guwahati | Sahanines Interiors'
