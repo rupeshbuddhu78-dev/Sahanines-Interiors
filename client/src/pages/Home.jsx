@@ -465,54 +465,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* False Ceiling Materials & Comparison */}
-      <section className="section" id="ceiling-materials">
-        <div className="container">
-          <div className="section-header fade-up">
-            <span className="label">Materials Guide</span>
-            <h2>False Ceiling Materials — Gypsum vs POP vs PVC</h2>
-            <p>Choosing the right material for your false ceiling in Guwahati depends on your room type, budget, design preference and maintenance requirements.</p>
-          </div>
-          <div style={{ maxWidth: 860, margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 24, marginTop: 32 }}>
-              <div style={{ padding: 24, background: 'white', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: 12, color: 'var(--primary)' }}>Gypsum Board</h3>
-                <ul style={{ fontSize: '0.95rem', lineHeight: 1.8, paddingLeft: 20 }}>
-                  <li>Smooth, clean finish</li>
-                  <li>Fire-resistant</li>
-                  <li>Good sound insulation</li>
-                  <li>Quick installation</li>
-                  <li>Best for: Living rooms, bedrooms, offices</li>
-                </ul>
-              </div>
-              <div style={{ padding: 24, background: 'white', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: 12, color: 'var(--primary)' }}>POP (Plaster of Paris)</h3>
-                <ul style={{ fontSize: '0.95rem', lineHeight: 1.8, paddingLeft: 20 }}>
-                  <li>Intricate custom designs</li>
-                  <li>Seamless monolithic finish</li>
-                  <li>Cost-effective for complex shapes</li>
-                  <li>Paintable in any colour</li>
-                  <li>Best for: Drawing rooms, banquet halls</li>
-                </ul>
-              </div>
-              <div style={{ padding: 24, background: 'white', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: 12, color: 'var(--primary)' }}>PVC Panels</h3>
-                <ul style={{ fontSize: '0.95rem', lineHeight: 1.8, paddingLeft: 20 }}>
-                  <li>Waterproof & moisture-resistant</li>
-                  <li>Termite-proof</li>
-                  <li>No painting needed</li>
-                  <li>Easy to clean & maintain</li>
-                  <li>Best for: Bathrooms, kitchens, commercial</li>
-                </ul>
-              </div>
-            </div>
-            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginTop: 32, textAlign: 'center' }}>
-              Not sure which material is right for your space? <Link to="/contact" style={{ color: 'var(--secondary)', fontWeight: 500 }}>Contact us for free guidance</Link> — we'll help you choose based on your room, budget and design needs.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* False Ceiling Guides & Contractor Questions — SEO Section for Guwahati */}
       {guides.length > 0 && (
         <section className="section bg-alt" id="false-ceiling-guides">
@@ -548,7 +500,8 @@ export default function Home() {
                         src={guide.videoUrl}
                         controls
                         preload="metadata"
-                        style={{ width: '100%', maxWidth: 720, borderRadius: 10, boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}
+                        playsInline
+                        style={{ width: '280px', maxWidth: '100%', aspectRatio: '9/16', borderRadius: 12, boxShadow: '0 4px 16px rgba(0,0,0,0.15)', objectFit: 'cover', background: '#000' }}
                       >
                         Your browser does not support the video tag.
                       </video>

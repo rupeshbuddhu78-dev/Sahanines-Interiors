@@ -125,10 +125,12 @@ export default function Guides() {
                         preload="metadata"
                         playsInline
                         style={{
-                          width: '100%',
-                          maxWidth: 720,
-                          borderRadius: 10,
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                          width: '280px',
+                          maxWidth: '100%',
+                          aspectRatio: '9/16',
+                          borderRadius: 12,
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                          objectFit: 'cover',
                           background: '#000'
                         }}
                       >
