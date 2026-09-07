@@ -16,6 +16,7 @@ import Projects from './pages/Projects'
 import Gallery from './pages/Gallery'
 import Reviews from './pages/Reviews'
 import FAQ from './pages/FAQ'
+import Guides from './pages/Guides'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
 
@@ -75,6 +76,7 @@ function App() {
         <Route path="/gallery" element={<><Header /><Gallery /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
         <Route path="/reviews" element={<><Header /><Reviews /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
         <Route path="/faq" element={<><Header /><FAQ /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
+        <Route path="/guides" element={<><Header /><Guides /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
         <Route path="/contact" element={<><Header /><Contact /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
         <Route path="/false-ceiling-guwahati" element={<><Header /><FalseCeilingGuwahati /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />
         <Route path="/gypsum-false-ceiling-guwahati" element={<><Header /><GypsumFalseCeilingGuwahati /><Footer /><WhatsAppButton /><MobileBottomBar /></>} />

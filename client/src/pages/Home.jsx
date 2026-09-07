@@ -302,30 +302,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* False Ceiling for Homes and Offices */}
-      <section className="section" id="homes-offices">
-        <div className="container">
-          <div className="section-header fade-up">
-            <span className="label">Residential & Commercial</span>
-            <h2>False Ceiling for Homes and Offices in Guwahati</h2>
-            <p>Whether it's your living room or your office cabin, a well-designed false ceiling adds value, comfort and visual appeal to any space.</p>
-          </div>
-          <div style={{ maxWidth: 860, margin: '0 auto' }}>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: 12 }}>Home False Ceiling in Guwahati</h3>
-            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 24 }}>
-              Your home deserves a ceiling that matches your style and enhances your living experience. Sahanines Interiors designs and installs false ceilings for all rooms — living rooms, bedrooms, drawing rooms, kitchens and dining areas. We create ceilings that complement your furniture, lighting and overall interior theme. From simple clean designs for a minimal look to elaborate multi-layer ceilings with cove lighting for a luxurious feel, we handle every home project with care and precision.
-            </p>
-            <Link to="/false-ceiling-guwahati" style={{ color: 'var(--secondary)', fontWeight: 500, display: 'inline-block', marginBottom: 32 }}>Explore home false ceiling options →</Link>
-
-            <h3 style={{ fontSize: '1.25rem', marginBottom: 12 }}>Office False Ceiling in Guwahati</h3>
-            <p style={{ fontSize: '1.02rem', lineHeight: 1.8, marginBottom: 24 }}>
-              A professional office ceiling creates the right impression for clients and a productive environment for your team. Sahanines Interiors provides office false ceiling solutions including grid ceilings for open workspaces, designer ceilings for cabins and conference rooms, and acoustic ceilings for noise reduction. We integrate lighting, AC vents, fire safety systems and cable management into the ceiling design for a clean, functional workspace.
-            </p>
-            <Link to="/interior-design-guwahati" style={{ color: 'var(--secondary)', fontWeight: 500, display: 'inline-block', marginBottom: 32 }}>View our commercial interior services →</Link>
-          </div>
-        </div>
-      </section>
-
       {/* Interior Design Services in Guwahati */}
       <section className="section bg-alt" id="interior-design">
         <div className="container">

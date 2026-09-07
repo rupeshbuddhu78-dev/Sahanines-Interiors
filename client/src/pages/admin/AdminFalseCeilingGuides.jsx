@@ -44,27 +44,35 @@ export default function AdminFalseCeilingGuides() {
     const file = e.target.files[0]
     if (!file) return
 
+    // Check file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      alert('Video file size must be under 50MB. Please compress the video or paste a Cloudinary URL directly.')
+      return
+    }
+
     setUploading(true)
     const formData = new FormData()
     formData.append('video', file)
 
     try {
-      // Upload video to Cloudinary via backend
+      const token = localStorage.getItem('adminToken')
       const res = await axios.post('/api/upload-video', formData, {
-        ...getToken(),
         headers: {
-          ...getToken().headers,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
         }
       })
       if (res.data.success) {
-        setForm({ ...form, videoUrl: res.data.url })
+        setForm(prev => ({ ...prev, videoUrl: res.data.url }))
+        alert('Video uploaded successfully to Cloudinary!')
       }
     } catch (err) {
-      // If video upload fails, allow manual URL input
-      alert('Video upload failed. You can paste a Cloudinary video URL directly in the Video URL field.')
+      const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
+      alert(`Video upload failed: ${errorMsg}\n\nYou can paste a Cloudinary video URL directly in the Video URL field above.`)
     }
     setUploading(false)
+    // Reset file input
+    e.target.value = ''
   }
 
   const handleSubmit = async (e) => {
@@ -157,17 +165,19 @@ export default function AdminFalseCeilingGuides() {
               type="url"
               value={form.videoUrl}
               onChange={e => setForm({ ...form, videoUrl: e.target.value })}
-              placeholder="Paste Cloudinary video URL or upload below"
+              placeholder="Upload video or paste Cloudinary URL (https://res.cloudinary.com/...)"
             />
             <div style={{ marginTop: 8 }}>
-              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '8px 16px', background: '#f0f0f0', borderRadius: 6, fontSize: '0.9rem' }}>
-                {uploading ? 'Uploading...' : 'Upload Video File'}
-                <input type="file" accept="video/*" onChange={handleVideoUpload} style={{ display: 'none' }} />
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: uploading ? 'wait' : 'pointer', padding: '8px 16px', background: uploading ? '#ddd' : '#f0f0f0', borderRadius: 6, fontSize: '0.9rem', pointerEvents: uploading ? 'none' : 'auto' }}>
+                {uploading ? 'Uploading... Please wait' : 'Upload Video File (max 50MB)'}
+                <input type="file" accept="video/mp4,video/mov,video/webm,video/*" onChange={handleVideoUpload} style={{ display: 'none' }} disabled={uploading} />
               </label>
+              <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 4 }}>Video will be uploaded to Cloudinary and URL will be saved automatically. You can also paste a Cloudinary URL directly.</p>
             </div>
             {form.videoUrl && (
-              <div style={{ marginTop: 8 }}>
-                <video src={form.videoUrl} controls style={{ maxWidth: 300, borderRadius: 8 }} muted />
+              <div style={{ marginTop: 10 }}>
+                <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: 6, wordBreak: 'break-all' }}>{form.videoUrl}</p>
+                <video src={form.videoUrl} controls style={{ maxWidth: 320, borderRadius: 8, border: '1px solid #eee' }} muted />
               </div>
             )}
           </div>

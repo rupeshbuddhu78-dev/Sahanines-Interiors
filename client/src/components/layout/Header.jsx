@@ -32,6 +32,7 @@ export default function Header() {
     { to: '/services', label: 'Services' },
     { to: '/projects', label: 'Projects' },
     { to: '/gallery', label: 'Gallery' },
+    { to: '/guides', label: 'Guides' },
     { to: '/reviews', label: 'Reviews' },
     { to: '/faq', label: 'FAQ' },
     { to: '/contact', label: 'Contact' }

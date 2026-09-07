@@ -458,10 +458,12 @@ const videoStorage = multer.diskStorage({
 const videoUpload = multer({
   storage: videoStorage,
   fileFilter: (r, f, cb) => {
-    if (/mp4|mov|webm|avi|mkv/.test(path.extname(f.originalname).toLowerCase())) cb(null, true);
+    const ext = path.extname(f.originalname).toLowerCase();
+    const mime = f.mimetype || '';
+    if (/mp4|mov|webm|avi|mkv|wmv|flv/.test(ext) || /video/.test(mime)) cb(null, true);
     else cb(new Error('Only video files allowed'));
   },
-  limits: { fileSize: 100 * 1024 * 1024 } // 100MB
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB
 });
 
 app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res) => {
@@ -470,7 +472,8 @@ app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res
     if (isCloudinaryConfigured()) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'sahanines-interiors/videos',
-        resource_type: 'video'
+        resource_type: 'video',
+        chunk_size: 6000000
       });
       fs.unlinkSync(req.file.path);
       res.json({ success: true, url: result.secure_url, filename: result.public_id, storage: 'cloudinary' });
@@ -479,7 +482,7 @@ app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res
     }
   } catch (error) {
     console.error('Video upload error:', error);
-    fs.unlinkSync(req.file.path);
+    try { fs.unlinkSync(req.file.path); } catch(e) {}
     res.status(500).json({ success: false, message: 'Video upload error: ' + error.message });
   }
 });
@@ -496,6 +499,7 @@ app.get('/sitemap.xml', async (req, res) => {
     { path: '/gallery', priority: '0.7', changefreq: 'weekly' },
     { path: '/reviews', priority: '0.8', changefreq: 'monthly' },
     { path: '/faq', priority: '0.6', changefreq: 'monthly' },
+    { path: '/guides', priority: '0.8', changefreq: 'monthly' },
     { path: '/contact', priority: '0.9', changefreq: 'monthly' },
     { path: '/false-ceiling-guwahati', priority: '0.9', changefreq: 'monthly' },
     { path: '/gypsum-false-ceiling-guwahati', priority: '0.9', changefreq: 'monthly' },
@@ -626,6 +630,10 @@ app.get(/^\/(?!api|uploads).*/, async (req, res) => {
       '/interior-design-guwahati': {
         title: 'Interior Design Service in Guwahati | Home & Office Interiors | Sahanines Interiors',
         description: 'Interior design service in Guwahati by Sahanines Interiors. Complete home and office interior solutions including ceiling design, lighting and finishing. Call 076360 08047.'
+      },
+      '/guides': {
+        title: 'False Ceiling Guides in Guwahati | Contractor Questions & Expert Tips | Sahanines Interiors',
+        description: 'Expert false ceiling guides in Guwahati. Learn what questions to ask your contractor before false ceiling construction. Tips on gypsum, POP, PVC ceiling installation in Guwahati by Sahanines Interiors.'
       }
     };
     
