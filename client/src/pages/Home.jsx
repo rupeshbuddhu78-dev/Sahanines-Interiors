@@ -465,6 +465,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Video Guides — Horizontal Scroll Section */}
+      {guides.filter(g => g.videoUrl).length > 0 && (
+        <section className="section" id="video-guides">
+          <div className="video-guides-section fade-up">
+            <div className="video-guides-header">
+              <span className="label">Video Guides</span>
+              <h2>False Ceiling Video Guides by Sahanines Interiors</h2>
+              <p>Watch our ongoing site tours and expert false ceiling construction videos in Guwahati. See our craftsmanship and quality of work before you book.</p>
+            </div>
+            <div className="video-scroll-container">
+              {guides.filter(g => g.videoUrl).slice(0, 6).map((guide, i) => (
+                <div key={guide._id} className="video-scroll-card" style={{ transitionDelay: `${i * 0.08}s` }}>
+                  <video
+                    src={guide.videoUrl}
+                    controls
+                    preload="metadata"
+                    playsInline
+                    className="video-scroll-player"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                  <div className="video-scroll-title">{guide.title}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* False Ceiling Guides & Contractor Questions — SEO Section for Guwahati */}
       {guides.length > 0 && (
         <section className="section bg-alt" id="false-ceiling-guides">

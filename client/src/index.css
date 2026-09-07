@@ -1133,6 +1133,99 @@ p { color: var(--text-light); }
 .toast-error { background: #c62828; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
+/* === VIDEO GUIDES HORIZONTAL SCROLL === */
+.video-guides-section {
+  padding: 0 0 0 0;
+}
+.video-guides-header {
+  padding: 0 24px 24px;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.video-guides-header h2 {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+.video-guides-header p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.video-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 16px;
+  padding: 0 24px 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary) transparent;
+}
+.video-scroll-container::-webkit-scrollbar {
+  height: 6px;
+}
+.video-scroll-container::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 3px;
+}
+.video-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.video-scroll-card {
+  flex: 0 0 auto;
+  width: 220px;
+  scroll-snap-align: start;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  transition: var(--transition);
+}
+.video-scroll-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.16);
+  transform: translateY(-2px);
+}
+.video-scroll-player {
+  width: 100%;
+  aspect-ratio: 9/16;
+  object-fit: cover;
+  background: #000;
+  display: block;
+}
+.video-scroll-title {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@media (max-width: 768px) {
+  .video-scroll-card {
+    width: 180px;
+  }
+  .video-scroll-container {
+    gap: 12px;
+    padding: 0 16px 12px;
+  }
+  .video-guides-header h2 {
+    font-size: 1.3rem;
+  }
+}
+@media (max-width: 480px) {
+  .video-scroll-card {
+    width: 160px;
+  }
+  .video-scroll-container {
+    gap: 10px;
+    padding: 0 12px 10px;
+  }
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
   .section { padding: 60px 0; }
