@@ -302,6 +302,42 @@ export default function Home() {
         </div>
       </section>
 
+      {/* False Ceiling Guides — Horizontal Video Scroll */}
+      {guides.length > 0 && (
+        <section className="section bg-alt" id="false-ceiling-guides">
+          <div className="container">
+            <div className="section-header fade-up">
+              <span className="label">Expert Guides</span>
+              <h2>False Ceiling Guides in Guwahati — Questions You Must Ask Your Contractor Before False Ceiling Construction</h2>
+              <p>Planning a false ceiling for your home or office in Guwahati? These expert guides by Sahanines Interiors will help you make informed decisions, choose the right materials and ask the right questions to your false ceiling contractor in Guwahati before construction begins.</p>
+            </div>
+            {/* Horizontal scroll — max 6 videos, swipe right on mobile */}
+            <div className="video-scroll-container fade-up">
+              {guides.slice(0, 6).map((guide, i) => (
+                <div key={guide._id} className="video-scroll-card" style={{ transitionDelay: `${i * 0.08}s` }}>
+                  <video
+                    src={guide.videoUrl || ''}
+                    controls
+                    preload="metadata"
+                    playsInline
+                    className="video-scroll-player"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                  <div className="video-scroll-title">{guide.title}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: 32 }}>
+              <p style={{ fontSize: '1.02rem', lineHeight: 1.8, maxWidth: 700, margin: '0 auto 16px' }}>
+                Need expert guidance for your false ceiling project in Guwahati? Sahanines Interiors provides free consultation and quotation for gypsum, POP and PVC false ceiling installation across Guwahati, Assam.
+              </p>
+              <Link to="/guides" className="btn btn-outline-dark">View All Guides</Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Interior Design Services in Guwahati */}
       <section className="section bg-alt" id="interior-design">
         <div className="container">
@@ -464,42 +500,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* False Ceiling Guides — Horizontal Video Scroll */}
-      {guides.length > 0 && (
-        <section className="section bg-alt" id="false-ceiling-guides">
-          <div className="container">
-            <div className="section-header fade-up">
-              <span className="label">Expert Guides</span>
-              <h2>False Ceiling Guides in Guwahati — Questions You Must Ask Your Contractor Before False Ceiling Construction</h2>
-              <p>Planning a false ceiling for your home or office in Guwahati? These expert guides by Sahanines Interiors will help you make informed decisions, choose the right materials and ask the right questions to your false ceiling contractor in Guwahati before construction begins.</p>
-            </div>
-            {/* Horizontal scroll — max 6 videos, swipe right on mobile */}
-            <div className="video-scroll-container fade-up">
-              {guides.slice(0, 6).map((guide, i) => (
-                <div key={guide._id} className="video-scroll-card" style={{ transitionDelay: `${i * 0.08}s` }}>
-                  <video
-                    src={guide.videoUrl || ''}
-                    controls
-                    preload="metadata"
-                    playsInline
-                    className="video-scroll-player"
-                  >
-                    Your browser does not support the video tag.
-                  </video>
-                  <div className="video-scroll-title">{guide.title}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ textAlign: 'center', marginTop: 32 }}>
-              <p style={{ fontSize: '1.02rem', lineHeight: 1.8, maxWidth: 700, margin: '0 auto 16px' }}>
-                Need expert guidance for your false ceiling project in Guwahati? Sahanines Interiors provides free consultation and quotation for gypsum, POP and PVC false ceiling installation across Guwahati, Assam.
-              </p>
-              <Link to="/guides" className="btn btn-outline-dark">View All Guides</Link>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Frequently Asked Questions - FAQ Schema for Rich Snippets */}
       <section className="section bg-alt" id="faq">
