@@ -537,14 +537,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* False Ceiling Guides & Contractor Questions */}
+      {/* False Ceiling Guides & Contractor Questions — SEO Section for Guwahati */}
       {guides.length > 0 && (
-        <section className="section" id="false-ceiling-guides">
+        <section className="section bg-alt" id="false-ceiling-guides">
           <div className="container">
             <div className="section-header fade-up">
               <span className="label">Expert Guides</span>
-              <h2>False Ceiling Guides and Questions You Must Ask Your Contractor Before False Ceiling Construction</h2>
-              <p>Planning a false ceiling for your home or office in Guwahati? These expert guides will help you make informed decisions and ask the right questions to your contractor before construction begins.</p>
+              <h2>False Ceiling Guides in Guwahati — Questions You Must Ask Your Contractor Before False Ceiling Construction</h2>
+              <p>Planning a false ceiling for your home or office in Guwahati? These expert guides by Sahanines Interiors will help you make informed decisions, choose the right materials and ask the right questions to your false ceiling contractor in Guwahati before construction begins.</p>
             </div>
             <div style={{ maxWidth: 900, margin: '0 auto' }}>
               {guides.map((guide, i) => (
@@ -554,7 +554,7 @@ export default function Home() {
 
                   {guide.advantages?.length > 0 && (
                     <div style={{ marginTop: 16 }}>
-                      <h4 style={{ fontSize: '1.05rem', marginBottom: 10, color: 'var(--primary)' }}>Key Advantages</h4>
+                      <h4 style={{ fontSize: '1.05rem', marginBottom: 10, color: 'var(--primary)' }}>Key Advantages of False Ceiling Installation in Guwahati</h4>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 8 }}>
                         {guide.advantages.map((adv, j) => (
                           <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 12px', background: '#f8f9fa', borderRadius: 6, fontSize: '0.95rem' }}>
@@ -580,6 +580,12 @@ export default function Home() {
                   )}
                 </div>
               ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: 24 }}>
+              <p style={{ fontSize: '1.02rem', lineHeight: 1.8, maxWidth: 700, margin: '0 auto 16px' }}>
+                Need expert guidance for your false ceiling project in Guwahati? Sahanines Interiors provides free consultation and quotation for gypsum, POP and PVC false ceiling installation across Guwahati, Assam.
+              </p>
+              <Link to="/contact" className="btn btn-outline-dark">Get Free Consultation for Your False Ceiling in Guwahati</Link>
             </div>
           </div>
         </section>

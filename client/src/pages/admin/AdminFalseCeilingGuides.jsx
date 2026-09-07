@@ -111,7 +111,7 @@ export default function AdminFalseCeilingGuides() {
             <input
               value={form.title}
               onChange={e => setForm({ ...form, title: e.target.value })}
-              placeholder="e.g. Questions You Must Ask Your Contractor Before False Ceiling Construction"
+              placeholder="e.g. Questions to Ask Your False Ceiling Contractor in Guwahati Before Construction"
               required
             />
           </div>
