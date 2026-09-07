@@ -47,6 +47,7 @@ const Gallery = require('./models/Gallery');
 const Testimonial = require('./models/Testimonial');
 const FAQ = require('./models/FAQ');
 const Enquiry = require('./models/Enquiry');
+const FalseCeilingGuide = require('./models/FalseCeilingGuide');
 
 function slugify(t) { return t.toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-'); }
 
@@ -345,6 +346,52 @@ app.delete('/api/faqs/:id', auth, async (req, res) => {
   res.json({ success: true });
 });
 
+// === False Ceiling Guides ===
+app.get('/api/false-ceiling-guides', async (req, res) => {
+  try {
+    const guides = await FalseCeilingGuide.find({ isPublished: true }).sort({ sortOrder: 1 });
+    res.json({ success: true, guides });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/api/false-ceiling-guides/all', auth, async (req, res) => {
+  try {
+    const guides = await FalseCeilingGuide.find().sort({ sortOrder: 1 });
+    res.json({ success: true, guides });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.post('/api/false-ceiling-guides', auth, async (req, res) => {
+  try {
+    const guide = await FalseCeilingGuide.create(req.body);
+    res.json({ success: true, guide });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.put('/api/false-ceiling-guides/:id', auth, async (req, res) => {
+  try {
+    const guide = await FalseCeilingGuide.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json({ success: true, guide });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.delete('/api/false-ceiling-guides/:id', auth, async (req, res) => {
+  try {
+    await FalseCeilingGuide.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Guide deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // Enquiries
 app.post('/api/enquiries', async (req, res) => {
   const { name, phone } = req.body;
@@ -400,6 +447,40 @@ app.post('/api/upload', auth, upload.single('image'), async (req, res) => {
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).json({ success: false, message: 'Upload error: ' + error.message });
+  }
+});
+
+// Upload video
+const videoStorage = multer.diskStorage({
+  destination: (r, f, cb) => cb(null, uploadDir),
+  filename: (r, f, cb) => cb(null, 'vid-' + Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(f.originalname))
+});
+const videoUpload = multer({
+  storage: videoStorage,
+  fileFilter: (r, f, cb) => {
+    if (/mp4|mov|webm|avi|mkv/.test(path.extname(f.originalname).toLowerCase())) cb(null, true);
+    else cb(new Error('Only video files allowed'));
+  },
+  limits: { fileSize: 100 * 1024 * 1024 } // 100MB
+});
+
+app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ success: false, message: 'No video file' });
+  try {
+    if (isCloudinaryConfigured()) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'sahanines-interiors/videos',
+        resource_type: 'video'
+      });
+      fs.unlinkSync(req.file.path);
+      res.json({ success: true, url: result.secure_url, filename: result.public_id, storage: 'cloudinary' });
+    } else {
+      res.json({ success: true, url: `/uploads/${req.file.filename}`, filename: req.file.filename, storage: 'local' });
+    }
+  } catch (error) {
+    console.error('Video upload error:', error);
+    fs.unlinkSync(req.file.path);
+    res.status(500).json({ success: false, message: 'Video upload error: ' + error.message });
   }
 });
 

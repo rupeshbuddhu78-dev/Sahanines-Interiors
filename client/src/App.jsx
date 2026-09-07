@@ -38,6 +38,7 @@ import AdminFAQs from './pages/admin/AdminFAQs'
 import AdminEnquiries from './pages/admin/AdminEnquiries'
 import AdminSettings from './pages/admin/AdminSettings'
 import AdminSEO from './pages/admin/AdminSEO'
+import AdminFalseCeilingGuides from './pages/admin/AdminFalseCeilingGuides'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -62,6 +63,7 @@ function App() {
           <Route path="enquiries" element={<AdminEnquiries />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="seo" element={<AdminSEO />} />
+          <Route path="false-ceiling-guides" element={<AdminFalseCeilingGuides />} />
         </Route>
 
         {/* Public routes */}

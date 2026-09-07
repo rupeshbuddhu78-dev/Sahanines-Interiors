@@ -18,20 +18,23 @@ export default function Home() {
   const [services, setServices] = useState([])
   const [projects, setProjects] = useState([])
   const [testimonials, setTestimonials] = useState(defaultTestimonials)
+  const [guides, setGuides] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [servRes, projRes, testRes] = await Promise.all([
+        const [servRes, projRes, testRes, guidesRes] = await Promise.all([
           axios.get('/api/services'),
           axios.get('/api/projects'),
-          axios.get('/api/testimonials')
+          axios.get('/api/testimonials'),
+          axios.get('/api/false-ceiling-guides')
         ])
         if (servRes.data.success) setServices(servRes.data.services)
         if (projRes.data.success) setProjects(projRes.data.projects.slice(0, 6))
         if (testRes.data.success && testRes.data.testimonials.length > 0) {
           setTestimonials(testRes.data.testimonials.slice(0, 3))
         }
+        if (guidesRes.data.success) setGuides(guidesRes.data.guides)
       } catch (err) { console.error(err) }
     }
     fetchData()
@@ -57,7 +60,7 @@ export default function Home() {
     document.querySelectorAll('.fade-up:not(.visible)').forEach(el => {
       observerRef.current.observe(el)
     })
-  }, [services, projects, testimonials])
+  }, [services, projects, testimonials, guides])
 
   const heroImage = settings?.hero?.image || ''
 
@@ -533,6 +536,54 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* False Ceiling Guides & Contractor Questions */}
+      {guides.length > 0 && (
+        <section className="section" id="false-ceiling-guides">
+          <div className="container">
+            <div className="section-header fade-up">
+              <span className="label">Expert Guides</span>
+              <h2>False Ceiling Guides and Questions You Must Ask Your Contractor Before False Ceiling Construction</h2>
+              <p>Planning a false ceiling for your home or office in Guwahati? These expert guides will help you make informed decisions and ask the right questions to your contractor before construction begins.</p>
+            </div>
+            <div style={{ maxWidth: 900, margin: '0 auto' }}>
+              {guides.map((guide, i) => (
+                <div key={guide._id} className="fade-up" style={{ transitionDelay: `${i * 0.1}s`, marginBottom: 32, padding: 28, background: 'white', borderRadius: 12, boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
+                  <h3 style={{ fontSize: '1.3rem', marginBottom: 14, color: 'var(--primary)', lineHeight: 1.4 }}>{guide.title}</h3>
+                  <p style={{ fontSize: '1.02rem', lineHeight: 1.8, color: '#444', marginBottom: guide.advantages?.length > 0 ? 16 : 0 }}>{guide.description}</p>
+
+                  {guide.advantages?.length > 0 && (
+                    <div style={{ marginTop: 16 }}>
+                      <h4 style={{ fontSize: '1.05rem', marginBottom: 10, color: 'var(--primary)' }}>Key Advantages</h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 8 }}>
+                        {guide.advantages.map((adv, j) => (
+                          <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 12px', background: '#f8f9fa', borderRadius: 6, fontSize: '0.95rem' }}>
+                            <span style={{ color: 'var(--secondary)', fontWeight: 700, flexShrink: 0 }}>✓</span>
+                            <span>{adv}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {guide.videoUrl && (
+                    <div style={{ marginTop: 20 }}>
+                      <video
+                        src={guide.videoUrl}
+                        controls
+                        preload="metadata"
+                        style={{ width: '100%', maxWidth: 720, borderRadius: 10, boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Frequently Asked Questions - FAQ Schema for Rich Snippets */}
       <section className="section bg-alt" id="faq">

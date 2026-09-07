@@ -31,6 +31,7 @@ export default function AdminLayout() {
     { path: '/admin/faqs', label: 'FAQs', icon: '?' },
     { path: '/admin/enquiries', label: 'Enquiries', icon: '✉' },
     { path: '/admin/seo', label: 'SEO', icon: '◎' },
+    { path: '/admin/false-ceiling-guides', label: 'Ceiling Guides', icon: '▤' },
     { path: '/admin/settings', label: 'Settings', icon: '⚙' },
   ]
 
