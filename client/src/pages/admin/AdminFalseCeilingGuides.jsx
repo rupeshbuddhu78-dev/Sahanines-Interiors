@@ -23,6 +23,9 @@ export default function AdminFalseCeilingGuides() {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadStatus, setUploadStatus] = useState('') // '', 'uploading', 'success', 'error'
+  const [uploadSpeed, setUploadSpeed] = useState(0) // bytes per second
+  const [uploadTimeLeft, setUploadTimeLeft] = useState(0) // seconds remaining
+  const [uploadFileSize, setUploadFileSize] = useState(0) // total file size in bytes
   const [uploadingThumb, setUploadingThumb] = useState(false)
 
   const fetchData = async () => {
@@ -54,6 +57,9 @@ export default function AdminFalseCeilingGuides() {
     setNewAdvantage('')
     setUploadProgress(0)
     setUploadStatus('')
+    setUploadSpeed(0)
+    setUploadTimeLeft(0)
+    setUploadFileSize(0)
   }
 
   const handleAddAdvantage = () => {
@@ -71,10 +77,10 @@ export default function AdminFalseCeilingGuides() {
     const file = e.target.files[0]
     if (!file) return
 
-    // Check file size (max 200MB)
-    const maxMB = 200
+    // Check file size (max 1GB)
+    const maxMB = 1024
     if (file.size > maxMB * 1024 * 1024) {
-      alert(`Video file size must be under ${maxMB}MB. Current: ${(file.size / 1024 / 1024).toFixed(1)}MB. Please compress the video or paste a Cloudinary URL directly.`)
+      alert(`Video file size must be under ${maxMB}MB (1GB). Current: ${(file.size / 1024 / 1024).toFixed(1)}MB. Please compress the video or paste a Cloudinary URL directly.`)
       e.target.value = ''
       return
     }
@@ -90,10 +96,15 @@ export default function AdminFalseCeilingGuides() {
     setUploading(true)
     setUploadProgress(0)
     setUploadStatus('uploading')
+    setUploadSpeed(0)
+    setUploadTimeLeft(0)
+    setUploadFileSize(file.size)
     const formData = new FormData()
     formData.append('video', file)
 
     const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
+    let lastLoaded = 0
+    let lastTime = Date.now()
 
     try {
       const res = await axios.post('/api/upload-video', formData, {
@@ -101,11 +112,27 @@ export default function AdminFalseCeilingGuides() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
         },
-        timeout: 600000, // 10 minutes timeout
+        timeout: 3600000, // 60 minutes timeout for 1GB files
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
             setUploadProgress(percent)
+
+            // Calculate upload speed and time remaining
+            const now = Date.now()
+            const elapsed = (now - lastTime) / 1000 // seconds
+            if (elapsed > 0.5) {
+              const bytesUploaded = progressEvent.loaded - lastLoaded
+              const bytesPerSec = bytesUploaded / elapsed
+              setUploadSpeed(bytesPerSec)
+
+              const remainingBytes = progressEvent.total - progressEvent.loaded
+              const secondsLeft = bytesPerSec > 0 ? remainingBytes / bytesPerSec : 0
+              setUploadTimeLeft(secondsLeft)
+
+              lastLoaded = progressEvent.loaded
+              lastTime = now
+            }
           }
         }
       })
@@ -113,9 +140,13 @@ export default function AdminFalseCeilingGuides() {
         setForm(prev => ({ ...prev, videoUrl: res.data.url }))
         setUploadStatus('success')
         setUploadProgress(100)
+        setUploadSpeed(0)
+        setUploadTimeLeft(0)
       }
     } catch (err) {
       setUploadStatus('error')
+      setUploadSpeed(0)
+      setUploadTimeLeft(0)
       const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
       if (err.response?.status === 401) {
         alert('Session expired. Please login again.')
@@ -361,7 +392,7 @@ export default function AdminFalseCeilingGuides() {
                 pointerEvents: uploading ? 'none' : 'auto',
                 border: '2px dashed #ccc'
               }}>
-                {uploading ? 'Uploading...' : '📁 Upload Video File (max 200MB)'}
+                {uploading ? 'Uploading...' : '📁 Upload Video File (max 1GB)'}
                 <input
                   type="file"
                   accept="video/*"
@@ -377,43 +408,115 @@ export default function AdminFalseCeilingGuides() {
 
             {/* Upload Progress Bar */}
             {uploading && (
-              <div style={{ marginTop: 14, padding: 14, background: '#f9f9f9', borderRadius: 8, border: '1px solid #e0e0e0' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#333' }}>Uploading video...</span>
-                  <span style={{ fontSize: '1.1rem', fontWeight: 700, color: uploadProgress >= 100 ? '#27ae60' : 'var(--primary)' }}>
+              <div style={{ marginTop: 14, padding: 16, background: '#f9f9f9', borderRadius: 10, border: '1px solid #e0e0e0' }}>
+                {/* Header row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#333' }}>
+                    Uploading video...
+                  </span>
+                  <span style={{
+                    fontSize: '1.3rem',
+                    fontWeight: 800,
+                    color: uploadProgress >= 100 ? '#27ae60' : 'var(--primary)',
+                    fontVariantNumeric: 'tabular-nums'
+                  }}>
                     {uploadProgress}%
                   </span>
                 </div>
+
+                {/* Progress bar */}
                 <div style={{
                   width: '100%',
-                  height: 20,
+                  height: 24,
                   background: '#e0e0e0',
-                  borderRadius: 10,
+                  borderRadius: 12,
                   overflow: 'hidden',
-                  position: 'relative'
+                  position: 'relative',
+                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)'
                 }}>
                   <div style={{
                     width: `${uploadProgress}%`,
                     height: '100%',
                     background: uploadProgress >= 100
                       ? 'linear-gradient(90deg, #27ae60, #2ecc71)'
-                      : 'linear-gradient(90deg, var(--primary), #4a90d9)',
-                    borderRadius: 10,
-                    transition: 'width 0.3s ease'
-                  }} />
+                      : 'linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa)',
+                    borderRadius: 12,
+                    transition: 'width 0.3s ease',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    {/* Animated stripes */}
+                    <div style={{
+                      position: 'absolute',
+                      top: 0, left: 0, right: 0, bottom: 0,
+                      background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.15) 10px, rgba(255,255,255,0.15) 20px)',
+                      animation: 'stripes-move 1s linear infinite'
+                    }} />
+                  </div>
                   <span style={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    fontSize: '0.75rem',
+                    fontSize: '0.8rem',
                     fontWeight: 700,
-                    color: uploadProgress > 50 ? 'white' : '#333'
+                    color: uploadProgress > 50 ? 'white' : '#333',
+                    textShadow: uploadProgress > 50 ? '0 1px 2px rgba(0,0,0,0.3)' : 'none'
                   }}>
                     {uploadProgress}%
                   </span>
                 </div>
-                <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
+
+                {/* Stats row: File size, Uploaded, Speed, Time left */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                  gap: '8px 16px',
+                  marginTop: 12,
+                  padding: '10px 12px',
+                  background: '#fff',
+                  borderRadius: 8,
+                  border: '1px solid #eee'
+                }}>
+                  <div>
+                    <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>File Size</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333', fontVariantNumeric: 'tabular-nums' }}>
+                      {uploadFileSize >= 1024 * 1024 * 1024
+                        ? (uploadFileSize / 1024 / 1024 / 1024).toFixed(2) + ' GB'
+                        : (uploadFileSize / 1024 / 1024).toFixed(1) + ' MB'}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Uploaded</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333', fontVariantNumeric: 'tabular-nums' }}>
+                      {((uploadFileSize * uploadProgress / 100) / 1024 / 1024).toFixed(1)} MB
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Speed</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333', fontVariantNumeric: 'tabular-nums' }}>
+                      {uploadSpeed >= 1024 * 1024
+                        ? (uploadSpeed / 1024 / 1024).toFixed(1) + ' MB/s'
+                        : uploadSpeed >= 1024
+                          ? (uploadSpeed / 1024).toFixed(0) + ' KB/s'
+                          : uploadSpeed > 0 ? 'Starting...' : '—'}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Time Left</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333', fontVariantNumeric: 'tabular-nums' }}>
+                      {uploadTimeLeft > 3600
+                        ? Math.floor(uploadTimeLeft / 3600) + 'h ' + Math.floor((uploadTimeLeft % 3600) / 60) + 'm'
+                        : uploadTimeLeft > 60
+                          ? Math.floor(uploadTimeLeft / 60) + 'm ' + Math.floor(uploadTimeLeft % 60) + 's'
+                          : uploadTimeLeft > 0
+                            ? Math.floor(uploadTimeLeft) + 's'
+                            : uploadSpeed > 0 ? 'Almost done...' : '—'}
+                    </div>
+                  </div>
+                </div>
+
+                <p style={{ fontSize: '0.78rem', color: '#999', marginTop: 8, marginBottom: 0, textAlign: 'center' }}>
                   Please do not close this page. Large videos may take a few minutes.
                 </p>
               </div>

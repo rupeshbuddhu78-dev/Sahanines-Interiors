@@ -1669,3 +1669,9 @@ p { color: var(--text-light); }
     justify-content: center;
   }
 }
+
+/* Upload progress bar animated stripes */
+@keyframes stripes-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 0; }
+}

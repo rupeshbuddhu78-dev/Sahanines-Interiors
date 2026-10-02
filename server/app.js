@@ -463,7 +463,7 @@ const videoUpload = multer({
     if (/mp4|mov|webm|avi|mkv|wmv|flv/.test(ext) || /video/.test(mime)) cb(null, true);
     else cb(new Error('Only video files allowed'));
   },
-  limits: { fileSize: 200 * 1024 * 1024 } // 200MB
+  limits: { fileSize: 1024 * 1024 * 1024 } // 1GB
 });
 
 app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res) => {
@@ -473,7 +473,7 @@ app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'sahanines-interiors/videos',
         resource_type: 'video',
-        chunk_size: 6000000
+        chunk_size: 20000000
       });
       fs.unlinkSync(req.file.path);
       res.json({ success: true, url: result.secure_url, filename: result.public_id, storage: 'cloudinary' });
