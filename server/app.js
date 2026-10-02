@@ -487,6 +487,38 @@ app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res
   }
 });
 
+// === Direct Cloudinary Upload Signature (bypasses server for large files) ===
+app.post('/api/cloudinary-signature', auth, (req, res) => {
+  if (!isCloudinaryConfigured()) {
+    return res.status(400).json({ success: false, message: 'Cloudinary not configured' });
+  }
+  try {
+    const timestamp = Math.round(Date.now() / 1000);
+    const resourceType = req.body.resourceType === 'video' ? 'video' : 'image';
+    const folder = resourceType === 'video' ? 'sahanines-interiors/videos' : 'sahanines-interiors';
+    
+    const paramsToSign = {
+      timestamp,
+      folder
+    };
+    
+    const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET);
+
+    res.json({
+      success: true,
+      signature,
+      timestamp,
+      apiKey: process.env.CLOUDINARY_API_KEY,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      folder,
+      resourceType
+    });
+  } catch (error) {
+    console.error('Signature error:', error);
+    res.status(500).json({ success: false, message: 'Signature generation failed' });
+  }
+});
+
 // Dynamic sitemap - includes all public pages + active services from DB
 app.get('/sitemap.xml', async (req, res) => {
   const base = process.env.SITE_URL || 'https://best-false-ceiling-specialist-of-guwahati-sahaninesinteriors.in';

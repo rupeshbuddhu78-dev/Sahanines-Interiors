@@ -80,12 +80,11 @@ export default function AdminFalseCeilingGuides() {
     // Check file size (max 1GB)
     const maxMB = 1024
     if (file.size > maxMB * 1024 * 1024) {
-      alert(`Video file size must be under ${maxMB}MB (1GB). Current: ${(file.size / 1024 / 1024).toFixed(1)}MB. Please compress the video or paste a Cloudinary URL directly.`)
+      alert(`Video file size must be under ${maxMB}MB (1GB). Current: ${(file.size / 1024 / 1024).toFixed(1)}MB.`)
       e.target.value = ''
       return
     }
 
-    // Check token before upload
     const token = localStorage.getItem('adminToken')
     if (!token) {
       alert('Session expired. Please login again.')
@@ -99,28 +98,45 @@ export default function AdminFalseCeilingGuides() {
     setUploadSpeed(0)
     setUploadTimeLeft(0)
     setUploadFileSize(file.size)
-    const formData = new FormData()
-    formData.append('video', file)
 
     const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
-    let lastLoaded = 0
-    let lastTime = Date.now()
 
     try {
-      const res = await axios.post('/api/upload-video', formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        },
-        timeout: 3600000, // 60 minutes timeout for 1GB files
+      // Step 1: Get Cloudinary signature from server
+      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        timeout: 30000
+      })
+
+      if (!sigRes.data.success) {
+        throw new Error('Failed to get upload signature')
+      }
+
+      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
+
+      // Step 2: Upload directly to Cloudinary from browser
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('api_key', apiKey)
+      formData.append('timestamp', timestamp)
+      formData.append('signature', signature)
+      formData.append('folder', folder)
+
+      let lastLoaded = 0
+      let lastTime = Date.now()
+
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`
+
+      const uploadRes = await axios.post(uploadUrl, formData, {
+        timeout: 3600000, // 60 minutes
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
             setUploadProgress(percent)
 
-            // Calculate upload speed and time remaining
+            // Calculate speed and time remaining
             const now = Date.now()
-            const elapsed = (now - lastTime) / 1000 // seconds
+            const elapsed = (now - lastTime) / 1000
             if (elapsed > 0.5) {
               const bytesUploaded = progressEvent.loaded - lastLoaded
               const bytesPerSec = bytesUploaded / elapsed
@@ -136,12 +152,15 @@ export default function AdminFalseCeilingGuides() {
           }
         }
       })
-      if (res.data.success) {
-        setForm(prev => ({ ...prev, videoUrl: res.data.url }))
+
+      if (uploadRes.data.secure_url) {
+        setForm(prev => ({ ...prev, videoUrl: uploadRes.data.secure_url }))
         setUploadStatus('success')
         setUploadProgress(100)
         setUploadSpeed(0)
         setUploadTimeLeft(0)
+      } else {
+        throw new Error('Upload response missing URL')
       }
     } catch (err) {
       setUploadStatus('error')
@@ -156,7 +175,6 @@ export default function AdminFalseCeilingGuides() {
       }
     }
     setUploading(false)
-    // Reset file input after a delay so user can see the status
     setTimeout(() => {
       e.target.value = ''
       if (uploadStatus === 'error') setUploadStatus('')
@@ -182,26 +200,42 @@ export default function AdminFalseCeilingGuides() {
     }
 
     setUploadingThumb(true)
-    const formData = new FormData()
-    formData.append('image', file)
 
     try {
-      const res = await axios.post('/api/upload', formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        },
-        timeout: 120000
+      // Get Cloudinary signature from server
+      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'image' }, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        timeout: 30000
       })
-      if (res.data.success) {
-        setForm(prev => ({ ...prev, thumbnailUrl: res.data.url }))
+
+      if (!sigRes.data.success) {
+        throw new Error('Failed to get upload signature')
+      }
+
+      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
+
+      // Upload directly to Cloudinary
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('api_key', apiKey)
+      formData.append('timestamp', timestamp)
+      formData.append('signature', signature)
+      formData.append('folder', folder)
+
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
+      const uploadRes = await axios.post(uploadUrl, formData, { timeout: 120000 })
+
+      if (uploadRes.data.secure_url) {
+        setForm(prev => ({ ...prev, thumbnailUrl: uploadRes.data.secure_url }))
+      } else {
+        throw new Error('Upload response missing URL')
       }
     } catch (err) {
       if (err.response?.status === 401) {
         alert('Session expired. Please login again.')
         navigate('/admin/login')
       } else {
-        alert(`Thumbnail upload failed: ${err.response?.data?.message || err.message}`)
+        alert(`Thumbnail upload failed: ${err.response?.data?.error?.message || err.message}`)
       }
     }
     setUploadingThumb(false)
