@@ -519,6 +519,18 @@ app.post('/api/cloudinary-signature', auth, (req, res) => {
   }
 });
 
+// === Get Cloudinary config for Upload Widget ===
+app.get('/api/cloudinary-config', auth, (req, res) => {
+  if (!isCloudinaryConfigured()) {
+    return res.status(400).json({ success: false, message: 'Cloudinary not configured' });
+  }
+  res.json({
+    success: true,
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET || 'sahanines-admin'
+  });
+});
+
 // Dynamic sitemap - includes all public pages + active services from DB
 app.get('/sitemap.xml', async (req, res) => {
   const base = process.env.SITE_URL || 'https://best-false-ceiling-specialist-of-guwahati-sahaninesinteriors.in';

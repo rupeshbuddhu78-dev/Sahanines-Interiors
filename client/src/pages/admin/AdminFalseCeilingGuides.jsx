@@ -75,18 +75,7 @@ export default function AdminFalseCeilingGuides() {
     setForm({ ...form, advantages: form.advantages.filter((_, i) => i !== index) })
   }
 
-  const handleVideoUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-
-    // Check file size (max 1GB)
-    const maxMB = 1024
-    if (file.size > maxMB * 1024 * 1024) {
-      alert(`Video file size must be under ${maxMB}MB (1GB). Current: ${(file.size / 1024 / 1024).toFixed(1)}MB.`)
-      e.target.value = ''
-      return
-    }
-
+  const handleVideoUpload = async () => {
     const token = localStorage.getItem('adminToken')
     if (!token) {
       alert('Session expired. Please login again.')
@@ -94,127 +83,108 @@ export default function AdminFalseCeilingGuides() {
       return
     }
 
-    setUploading(true)
-    setUploadProgress(0)
-    setUploadStatus('uploading')
-    setUploadSpeed(0)
-    setUploadTimeLeft(0)
-    setUploadFileSize(file.size)
-    setUploadChunkInfo('')
-
-    const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
-
     try {
-      // Step 1: Get Cloudinary signature from server
-      setUploadChunkInfo('Getting upload signature...')
-      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
-        headers: { 'Authorization': `Bearer ${token}` },
-        timeout: 30000
+      // Get Cloudinary config from server
+      const configRes = await axios.get('/api/cloudinary-config', {
+        headers: { 'Authorization': `Bearer ${token}` }
       })
 
-      if (!sigRes.data.success) {
-        throw new Error('Failed to get upload signature')
+      if (!configRes.data.success) {
+        throw new Error('Failed to get upload config')
       }
 
-      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
-      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`
+      const { cloudName, uploadPreset } = configRes.data
 
-      // Step 2: Direct upload to Cloudinary with retry (up to 5 attempts)
-      let lastTime = Date.now()
-      let lastLoaded = 0
-
-      for (let attempt = 1; attempt <= 5; attempt++) {
-        try {
-          setUploadChunkInfo(attempt > 1 ? `Retrying upload (attempt ${attempt}/5)...` : 'Uploading video to Cloudinary...')
-
-          const formData = new FormData()
-          formData.append('file', file)
-          formData.append('api_key', apiKey)
-          formData.append('timestamp', String(timestamp))
-          formData.append('signature', signature)
-          formData.append('folder', folder)
-
-          lastTime = Date.now()
-          lastLoaded = 0
-
-          const uploadRes = await axios.post(uploadUrl, formData, {
-            timeout: 3600000, // 60 minutes
-            onUploadProgress: (progressEvent) => {
-              if (progressEvent.total) {
-                const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-                setUploadProgress(percent)
-
-                // Calculate speed and time remaining
-                const now = Date.now()
-                const elapsed = (now - lastTime) / 1000
-                if (elapsed > 0.5) {
-                  const bytesUploaded = progressEvent.loaded - lastLoaded
-                  const bytesPerSec = bytesUploaded / elapsed
-                  setUploadSpeed(bytesPerSec)
-
-                  const remainingBytes = progressEvent.total - progressEvent.loaded
-                  const secondsLeft = bytesPerSec > 0 ? remainingBytes / bytesPerSec : 0
-                  setUploadTimeLeft(secondsLeft)
-
-                  lastLoaded = progressEvent.loaded
-                  lastTime = now
-                }
-              }
-            }
-          })
-
-          if (uploadRes.data.secure_url) {
-            setForm(prev => ({ ...prev, videoUrl: uploadRes.data.secure_url }))
-            setUploadStatus('success')
-            setUploadProgress(100)
-            setUploadSpeed(0)
-            setUploadTimeLeft(0)
-            setUploadChunkInfo('Upload complete!')
-            break
-          } else {
-            throw new Error('Upload response missing URL')
-          }
-        } catch (uploadErr) {
-          if (attempt < 5) {
-            const waitSec = attempt * 3
-            setUploadChunkInfo(`Upload failed, retrying in ${waitSec}s... (attempt ${attempt}/5)`)
-            await new Promise(r => setTimeout(r, waitSec * 1000))
-          } else {
-            throw uploadErr
+      // Open Cloudinary Upload Widget
+      const widget = window.cloudinary.createUploadWidget({
+        cloudName: cloudName,
+        uploadPreset: uploadPreset,
+        sources: ['local', 'camera'],
+        resourceType: 'video',
+        folder: 'sahanines-interiors/videos',
+        maxFileSize: 1024 * 1024 * 1024, // 1GB
+        clientAllowedFormats: ['video'],
+        thumbnails: '.5',
+        showPoweredBy: false,
+        cropping: false,
+        multiple: false,
+        styles: {
+          palette: {
+            window: "#FFFFFF",
+            windowBorder: "#90A0B3",
+            windowBorderDark: "#000000",
+            tabIcon: "#0073FF",
+            tabIconHover: "#0059CC",
+            menuHover: "#0073FF",
+            textDark: "#000000",
+            textLight: "#FFFFFF",
+            link: "#0073FF",
+            action: "#FF620C",
+            inactiveTabIcon: "#69778A",
+            error: "#F44242",
+            inProgress: "#0073FF",
+            uploadComplete: "#620887",
+            uploadDraft: "#69778A",
+            uploadDraftIcon: "#69778A",
+            dropzone: "#F5F7FA",
+            dropzoneText: "#69778A",
+            dropzoneTextDark: "#000000",
+            dropzoneIcon: "#69778A",
+            fileIcon: "#69778A",
+            fileName: "#000000",
+            fileSize: "#69778A",
+            fileProgress: "#0073FF",
+            fileProgressBackground: "#E6EEF9",
+            fileInfo: "#69778A",
+            image: "#0073FF",
+            imageBackground: "#F5F7FA",
+            imageBorder: "#E0E0E0",
+            imageHover: "#0059CC",
+            imageSelected: "#0073FF",
+            imageSelectedBackground: "#E6EEF9",
+            imageSelectedBorder: "#0073FF"
           }
         }
-      }
-    } catch (err) {
-      setUploadStatus('error')
+      }, (error, result) => {
+        if (!error && result && result.event === 'success') {
+          const url = result.info.secure_url
+          setForm(prev => ({ ...prev, videoUrl: url }))
+          setUploadStatus('success')
+          setUploadProgress(100)
+          setUploadSpeed(0)
+          setUploadTimeLeft(0)
+          setUploadChunkInfo('Upload complete!')
+          setUploading(false)
+        } else if (result && result.event === 'close') {
+          // Widget closed by user
+          setUploading(false)
+          setUploadChunkInfo('')
+        } else if (error) {
+          console.error('Upload error:', error)
+          setUploadStatus('error')
+          setUploadChunkInfo('')
+          setUploading(false)
+          alert(`Video upload failed: ${error.message || 'Unknown error'}\n\nTip: Use Wi-Fi for large files, or paste a Cloudinary video URL directly.`)
+        }
+      })
+
+      setUploading(true)
+      setUploadProgress(0)
+      setUploadStatus('uploading')
       setUploadSpeed(0)
       setUploadTimeLeft(0)
-      setUploadChunkInfo('')
-      const errorMsg = err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Unknown error'
-      if (err.response?.status === 401) {
-        alert('Session expired. Please login again.')
-        navigate('/admin/login')
-      } else {
-        alert(`Video upload failed: ${errorMsg}\n\nFile size: ${fileSizeMB}MB\n\nTip: Use Wi-Fi for large files, or paste a Cloudinary video URL directly.`)
-      }
+      setUploadFileSize(0)
+      setUploadChunkInfo('Opening upload widget...')
+      
+      widget.open()
+    } catch (err) {
+      console.error('Error opening upload widget:', err)
+      alert('Failed to open upload widget. Please try again or paste a Cloudinary URL directly.')
+      setUploading(false)
     }
-    setUploading(false)
-    setTimeout(() => {
-      e.target.value = ''
-      if (uploadStatus === 'error') setUploadStatus('')
-    }, 1000)
   }
 
-  const handleThumbnailUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-
-    const maxMB = 10
-    if (file.size > maxMB * 1024 * 1024) {
-      alert(`Image file size must be under ${maxMB}MB.`)
-      e.target.value = ''
-      return
-    }
-
+  const handleThumbnailUpload = async () => {
     const token = localStorage.getItem('adminToken')
     if (!token) {
       alert('Session expired. Please login again.')
@@ -222,47 +192,54 @@ export default function AdminFalseCeilingGuides() {
       return
     }
 
-    setUploadingThumb(true)
-
     try {
-      // Get Cloudinary signature from server
-      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'image' }, {
-        headers: { 'Authorization': `Bearer ${token}` },
-        timeout: 30000
+      // Get Cloudinary config from server
+      const configRes = await axios.get('/api/cloudinary-config', {
+        headers: { 'Authorization': `Bearer ${token}` }
       })
 
-      if (!sigRes.data.success) {
-        throw new Error('Failed to get upload signature')
+      if (!configRes.data.success) {
+        throw new Error('Failed to get upload config')
       }
 
-      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
+      const { cloudName, uploadPreset } = configRes.data
 
-      // Upload directly to Cloudinary
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('api_key', apiKey)
-      formData.append('timestamp', timestamp)
-      formData.append('signature', signature)
-      formData.append('folder', folder)
+      // Open Cloudinary Upload Widget
+      const widget = window.cloudinary.createUploadWidget({
+        cloudName: cloudName,
+        uploadPreset: uploadPreset,
+        sources: ['local', 'camera'],
+        resourceType: 'image',
+        folder: 'sahanines-interiors',
+        maxFileSize: 10 * 1024 * 1024, // 10MB
+        clientAllowedFormats: ['image'],
+        cropping: true,
+        croppingAspectRatio: 9/16,
+        croppingDefaultSelectionRatio: 9/16,
+        showPoweredBy: false,
+        multiple: false
+      }, (error, result) => {
+        if (!error && result && result.event === 'success') {
+          const url = result.info.secure_url
+          setForm(prev => ({ ...prev, thumbnailUrl: url }))
+          setUploadingThumb(false)
+        } else if (result && result.event === 'close') {
+          // Widget closed by user
+          setUploadingThumb(false)
+        } else if (error) {
+          console.error('Thumbnail upload error:', error)
+          setUploadingThumb(false)
+          alert(`Thumbnail upload failed: ${error.message || 'Unknown error'}`)
+        }
+      })
 
-      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
-      const uploadRes = await axios.post(uploadUrl, formData, { timeout: 120000 })
-
-      if (uploadRes.data.secure_url) {
-        setForm(prev => ({ ...prev, thumbnailUrl: uploadRes.data.secure_url }))
-      } else {
-        throw new Error('Upload response missing URL')
-      }
+      setUploadingThumb(true)
+      widget.open()
     } catch (err) {
-      if (err.response?.status === 401) {
-        alert('Session expired. Please login again.')
-        navigate('/admin/login')
-      } else {
-        alert(`Thumbnail upload failed: ${err.response?.data?.error?.message || err.message}`)
-      }
+      console.error('Error opening upload widget:', err)
+      alert('Failed to open upload widget. Please try again or paste a Cloudinary URL directly.')
+      setUploadingThumb(false)
     }
-    setUploadingThumb(false)
-    e.target.value = ''
   }
 
   const handleSubmit = async (e) => {
@@ -386,28 +363,25 @@ export default function AdminFalseCeilingGuides() {
               disabled={uploadingThumb}
             />
             <div style={{ marginTop: 10 }}>
-              <label style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                cursor: uploadingThumb ? 'wait' : 'pointer',
-                padding: '10px 18px',
-                background: uploadingThumb ? '#e0e0e0' : '#f0f0f0',
-                borderRadius: 8,
-                fontSize: '0.9rem',
-                fontWeight: 500,
-                pointerEvents: uploadingThumb ? 'none' : 'auto',
-                border: '2px dashed #ccc'
-              }}>
+              <button
+                type="button"
+                onClick={handleThumbnailUpload}
+                disabled={uploadingThumb}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  cursor: uploadingThumb ? 'wait' : 'pointer',
+                  padding: '10px 18px',
+                  background: uploadingThumb ? '#e0e0e0' : '#f0f0f0',
+                  borderRadius: 8,
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                  border: '2px dashed #ccc'
+                }}
+              >
                 {uploadingThumb ? 'Uploading...' : '🖼️ Upload Thumbnail Image (max 10MB)'}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleThumbnailUpload}
-                  style={{ display: 'none' }}
-                  disabled={uploadingThumb}
-                />
-              </label>
+              </button>
               <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
                 This image will be shown as the video poster/thumbnail on the Guides page. Recommended size: 720x1280 (9:16 ratio).
               </p>
@@ -436,30 +410,27 @@ export default function AdminFalseCeilingGuides() {
               disabled={uploading}
             />
             <div style={{ marginTop: 10 }}>
-              <label style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                cursor: uploading ? 'wait' : 'pointer',
-                padding: '10px 18px',
-                background: uploading ? '#e0e0e0' : '#f0f0f0',
-                borderRadius: 8,
-                fontSize: '0.9rem',
-                fontWeight: 500,
-                pointerEvents: uploading ? 'none' : 'auto',
-                border: '2px dashed #ccc'
-              }}>
+              <button
+                type="button"
+                onClick={handleVideoUpload}
+                disabled={uploading}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  cursor: uploading ? 'wait' : 'pointer',
+                  padding: '10px 18px',
+                  background: uploading ? '#e0e0e0' : '#f0f0f0',
+                  borderRadius: 8,
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                  border: '2px dashed #ccc'
+                }}
+              >
                 {uploading ? 'Uploading...' : '📁 Upload Video File (max 1GB)'}
-                <input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoUpload}
-                  style={{ display: 'none' }}
-                  disabled={uploading}
-                />
-              </label>
+              </button>
               <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
-                Video will be uploaded to Cloudinary. You can also paste any Cloudinary video URL directly in the field above.
+                Video will be uploaded to Cloudinary with auto-retry. You can also paste any Cloudinary video URL directly in the field above.
               </p>
             </div>
 
