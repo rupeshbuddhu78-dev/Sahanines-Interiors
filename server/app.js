@@ -518,8 +518,8 @@ app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res
   const videoPath = `/uploads/${req.file.filename}`;
   
   try {
-    // Only upload to Cloudinary if file is under 100MB (free plan limit)
-    if (isCloudinaryConfigured() && fileSizeMB <= 95) {
+    // Only upload to Cloudinary if file is under 200MB
+    if (isCloudinaryConfigured() && fileSizeMB <= 200) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'sahanines-interiors/videos',
         resource_type: 'video',
