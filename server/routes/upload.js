@@ -49,23 +49,34 @@ router.post('/video', protect, videoUpload.single('video'), async (req, res) => 
   try {
     if (!req.file) return res.status(400).json({ success: false, message: 'No video file uploaded' });
     
+    const fileSizeMB = req.file.size / (1024 * 1024);
+    
     if (isCloudinaryConfigured()) {
+      // Always upload to Cloudinary - use larger chunks for bigger files
+      const chunkSize = fileSizeMB > 300 ? 100000000 : fileSizeMB > 100 ? 50000000 : 20000000;
+      const timeout = fileSizeMB > 300 ? 1800000 : fileSizeMB > 100 ? 1200000 : 600000;
+      
+      console.log(`📹 Uploading video to Cloudinary (${fileSizeMB.toFixed(1)}MB, chunk: ${chunkSize/1000000}MB)...`);
+      
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'sahanines-interiors/videos',
         resource_type: 'video',
-        chunk_size: 50000000,
-        timeout: 600000
+        chunk_size: chunkSize,
+        timeout: timeout
       });
-      fs.unlinkSync(req.file.path);
+      
+      try { fs.unlinkSync(req.file.path); } catch(e) {}
+      console.log(`✅ Video uploaded to Cloudinary: ${result.secure_url}`);
       res.json({ success: true, url: result.secure_url, filename: result.public_id, storage: 'cloudinary' });
     } else {
       const url = `/uploads/${req.file.filename}`;
-      res.json({ success: true, url, filename: req.file.filename, storage: 'local' });
+      console.log(`⚠️ Cloudinary NOT configured. Video stored locally.`);
+      res.json({ success: true, url, filename: req.file.filename, storage: 'local', warning: 'Cloudinary not configured. Videos stored locally will be lost on server restart.' });
     }
   } catch (error) {
     console.error('Video upload error:', error);
     try { fs.unlinkSync(req.file.path); } catch(e) {}
-    res.status(500).json({ success: false, message: 'Video upload error: ' + error.message });
+    res.status(500).json({ success: false, message: 'Video upload to Cloudinary failed: ' + error.message + '. Please try again or use a smaller file.' });
   }
 });
 

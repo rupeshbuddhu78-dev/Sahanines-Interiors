@@ -510,7 +510,7 @@ const videoUpload = multer({
   limits: { fileSize: 1024 * 1024 * 1024 } // 1GB
 });
 
-// Upload video - store locally for files > 100MB (Cloudinary free limit)
+// Upload video - always upload to Cloudinary CDN
 app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res) => {
   if (!req.file) return res.status(400).json({ success: false, message: 'No video file' });
   
@@ -518,34 +518,38 @@ app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res
   const videoPath = `/uploads/${req.file.filename}`;
   
   try {
-    // Only upload to Cloudinary if file is under 200MB
-    if (isCloudinaryConfigured() && fileSizeMB <= 200) {
+    if (isCloudinaryConfigured()) {
+      // Always upload to Cloudinary - use larger chunks for bigger files
+      const chunkSize = fileSizeMB > 300 ? 100000000 : fileSizeMB > 100 ? 50000000 : 20000000;
+      const timeout = fileSizeMB > 300 ? 1800000 : fileSizeMB > 100 ? 1200000 : 600000;
+      
+      console.log(`📹 Uploading video to Cloudinary (${fileSizeMB.toFixed(1)}MB, chunk: ${chunkSize/1000000}MB)...`);
+      
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'sahanines-interiors/videos',
         resource_type: 'video',
-        chunk_size: 50000000,
-        timeout: 600000
+        chunk_size: chunkSize,
+        timeout: timeout
       });
-      fs.unlinkSync(req.file.path);
+      
+      // Delete local temp file after successful Cloudinary upload
+      try { fs.unlinkSync(req.file.path); } catch(e) { console.log('Could not delete temp file:', e.message); }
+      
+      console.log(`✅ Video uploaded to Cloudinary: ${result.secure_url}`);
       res.json({ success: true, url: result.secure_url, filename: result.public_id, storage: 'cloudinary' });
     } else {
-      // Store locally for large files (>100MB) or if Cloudinary not configured
+      // Cloudinary not configured - store locally (will NOT persist on Render)
       const baseUrl = process.env.SITE_URL || `http://localhost:${PORT}`;
       const fullUrl = `${baseUrl}${videoPath}`;
-      console.log(`📹 Video stored locally (${fileSizeMB.toFixed(1)}MB): ${videoPath}`);
-      res.json({ success: true, url: videoPath, fullUrl, filename: req.file.filename, storage: 'local', size: fileSizeMB.toFixed(1) + 'MB' });
+      console.log(`⚠️ Cloudinary NOT configured. Video stored locally (${fileSizeMB.toFixed(1)}MB): ${videoPath}`);
+      console.log(`⚠️ WARNING: Local files do NOT persist on Render. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET env vars.`);
+      res.json({ success: true, url: videoPath, fullUrl, filename: req.file.filename, storage: 'local', size: fileSizeMB.toFixed(1) + 'MB', warning: 'Cloudinary not configured. Videos stored locally will be lost on server restart.' });
     }
   } catch (error) {
     console.error('Video upload error:', error);
-    // If Cloudinary upload fails, keep file locally as fallback
-    if (fs.existsSync(req.file.path)) {
-      const baseUrl = process.env.SITE_URL || `http://localhost:${PORT}`;
-      const fullUrl = `${baseUrl}${videoPath}`;
-      console.log(`⚠️ Cloudinary failed, keeping video locally: ${videoPath}`);
-      res.json({ success: true, url: videoPath, fullUrl, filename: req.file.filename, storage: 'local', size: fileSizeMB.toFixed(1) + 'MB', note: 'Stored locally due to Cloudinary error' });
-    } else {
-      res.status(500).json({ success: false, message: 'Video upload error: ' + error.message });
-    }
+    // Clean up local temp file on error
+    try { fs.unlinkSync(req.file.path); } catch(e) {}
+    res.status(500).json({ success: false, message: 'Video upload to Cloudinary failed: ' + error.message + '. Please try again or use a smaller file.' });
   }
 });
 
