@@ -100,11 +100,13 @@ export default function AdminFalseCeilingGuides() {
     setUploadSpeed(0)
     setUploadTimeLeft(0)
     setUploadFileSize(file.size)
+    setUploadChunkInfo('')
 
     const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
 
     try {
       // Step 1: Get Cloudinary signature from server
+      setUploadChunkInfo('Getting upload signature...')
       const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
         headers: { 'Authorization': `Bearer ${token}` },
         timeout: 30000
@@ -116,93 +118,72 @@ export default function AdminFalseCeilingGuides() {
 
       const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
       const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`
-      const uniqueUploadId = `upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-      // Step 2: Chunked upload for reliability on slow networks
-      const CHUNK_SIZE = 5 * 1024 * 1024 // 5MB chunks
-      const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
-      let bytesUploaded = 0
+      // Step 2: Direct upload to Cloudinary with retry (up to 5 attempts)
       let lastTime = Date.now()
-      let lastBytes = 0
+      let lastLoaded = 0
 
-      setUploadChunkInfo(`Starting upload... 0/${totalChunks} chunks`)
+      for (let attempt = 1; attempt <= 5; attempt++) {
+        try {
+          setUploadChunkInfo(attempt > 1 ? `Retrying upload (attempt ${attempt}/5)...` : 'Uploading video to Cloudinary...')
 
-      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-        const start = chunkIndex * CHUNK_SIZE
-        const end = Math.min(start + CHUNK_SIZE, file.size)
-        const chunk = file.slice(start, end)
-        const contentRange = `bytes ${start}-${end - 1}/${file.size}`
+          const formData = new FormData()
+          formData.append('file', file)
+          formData.append('api_key', apiKey)
+          formData.append('timestamp', String(timestamp))
+          formData.append('signature', signature)
+          formData.append('folder', folder)
 
-        setUploadChunkInfo(`Uploading chunk ${chunkIndex + 1}/${totalChunks}...`)
+          lastTime = Date.now()
+          lastLoaded = 0
 
-        // Retry each chunk up to 5 times
-        let chunkSuccess = false
-        for (let attempt = 1; attempt <= 5; attempt++) {
-          try {
-            const formData = new FormData()
-            formData.append('file', chunk)
-            formData.append('api_key', apiKey)
-            formData.append('timestamp', timestamp)
-            formData.append('signature', signature)
-            formData.append('folder', folder)
+          const uploadRes = await axios.post(uploadUrl, formData, {
+            timeout: 3600000, // 60 minutes
+            onUploadProgress: (progressEvent) => {
+              if (progressEvent.total) {
+                const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                setUploadProgress(percent)
 
-            const res = await axios.post(uploadUrl, formData, {
-              headers: {
-                'X-Unique-Upload-Id': uniqueUploadId,
-                'Content-Range': contentRange
-              },
-              timeout: 300000 // 5 min per chunk
-            })
+                // Calculate speed and time remaining
+                const now = Date.now()
+                const elapsed = (now - lastTime) / 1000
+                if (elapsed > 0.5) {
+                  const bytesUploaded = progressEvent.loaded - lastLoaded
+                  const bytesPerSec = bytesUploaded / elapsed
+                  setUploadSpeed(bytesPerSec)
 
-            // Last chunk returns the final URL
-            if (chunkIndex === totalChunks - 1 && res.data.secure_url) {
-              setForm(prev => ({ ...prev, videoUrl: res.data.secure_url }))
+                  const remainingBytes = progressEvent.total - progressEvent.loaded
+                  const secondsLeft = bytesPerSec > 0 ? remainingBytes / bytesPerSec : 0
+                  setUploadTimeLeft(secondsLeft)
+
+                  lastLoaded = progressEvent.loaded
+                  lastTime = now
+                }
+              }
             }
+          })
 
-            bytesUploaded += (end - start)
-            chunkSuccess = true
+          if (uploadRes.data.secure_url) {
+            setForm(prev => ({ ...prev, videoUrl: uploadRes.data.secure_url }))
+            setUploadStatus('success')
+            setUploadProgress(100)
+            setUploadSpeed(0)
+            setUploadTimeLeft(0)
+            setUploadChunkInfo('Upload complete!')
             break
-          } catch (chunkErr) {
-            if (attempt < 5) {
-              setUploadChunkInfo(`Chunk ${chunkIndex + 1}/${totalChunks} failed, retrying (${attempt}/5)...`)
-              // Wait before retry (exponential backoff)
-              await new Promise(r => setTimeout(r, attempt * 2000))
-            } else {
-              throw new Error(`Chunk ${chunkIndex + 1}/${totalChunks} failed after 5 attempts: ${chunkErr.message}`)
-            }
+          } else {
+            throw new Error('Upload response missing URL')
+          }
+        } catch (uploadErr) {
+          if (attempt < 5) {
+            const waitSec = attempt * 3
+            setUploadChunkInfo(`Upload failed, retrying in ${waitSec}s... (attempt ${attempt}/5)`)
+            await new Promise(r => setTimeout(r, waitSec * 1000))
+          } else {
+            throw uploadErr
           }
         }
-
-        if (!chunkSuccess) {
-          throw new Error(`Upload failed at chunk ${chunkIndex + 1}/${totalChunks}`)
-        }
-
-        // Update progress
-        const percent = Math.round((bytesUploaded * 100) / file.size)
-        setUploadProgress(percent)
-
-        // Calculate speed and time remaining
-        const now = Date.now()
-        const elapsed = (now - lastTime) / 1000
-        if (elapsed > 0.5) {
-          const recentBytes = bytesUploaded - lastBytes
-          const bytesPerSec = recentBytes / elapsed
-          setUploadSpeed(bytesPerSec)
-
-          const remainingBytes = file.size - bytesUploaded
-          const secondsLeft = bytesPerSec > 0 ? remainingBytes / bytesPerSec : 0
-          setUploadTimeLeft(secondsLeft)
-
-          lastBytes = bytesUploaded
-          lastTime = now
-        }
       }
-
-      setUploadChunkInfo('Upload complete!')
-      setUploadStatus('success')
-      setUploadProgress(100)
-      setUploadSpeed(0)
-      setUploadTimeLeft(0)
     } catch (err) {
       setUploadStatus('error')
       setUploadSpeed(0)
