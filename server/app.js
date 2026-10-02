@@ -507,7 +507,7 @@ const videoUpload = multer({
     if (/mp4|mov|webm|avi|mkv|wmv|flv/.test(ext) || /video/.test(mime)) cb(null, true);
     else cb(new Error('Only video files allowed'));
   },
-  limits: { fileSize: 1024 * 1024 * 1024 } // 1GB
+  limits: { fileSize: 100 * 1024 * 1024 } // 100MB
 });
 
 // Upload video - always upload to Cloudinary CDN

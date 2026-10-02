@@ -49,7 +49,7 @@ const videoFileFilter = (req, file, cb) => {
 const videoUpload = multer({
   storage: videoStorage,
   fileFilter: videoFileFilter,
-  limits: { fileSize: 1024 * 1024 * 1024 } // 1GB
+  limits: { fileSize: 100 * 1024 * 1024 } // 100MB
 });
 
 module.exports = upload;
