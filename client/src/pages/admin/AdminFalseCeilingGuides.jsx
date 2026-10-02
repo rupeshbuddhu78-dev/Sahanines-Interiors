@@ -66,7 +66,17 @@ export default function AdminFalseCeilingGuides() {
     setForm({ ...form, advantages: form.advantages.filter((_, i) => i !== index) })
   }
 
-  const openCloudinaryWidget = () => {
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const maxMB = 500
+    if (file.size > maxMB * 1024 * 1024) {
+      alert(`Video file size must be under ${maxMB}MB. Current: ${(file.size / 1024 / 1024).toFixed(1)}MB.`)
+      e.target.value = ''
+      return
+    }
+
     const token = localStorage.getItem('adminToken')
     if (!token) {
       alert('Session expired. Please login again.')
@@ -74,91 +84,50 @@ export default function AdminFalseCeilingGuides() {
       return
     }
 
-    // First get Cloudinary config from server
-    axios.get('/api/cloudinary-config', {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then(configRes => {
-      if (!configRes.data.success) {
-        alert('Cloudinary not configured on server. Please paste video URL directly.')
-        return
-      }
+    setUploading(true)
+    setUploadProgress(0)
+    setUploadStatus('uploading')
+    const formData = new FormData()
+    formData.append('video', file)
 
-      const { cloudName, uploadPreset } = configRes.data
+    const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
 
-      if (typeof window.cloudinary === 'undefined') {
-        alert('Cloudinary widget not loaded. Please refresh the page.')
-        return
-      }
-
-      setUploading(true)
-      setUploadProgress(0)
-      setUploadStatus('uploading')
-
-      const widget = window.cloudinary.createUploadWidget({
-        cloudName: cloudName,
-        uploadPreset: uploadPreset,
-        sources: ['local', 'camera', 'url'],
-        multiple: false,
-        folder: 'sahanines-interiors/videos',
-        resourceType: 'video',
-        maxFileSize: 1073741824, // 1GB
-        clientAllowedFormats: ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska'],
-        text: {
-          en: {
-            queue: {
-              title: 'Videos to upload',
-              title_uploading: 'Uploading videos... please wait'
-            }
-          }
-        }
-      }, (error, result) => {
-        if (!error && result && result.event === 'success') {
-          const videoUrl = result.info.secure_url
-          setForm(prev => ({ ...prev, videoUrl: videoUrl }))
-          setUploadStatus('success')
-          setUploadProgress(100)
-          setUploading(false)
-        } else if (error) {
-          console.error('Cloudinary widget error:', error)
-          setUploadStatus('error')
-          setUploading(false)
-          alert(`Video upload failed: ${error.message || 'Unknown error'}`)
-        } else if (result && result.event === 'close') {
-          // User closed widget without uploading
-          if (uploadStatus === 'uploading') {
-            setUploading(false)
-            setUploadStatus('')
-          }
-        } else if (result && result.event === 'queues-end') {
-          // All files in queue processed
-          if (result.info && result.info.length > 0) {
-            const lastResult = result.info[result.info.length - 1]
-            if (lastResult.success) {
-              setForm(prev => ({ ...prev, videoUrl: lastResult.url }))
-              setUploadStatus('success')
-              setUploadProgress(100)
-            }
+    try {
+      const res = await axios.post('/api/upload-video', formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 3600000, // 1 hour timeout for large files
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            setUploadProgress(percent)
           }
         }
       })
-
-      widget.open()
-    }).catch(err => {
-      console.error('Failed to get Cloudinary config:', err)
+      if (res.data.success) {
+        setForm(prev => ({ ...prev, videoUrl: res.data.url }))
+        setUploadStatus('success')
+        setUploadProgress(100)
+      }
+    } catch (err) {
+      setUploadStatus('error')
+      const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
       if (err.response?.status === 401) {
         alert('Session expired. Please login again.')
         navigate('/admin/login')
+      } else if (err.response?.status === 413) {
+        alert(`File too large (${fileSizeMB}MB). Maximum allowed is 500MB.`)
       } else {
-        alert('Failed to initialize upload. Please paste video URL directly.')
+        alert(`Video upload failed: ${errorMsg}\n\nFile size: ${fileSizeMB}MB`)
       }
-    })
-  }
-
-  const handleVideoUpload = async (e) => {
-    // Open Cloudinary widget instead of file input
-    openCloudinaryWidget()
-    // Reset the file input
-    e.target.value = ''
+    }
+    setUploading(false)
+    setTimeout(() => {
+      e.target.value = ''
+      if (uploadStatus === 'error') setUploadStatus('')
+    }, 1000)
   }
 
   const handleThumbnailUpload = async (e) => {
@@ -367,37 +336,39 @@ export default function AdminFalseCeilingGuides() {
           </div>
 
           <div className="form-group">
-            <label>Video (Cloudinary)</label>
+            <label>Video (up to 500MB)</label>
             <input
               type="url"
               value={form.videoUrl}
               onChange={e => setForm({ ...form, videoUrl: e.target.value })}
-              placeholder="Upload video below or paste Cloudinary URL directly"
+              placeholder="Upload video below or paste video URL directly"
               disabled={uploading}
             />
             <div style={{ marginTop: 10 }}>
-              <button
-                type="button"
-                onClick={openCloudinaryWidget}
-                disabled={uploading}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  cursor: uploading ? 'wait' : 'pointer',
-                  padding: '10px 18px',
-                  background: uploading ? '#e0e0e0' : '#4a90d9',
-                  color: uploading ? '#666' : 'white',
-                  borderRadius: 8,
-                  fontSize: '0.9rem',
-                  fontWeight: 500,
-                  border: 'none'
-                }}
-              >
-                {uploading ? 'Uploading...' : '📁 Upload Video (up to 1GB)'}
-              </button>
+              <label style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                cursor: uploading ? 'wait' : 'pointer',
+                padding: '10px 18px',
+                background: uploading ? '#e0e0e0' : '#f0f0f0',
+                borderRadius: 8,
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                pointerEvents: uploading ? 'none' : 'auto',
+                border: '2px dashed #ccc'
+              }}>
+                {uploading ? 'Uploading...' : '📁 Upload Video File (max 500MB)'}
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoUpload}
+                  style={{ display: 'none' }}
+                  disabled={uploading}
+                />
+              </label>
               <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
-                Opens Cloudinary upload widget. Supports MP4, WebM, MOV up to 1GB. You can also paste any video URL directly above.
+                Video will be stored on server. You can also paste any video URL directly in the field above.
               </p>
             </div>
 
@@ -440,7 +411,7 @@ export default function AdminFalseCeilingGuides() {
                   </span>
                 </div>
                 <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
-                  Please do not close this page. Large videos may take a few minutes.
+                  Please do not close this page. Large videos (up to 500MB) may take a few minutes.
                 </p>
               </div>
             )}

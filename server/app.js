@@ -133,7 +133,51 @@ const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 const storage = multer.diskStorage({ destination: (r,f,cb) => cb(null, uploadDir), filename: (r,f,cb) => cb(null, Date.now() + '-' + Math.round(Math.random()*1E9) + path.extname(f.originalname)) });
 const upload = multer({ storage, fileFilter: (r,f,cb) => { if (/jpeg|jpg|png|webp/.test(path.extname(f.originalname).toLowerCase())) cb(null,true); else cb(new Error('Only images allowed')); }, limits: { fileSize: 5*1024*1024 } });
-app.use('/uploads', express.static(uploadDir));
+app.use('/uploads', express.static(uploadDir, {
+  setHeaders: (res, filePath) => {
+    // Set proper headers for video streaming
+    if (filePath.match(/\.(mp4|webm|mov|avi|mkv)$/i)) {
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  }
+}));
+
+// Video streaming endpoint with range support (for seeking)
+app.get('/api/video-stream/:filename', (req, res) => {
+  const filePath = path.join(uploadDir, req.params.filename);
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ success: false, message: 'Video not found' });
+  }
+  
+  const stat = fs.statSync(filePath);
+  const fileSize = stat.size;
+  const range = req.headers.range;
+  
+  if (range) {
+    const parts = range.replace(/bytes=/, '').split('-');
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+    const chunksize = (end - start) + 1;
+    const file = fs.createReadStream(filePath, { start, end });
+    const head = {
+      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+      'Accept-Ranges': 'bytes',
+      'Content-Length': chunksize,
+      'Content-Type': 'video/mp4',
+    };
+    res.writeHead(206, head);
+    file.pipe(res);
+  } else {
+    const head = {
+      'Content-Length': fileSize,
+      'Content-Type': 'video/mp4',
+      'Accept-Ranges': 'bytes',
+    };
+    res.writeHead(200, head);
+    fs.createReadStream(filePath).pipe(res);
+  }
+});
 
 // Auth middleware
 function auth(req, res, next) {
@@ -466,10 +510,16 @@ const videoUpload = multer({
   limits: { fileSize: 1024 * 1024 * 1024 } // 1GB
 });
 
+// Upload video - store locally for files > 100MB (Cloudinary free limit)
 app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res) => {
   if (!req.file) return res.status(400).json({ success: false, message: 'No video file' });
+  
+  const fileSizeMB = req.file.size / (1024 * 1024);
+  const videoPath = `/uploads/${req.file.filename}`;
+  
   try {
-    if (isCloudinaryConfigured()) {
+    // Only upload to Cloudinary if file is under 100MB (free plan limit)
+    if (isCloudinaryConfigured() && fileSizeMB <= 95) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'sahanines-interiors/videos',
         resource_type: 'video',
@@ -479,12 +529,23 @@ app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res
       fs.unlinkSync(req.file.path);
       res.json({ success: true, url: result.secure_url, filename: result.public_id, storage: 'cloudinary' });
     } else {
-      res.json({ success: true, url: `/uploads/${req.file.filename}`, filename: req.file.filename, storage: 'local' });
+      // Store locally for large files (>100MB) or if Cloudinary not configured
+      const baseUrl = process.env.SITE_URL || `http://localhost:${PORT}`;
+      const fullUrl = `${baseUrl}${videoPath}`;
+      console.log(`📹 Video stored locally (${fileSizeMB.toFixed(1)}MB): ${videoPath}`);
+      res.json({ success: true, url: videoPath, fullUrl, filename: req.file.filename, storage: 'local', size: fileSizeMB.toFixed(1) + 'MB' });
     }
   } catch (error) {
     console.error('Video upload error:', error);
-    try { fs.unlinkSync(req.file.path); } catch(e) {}
-    res.status(500).json({ success: false, message: 'Video upload error: ' + error.message });
+    // If Cloudinary upload fails, keep file locally as fallback
+    if (fs.existsSync(req.file.path)) {
+      const baseUrl = process.env.SITE_URL || `http://localhost:${PORT}`;
+      const fullUrl = `${baseUrl}${videoPath}`;
+      console.log(`⚠️ Cloudinary failed, keeping video locally: ${videoPath}`);
+      res.json({ success: true, url: videoPath, fullUrl, filename: req.file.filename, storage: 'local', size: fileSizeMB.toFixed(1) + 'MB', note: 'Stored locally due to Cloudinary error' });
+    } else {
+      res.status(500).json({ success: false, message: 'Video upload error: ' + error.message });
+    }
   }
 });
 
