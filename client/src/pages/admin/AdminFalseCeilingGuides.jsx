@@ -22,11 +22,7 @@ export default function AdminFalseCeilingGuides() {
   const [newAdvantage, setNewAdvantage] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [uploadStatus, setUploadStatus] = useState('') // '', 'uploading', 'success', 'error'
-  const [uploadSpeed, setUploadSpeed] = useState(0) // bytes per second
-  const [uploadTimeLeft, setUploadTimeLeft] = useState(0) // seconds remaining
-  const [uploadFileSize, setUploadFileSize] = useState(0) // total file size in bytes
-  const [uploadChunkInfo, setUploadChunkInfo] = useState('') // e.g., "Chunk 15/38"
+  const [uploadStatus, setUploadStatus] = useState('')
   const [uploadingThumb, setUploadingThumb] = useState(false)
 
   const fetchData = async () => {
@@ -38,7 +34,6 @@ export default function AdminFalseCeilingGuides() {
     } catch (err) {
       if (err.response?.status === 401) {
         setAuthError(true)
-        // Token expire ho gaya - redirect to login after 2 seconds
         setTimeout(() => {
           localStorage.removeItem('adminToken')
           localStorage.removeItem('adminUser')
@@ -58,10 +53,6 @@ export default function AdminFalseCeilingGuides() {
     setNewAdvantage('')
     setUploadProgress(0)
     setUploadStatus('')
-    setUploadSpeed(0)
-    setUploadTimeLeft(0)
-    setUploadFileSize(0)
-    setUploadChunkInfo('')
   }
 
   const handleAddAdvantage = () => {
@@ -75,7 +66,17 @@ export default function AdminFalseCeilingGuides() {
     setForm({ ...form, advantages: form.advantages.filter((_, i) => i !== index) })
   }
 
-  const handleVideoUpload = async () => {
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const maxMB = 1024
+    if (file.size > maxMB * 1024 * 1024) {
+      alert(`Video file size must be under ${maxMB}MB (1GB). Current: ${(file.size / 1024 / 1024).toFixed(1)}MB.`)
+      e.target.value = ''
+      return
+    }
+
     const token = localStorage.getItem('adminToken')
     if (!token) {
       alert('Session expired. Please login again.')
@@ -83,109 +84,61 @@ export default function AdminFalseCeilingGuides() {
       return
     }
 
+    setUploading(true)
+    setUploadProgress(0)
+    setUploadStatus('uploading')
+    const formData = new FormData()
+    formData.append('video', file)
+
+    const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
+
     try {
-      // Get Cloudinary config from server
-      const configRes = await axios.get('/api/cloudinary-config', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        timeout: 30000
-      })
-
-      if (!configRes.data.success) {
-        throw new Error('Failed to get upload config')
-      }
-
-      const { cloudName, uploadPreset } = configRes.data
-
-      // Open Cloudinary Upload Widget
-      const widget = window.cloudinary.createUploadWidget({
-        cloudName: cloudName,
-        uploadPreset: uploadPreset,
-        sources: ['local', 'camera'],
-        resourceType: 'video',
-        folder: 'sahanines-interiors/videos',
-        maxFileSize: 1024 * 1024 * 1024, // 1GB
-        clientAllowedFormats: ['video'],
-        thumbnails: '.5',
-        showPoweredBy: false,
-        cropping: false,
-        multiple: false,
-        styles: {
-          palette: {
-            window: "#FFFFFF",
-            windowBorder: "#90A0B3",
-            windowBorderDark: "#000000",
-            tabIcon: "#0073FF",
-            tabIconHover: "#0059CC",
-            menuHover: "#0073FF",
-            textDark: "#000000",
-            textLight: "#FFFFFF",
-            link: "#0073FF",
-            action: "#FF620C",
-            inactiveTabIcon: "#69778A",
-            error: "#F44242",
-            inProgress: "#0073FF",
-            uploadComplete: "#620887",
-            uploadDraft: "#69778A",
-            uploadDraftIcon: "#69778A",
-            dropzone: "#F5F7FA",
-            dropzoneText: "#69778A",
-            dropzoneTextDark: "#000000",
-            dropzoneIcon: "#69778A",
-            fileIcon: "#69778A",
-            fileName: "#000000",
-            fileSize: "#69778A",
-            fileProgress: "#0073FF",
-            fileProgressBackground: "#E6EEF9",
-            fileInfo: "#69778A",
-            image: "#0073FF",
-            imageBackground: "#F5F7FA",
-            imageBorder: "#E0E0E0",
-            imageHover: "#0059CC",
-            imageSelected: "#0073FF",
-            imageSelectedBackground: "#E6EEF9",
-            imageSelectedBorder: "#0073FF"
+      const res = await axios.post('/api/upload-video', formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 3600000,
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            setUploadProgress(percent)
           }
         }
-      }, (error, result) => {
-        if (!error && result && result.event === 'success') {
-          const url = result.info.secure_url
-          setForm(prev => ({ ...prev, videoUrl: url }))
-          setUploadStatus('success')
-          setUploadProgress(100)
-          setUploadSpeed(0)
-          setUploadTimeLeft(0)
-          setUploadChunkInfo('Upload complete!')
-          setUploading(false)
-        } else if (result && result.event === 'close') {
-          // Widget closed by user
-          setUploading(false)
-          setUploadChunkInfo('')
-        } else if (error) {
-          console.error('Upload error:', error)
-          setUploadStatus('error')
-          setUploadChunkInfo('')
-          setUploading(false)
-          alert(`Video upload failed: ${error.message || 'Unknown error'}\n\nTip: Use Wi-Fi for large files, or paste a Cloudinary video URL directly.`)
-        }
       })
-
-      setUploading(true)
-      setUploadProgress(0)
-      setUploadStatus('uploading')
-      setUploadSpeed(0)
-      setUploadTimeLeft(0)
-      setUploadFileSize(0)
-      setUploadChunkInfo('Opening upload widget...')
-      
-      widget.open()
+      if (res.data.success) {
+        setForm(prev => ({ ...prev, videoUrl: res.data.url }))
+        setUploadStatus('success')
+        setUploadProgress(100)
+      }
     } catch (err) {
-      console.error('Error opening upload widget:', err)
-      alert('Failed to open upload widget. Please try again or paste a Cloudinary URL directly.')
-      setUploading(false)
+      setUploadStatus('error')
+      const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
+      if (err.response?.status === 401) {
+        alert('Session expired. Please login again.')
+        navigate('/admin/login')
+      } else {
+        alert(`Video upload failed: ${errorMsg}\n\nFile size: ${fileSizeMB}MB\n\nTip: Paste a Cloudinary video URL directly in the field above.`)
+      }
     }
+    setUploading(false)
+    setTimeout(() => {
+      e.target.value = ''
+      if (uploadStatus === 'error') setUploadStatus('')
+    }, 1000)
   }
 
-  const handleThumbnailUpload = async () => {
+  const handleThumbnailUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const maxMB = 10
+    if (file.size > maxMB * 1024 * 1024) {
+      alert(`Image file size must be under ${maxMB}MB.`)
+      e.target.value = ''
+      return
+    }
+
     const token = localStorage.getItem('adminToken')
     if (!token) {
       alert('Session expired. Please login again.')
@@ -193,55 +146,31 @@ export default function AdminFalseCeilingGuides() {
       return
     }
 
+    setUploadingThumb(true)
+    const formData = new FormData()
+    formData.append('image', file)
+
     try {
-      // Get Cloudinary config from server
-      const configRes = await axios.get('/api/cloudinary-config', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        timeout: 30000
+      const res = await axios.post('/api/upload', formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 120000
       })
-
-      if (!configRes.data.success) {
-        throw new Error('Failed to get upload config')
+      if (res.data.success) {
+        setForm(prev => ({ ...prev, thumbnailUrl: res.data.url }))
       }
-
-      const { cloudName, uploadPreset } = configRes.data
-
-      // Open Cloudinary Upload Widget
-      const widget = window.cloudinary.createUploadWidget({
-        cloudName: cloudName,
-        uploadPreset: uploadPreset,
-        sources: ['local', 'camera'],
-        resourceType: 'image',
-        folder: 'sahanines-interiors',
-        maxFileSize: 10 * 1024 * 1024, // 10MB
-        clientAllowedFormats: ['image'],
-        cropping: true,
-        croppingAspectRatio: 9/16,
-        croppingDefaultSelectionRatio: 9/16,
-        showPoweredBy: false,
-        multiple: false
-      }, (error, result) => {
-        if (!error && result && result.event === 'success') {
-          const url = result.info.secure_url
-          setForm(prev => ({ ...prev, thumbnailUrl: url }))
-          setUploadingThumb(false)
-        } else if (result && result.event === 'close') {
-          // Widget closed by user
-          setUploadingThumb(false)
-        } else if (error) {
-          console.error('Thumbnail upload error:', error)
-          setUploadingThumb(false)
-          alert(`Thumbnail upload failed: ${error.message || 'Unknown error'}`)
-        }
-      })
-
-      setUploadingThumb(true)
-      widget.open()
     } catch (err) {
-      console.error('Error opening upload widget:', err)
-      alert('Failed to open upload widget. Please try again or paste a Cloudinary URL directly.')
-      setUploadingThumb(false)
+      if (err.response?.status === 401) {
+        alert('Session expired. Please login again.')
+        navigate('/admin/login')
+      } else {
+        alert(`Thumbnail upload failed: ${err.response?.data?.message || err.message}`)
+      }
     }
+    setUploadingThumb(false)
+    e.target.value = ''
   }
 
   const handleSubmit = async (e) => {
@@ -356,40 +285,42 @@ export default function AdminFalseCeilingGuides() {
           </div>
 
           <div className="form-group">
-            <label>Thumbnail Image (Cloudinary)</label>
+            <label>Thumbnail Image</label>
             <input
               type="url"
               value={form.thumbnailUrl}
               onChange={e => setForm({ ...form, thumbnailUrl: e.target.value })}
-              placeholder="Upload thumbnail below or paste Cloudinary image URL directly"
+              placeholder="Upload image below or paste Cloudinary URL directly"
               disabled={uploadingThumb}
             />
             <div style={{ marginTop: 10 }}>
-              <button
-                type="button"
-                onClick={handleThumbnailUpload}
-                disabled={uploadingThumb}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  cursor: uploadingThumb ? 'wait' : 'pointer',
-                  padding: '10px 18px',
-                  background: uploadingThumb ? '#e0e0e0' : '#f0f0f0',
-                  borderRadius: 8,
-                  fontSize: '0.9rem',
-                  fontWeight: 500,
-                  border: '2px dashed #ccc'
-                }}
-              >
+              <label style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                cursor: uploadingThumb ? 'wait' : 'pointer',
+                padding: '10px 18px',
+                background: uploadingThumb ? '#e0e0e0' : '#f0f0f0',
+                borderRadius: 8,
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                pointerEvents: uploadingThumb ? 'none' : 'auto',
+                border: '2px dashed #ccc'
+              }}>
                 {uploadingThumb ? 'Uploading...' : '🖼️ Upload Thumbnail Image (max 10MB)'}
-              </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailUpload}
+                  style={{ display: 'none' }}
+                  disabled={uploadingThumb}
+                />
+              </label>
               <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
-                This image will be shown as the video poster/thumbnail on the Guides page. Recommended size: 720x1280 (9:16 ratio).
+                This image will be shown as the video poster/thumbnail on the Guides page.
               </p>
             </div>
 
-            {/* Thumbnail Preview */}
             {form.thumbnailUrl && !uploadingThumb && (
               <div style={{ marginTop: 12 }}>
                 <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: 6, wordBreak: 'break-all' }}>{form.thumbnailUrl}</p>
@@ -412,157 +343,72 @@ export default function AdminFalseCeilingGuides() {
               disabled={uploading}
             />
             <div style={{ marginTop: 10 }}>
-              <button
-                type="button"
-                onClick={handleVideoUpload}
-                disabled={uploading}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  cursor: uploading ? 'wait' : 'pointer',
-                  padding: '10px 18px',
-                  background: uploading ? '#e0e0e0' : '#f0f0f0',
-                  borderRadius: 8,
-                  fontSize: '0.9rem',
-                  fontWeight: 500,
-                  border: '2px dashed #ccc'
-                }}
-              >
+              <label style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                cursor: uploading ? 'wait' : 'pointer',
+                padding: '10px 18px',
+                background: uploading ? '#e0e0e0' : '#f0f0f0',
+                borderRadius: 8,
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                pointerEvents: uploading ? 'none' : 'auto',
+                border: '2px dashed #ccc'
+              }}>
                 {uploading ? 'Uploading...' : '📁 Upload Video File (max 1GB)'}
-              </button>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoUpload}
+                  style={{ display: 'none' }}
+                  disabled={uploading}
+                />
+              </label>
               <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
-                Video will be uploaded to Cloudinary with auto-retry. You can also paste any Cloudinary video URL directly in the field above.
+                Video will be uploaded to Cloudinary. You can also paste any Cloudinary video URL directly in the field above.
               </p>
             </div>
 
             {/* Upload Progress Bar */}
             {uploading && (
-              <div style={{ marginTop: 14, padding: 16, background: '#f9f9f9', borderRadius: 10, border: '1px solid #e0e0e0' }}>
-                {/* Header row */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                  <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#333' }}>
-                    Uploading video...
-                  </span>
-                  <span style={{
-                    fontSize: '1.3rem',
-                    fontWeight: 800,
-                    color: uploadProgress >= 100 ? '#27ae60' : 'var(--primary)',
-                    fontVariantNumeric: 'tabular-nums'
-                  }}>
+              <div style={{ marginTop: 14, padding: 14, background: '#f9f9f9', borderRadius: 8, border: '1px solid #e0e0e0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#333' }}>Uploading video...</span>
+                  <span style={{ fontSize: '1.1rem', fontWeight: 700, color: uploadProgress >= 100 ? '#27ae60' : 'var(--primary)' }}>
                     {uploadProgress}%
                   </span>
                 </div>
-
-                {/* Progress bar */}
                 <div style={{
                   width: '100%',
-                  height: 24,
+                  height: 20,
                   background: '#e0e0e0',
-                  borderRadius: 12,
+                  borderRadius: 10,
                   overflow: 'hidden',
-                  position: 'relative',
-                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)'
+                  position: 'relative'
                 }}>
                   <div style={{
                     width: `${uploadProgress}%`,
                     height: '100%',
                     background: uploadProgress >= 100
                       ? 'linear-gradient(90deg, #27ae60, #2ecc71)'
-                      : 'linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa)',
-                    borderRadius: 12,
-                    transition: 'width 0.3s ease',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}>
-                    {/* Animated stripes */}
-                    <div style={{
-                      position: 'absolute',
-                      top: 0, left: 0, right: 0, bottom: 0,
-                      background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.15) 10px, rgba(255,255,255,0.15) 20px)',
-                      animation: 'stripes-move 1s linear infinite'
-                    }} />
-                  </div>
+                      : 'linear-gradient(90deg, var(--primary), #4a90d9)',
+                    borderRadius: 10,
+                    transition: 'width 0.3s ease'
+                  }} />
                   <span style={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    fontSize: '0.8rem',
+                    fontSize: '0.75rem',
                     fontWeight: 700,
-                    color: uploadProgress > 50 ? 'white' : '#333',
-                    textShadow: uploadProgress > 50 ? '0 1px 2px rgba(0,0,0,0.3)' : 'none'
+                    color: uploadProgress > 50 ? 'white' : '#333'
                   }}>
                     {uploadProgress}%
                   </span>
                 </div>
-
-                {/* Stats row: File size, Uploaded, Speed, Time left */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                  gap: '8px 16px',
-                  marginTop: 12,
-                  padding: '10px 12px',
-                  background: '#fff',
-                  borderRadius: 8,
-                  border: '1px solid #eee'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>File Size</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333', fontVariantNumeric: 'tabular-nums' }}>
-                      {uploadFileSize >= 1024 * 1024 * 1024
-                        ? (uploadFileSize / 1024 / 1024 / 1024).toFixed(2) + ' GB'
-                        : (uploadFileSize / 1024 / 1024).toFixed(1) + ' MB'}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Uploaded</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333', fontVariantNumeric: 'tabular-nums' }}>
-                      {((uploadFileSize * uploadProgress / 100) / 1024 / 1024).toFixed(1)} MB
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Speed</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333', fontVariantNumeric: 'tabular-nums' }}>
-                      {uploadSpeed >= 1024 * 1024
-                        ? (uploadSpeed / 1024 / 1024).toFixed(1) + ' MB/s'
-                        : uploadSpeed >= 1024
-                          ? (uploadSpeed / 1024).toFixed(0) + ' KB/s'
-                          : uploadSpeed > 0 ? 'Starting...' : '—'}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Time Left</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333', fontVariantNumeric: 'tabular-nums' }}>
-                      {uploadTimeLeft > 3600
-                        ? Math.floor(uploadTimeLeft / 3600) + 'h ' + Math.floor((uploadTimeLeft % 3600) / 60) + 'm'
-                        : uploadTimeLeft > 60
-                          ? Math.floor(uploadTimeLeft / 60) + 'm ' + Math.floor(uploadTimeLeft % 60) + 's'
-                          : uploadTimeLeft > 0
-                            ? Math.floor(uploadTimeLeft) + 's'
-                            : uploadSpeed > 0 ? 'Almost done...' : '—'}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Chunk progress info */}
-                {uploadChunkInfo && (
-                  <div style={{
-                    marginTop: 8,
-                    padding: '8px 12px',
-                    background: '#fff8e1',
-                    borderRadius: 6,
-                    border: '1px solid #ffe082',
-                    textAlign: 'center'
-                  }}>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f57c00' }}>
-                      {uploadChunkInfo}
-                    </span>
-                  </div>
-                )}
-
-                <p style={{ fontSize: '0.78rem', color: '#999', marginTop: 8, marginBottom: 0, textAlign: 'center' }}>
+                <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
                   Please do not close this page. Large videos may take a few minutes.
                 </p>
               </div>
@@ -661,4 +507,3 @@ export default function AdminFalseCeilingGuides() {
     </div>
   )
 }
-
