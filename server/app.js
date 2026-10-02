@@ -780,11 +780,46 @@ app.get(/^\/(?!api|uploads).*/, async (req, res) => {
 app.use((err, req, res, next) => { console.error(err.message); res.status(500).json({ success: false, message: 'Server error' }); });
 
 // Start server
+// Auto-create Cloudinary upload preset if it doesn't exist
+async function ensureCloudinaryPreset() {
+  if (!isCloudinaryConfigured()) {
+    console.log('⚠️  Cloudinary not configured, skipping preset creation');
+    return;
+  }
+
+  try {
+    const presetName = 'sahanines-admin';
+    
+    // Check if preset already exists
+    const existingPresets = await cloudinary.api.upload_presets();
+    const presetExists = existingPresets.presets.some(p => p.name === presetName);
+    
+    if (presetExists) {
+      console.log('✅ Cloudinary upload preset already exists:', presetName);
+      return;
+    }
+    
+    // Create unsigned upload preset
+    await cloudinary.api.create_upload_preset({
+      name: presetName,
+      unsigned: true,
+      folder: 'sahanines-interiors',
+      tags: ['admin-upload']
+    });
+    
+    console.log('✅ Created Cloudinary upload preset:', presetName);
+  } catch (err) {
+    console.error('⚠️  Failed to create Cloudinary preset:', err.message);
+    console.log('   You can manually create preset "sahanines-admin" in Cloudinary dashboard');
+  }
+}
+
 async function start() {
   try {
     await mongoose.connect(MONGODB_URI);
     console.log('✅ MongoDB connected successfully');
     await seedMongo();
+    await ensureCloudinaryPreset();
   } catch (err) {
     console.error('❌ MongoDB connection error:', err.message);
     process.exit(1);

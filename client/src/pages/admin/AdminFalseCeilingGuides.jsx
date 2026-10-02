@@ -84,42 +84,25 @@ export default function AdminFalseCeilingGuides() {
     }
 
     try {
-      // Get signed upload parameters from server (no preset needed)
-      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
+      // Get Cloudinary config from server
+      const configRes = await axios.get('/api/cloudinary-config', {
         headers: { 'Authorization': `Bearer ${token}` },
         timeout: 30000
       })
 
-      if (!sigRes.data.success) {
-        throw new Error('Failed to get upload signature')
+      if (!configRes.data.success) {
+        throw new Error('Failed to get upload config')
       }
 
-      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
+      const { cloudName, uploadPreset } = configRes.data
 
-      // Open Cloudinary Upload Widget with signed upload
+      // Open Cloudinary Upload Widget
       const widget = window.cloudinary.createUploadWidget({
         cloudName: cloudName,
-        apiKey: apiKey,
-        uploadSignature: async (callback) => {
-          // Request fresh signature for each chunk/upload
-          try {
-            const freshSig = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
-              headers: { 'Authorization': `Bearer ${token}` },
-              timeout: 30000
-            })
-            if (freshSig.data.success) {
-              callback(freshSig.data.signature, freshSig.data.timestamp)
-            } else {
-              throw new Error('Signature failed')
-            }
-          } catch (err) {
-            console.error('Signature error:', err)
-            callback(null, null)
-          }
-        },
+        uploadPreset: uploadPreset,
         sources: ['local', 'camera'],
         resourceType: 'video',
-        folder: folder,
+        folder: 'sahanines-interiors/videos',
         maxFileSize: 1024 * 1024 * 1024, // 1GB
         clientAllowedFormats: ['video'],
         thumbnails: '.5',
@@ -211,42 +194,25 @@ export default function AdminFalseCeilingGuides() {
     }
 
     try {
-      // Get signed upload parameters from server (no preset needed)
-      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'image' }, {
+      // Get Cloudinary config from server
+      const configRes = await axios.get('/api/cloudinary-config', {
         headers: { 'Authorization': `Bearer ${token}` },
         timeout: 30000
       })
 
-      if (!sigRes.data.success) {
-        throw new Error('Failed to get upload signature')
+      if (!configRes.data.success) {
+        throw new Error('Failed to get upload config')
       }
 
-      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
+      const { cloudName, uploadPreset } = configRes.data
 
-      // Open Cloudinary Upload Widget with signed upload
+      // Open Cloudinary Upload Widget
       const widget = window.cloudinary.createUploadWidget({
         cloudName: cloudName,
-        apiKey: apiKey,
-        uploadSignature: async (callback) => {
-          // Request fresh signature for each upload
-          try {
-            const freshSig = await axios.post('/api/cloudinary-signature', { resourceType: 'image' }, {
-              headers: { 'Authorization': `Bearer ${token}` },
-              timeout: 30000
-            })
-            if (freshSig.data.success) {
-              callback(freshSig.data.signature, freshSig.data.timestamp)
-            } else {
-              throw new Error('Signature failed')
-            }
-          } catch (err) {
-            console.error('Signature error:', err)
-            callback(null, null)
-          }
-        },
+        uploadPreset: uploadPreset,
         sources: ['local', 'camera'],
         resourceType: 'image',
-        folder: folder,
+        folder: 'sahanines-interiors',
         maxFileSize: 10 * 1024 * 1024, // 10MB
         clientAllowedFormats: ['image'],
         cropping: true,
