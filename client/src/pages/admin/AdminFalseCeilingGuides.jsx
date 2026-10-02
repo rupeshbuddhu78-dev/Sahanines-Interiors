@@ -66,6 +66,57 @@ export default function AdminFalseCeilingGuides() {
     setForm({ ...form, advantages: form.advantages.filter((_, i) => i !== index) })
   }
 
+  const uploadVideoDirectToCloudinary = async (file, token) => {
+    // Step 1: Get Cloudinary signature from server
+    const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!sigRes.data.success) throw new Error('Failed to get upload signature')
+
+    const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
+
+    // Step 2: Upload directly from browser to Cloudinary (bypasses server)
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('api_key', apiKey)
+    formData.append('timestamp', timestamp)
+    formData.append('signature', signature)
+    formData.append('folder', folder)
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`)
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded * 100) / event.total)
+          setUploadProgress(percent)
+        }
+      }
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const data = JSON.parse(xhr.responseText)
+            resolve({ success: true, url: data.secure_url, filename: data.public_id, storage: 'cloudinary' })
+          } catch (e) {
+            reject(new Error('Invalid response from Cloudinary'))
+          }
+        } else {
+          try {
+            const errData = JSON.parse(xhr.responseText)
+            reject(new Error(errData.error?.message || `Cloudinary error (${xhr.status})`))
+          } catch (e) {
+            reject(new Error(`Cloudinary upload failed (${xhr.status})`))
+          }
+        }
+      }
+
+      xhr.onerror = () => reject(new Error('Network error during upload'))
+      xhr.send(formData)
+    })
+  }
+
   const handleVideoUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
@@ -87,27 +138,37 @@ export default function AdminFalseCeilingGuides() {
     setUploading(true)
     setUploadProgress(0)
     setUploadStatus('uploading')
-    const formData = new FormData()
-    formData.append('video', file)
 
     const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
 
     try {
-      const res = await axios.post('/api/upload-video', formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        },
-        timeout: 3600000,
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-            setUploadProgress(percent)
+      // Try direct Cloudinary upload first (fastest, bypasses server)
+      let result
+      try {
+        result = await uploadVideoDirectToCloudinary(file, token)
+      } catch (cloudinaryErr) {
+        console.warn('Direct Cloudinary upload failed, falling back to server upload:', cloudinaryErr.message)
+        // Fallback: upload through server
+        const formData = new FormData()
+        formData.append('video', file)
+        const res = await axios.post('/api/upload-video', formData, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          },
+          timeout: 3600000,
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              setUploadProgress(percent)
+            }
           }
-        }
-      })
-      if (res.data.success) {
-        setForm(prev => ({ ...prev, videoUrl: res.data.url }))
+        })
+        result = res.data
+      }
+
+      if (result.success) {
+        setForm(prev => ({ ...prev, videoUrl: result.url }))
         setUploadStatus('success')
         setUploadProgress(100)
       }

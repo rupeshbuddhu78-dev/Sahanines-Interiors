@@ -125,8 +125,8 @@ app.use(helmet({
   contentSecurityPolicy: false
 }));
 app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Upload
 const uploadDir = path.join(__dirname, 'uploads');
@@ -473,7 +473,8 @@ app.post('/api/upload-video', auth, videoUpload.single('video'), async (req, res
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'sahanines-interiors/videos',
         resource_type: 'video',
-        chunk_size: 20000000
+        chunk_size: 50000000,
+        timeout: 600000
       });
       fs.unlinkSync(req.file.path);
       res.json({ success: true, url: result.secure_url, filename: result.public_id, storage: 'cloudinary' });

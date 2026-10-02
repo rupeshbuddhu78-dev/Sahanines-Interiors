@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const upload = require('../middleware/upload');
+const { videoUpload } = require('../middleware/upload');
 const cloudinary = require('../config/cloudinary');
 const fs = require('fs');
 const { protect } = require('../middleware/auth');
@@ -43,6 +45,30 @@ router.post('/', protect, upload.single('image'), async (req, res) => {
   }
 });
 
+router.post('/video', protect, videoUpload.single('video'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ success: false, message: 'No video file uploaded' });
+    
+    if (isCloudinaryConfigured()) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'sahanines-interiors/videos',
+        resource_type: 'video',
+        chunk_size: 50000000,
+        timeout: 600000
+      });
+      fs.unlinkSync(req.file.path);
+      res.json({ success: true, url: result.secure_url, filename: result.public_id, storage: 'cloudinary' });
+    } else {
+      const url = `/uploads/${req.file.filename}`;
+      res.json({ success: true, url, filename: req.file.filename, storage: 'local' });
+    }
+  } catch (error) {
+    console.error('Video upload error:', error);
+    try { fs.unlinkSync(req.file.path); } catch(e) {}
+    res.status(500).json({ success: false, message: 'Video upload error: ' + error.message });
+  }
+});
+
 router.post('/multiple', protect, upload.array('images', 20), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) return res.status(400).json({ success: false, message: 'No files uploaded' });
@@ -78,7 +104,7 @@ router.delete('/:filename', protect, async (req, res) => {
         ? req.params.filename.split('/').pop().split('.')[0]
         : req.params.filename;
       
-      await cloudinary.uploader.destroy(`sahanines-interiors/${publicId}`);
+      await cloudinary.uploader.destroy(`sahanines-interiors/${publicId}`, { resource_type: 'video' });
       res.json({ success: true, message: 'File deleted from Cloudinary' });
     } else {
       // Local file deletion
