@@ -1378,6 +1378,57 @@ p { color: var(--text-light); }
   background: #000;
   overflow: hidden;
 }
+.guide-thumbnail-img {
+  width: 100%;
+  aspect-ratio: 9/16;
+  max-height: 500px;
+  object-fit: cover;
+  display: block;
+}
+.guide-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.guide-play-overlay:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+.guide-play-overlay:hover .guide-play-btn-icon {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.95);
+}
+.guide-play-btn-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, background 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.guide-play-btn-icon span {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin-left: 4px;
+}
+.guide-play-text {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
 .guide-video-player {
   width: 100%;
   aspect-ratio: 9/16;

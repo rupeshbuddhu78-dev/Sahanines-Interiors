@@ -15,6 +15,7 @@ export default function AdminFalseCeilingGuides() {
     description: '',
     advantages: [],
     videoUrl: '',
+    thumbnailUrl: '',
     isPublished: true,
     sortOrder: 0
   })
@@ -22,6 +23,7 @@ export default function AdminFalseCeilingGuides() {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadStatus, setUploadStatus] = useState('') // '', 'uploading', 'success', 'error'
+  const [uploadingThumb, setUploadingThumb] = useState(false)
 
   const fetchData = async () => {
     try {
@@ -47,7 +49,7 @@ export default function AdminFalseCeilingGuides() {
   useEffect(() => { fetchData() }, [])
 
   const resetForm = () => {
-    setForm({ title: '', description: '', advantages: [], videoUrl: '', isPublished: true, sortOrder: 0 })
+    setForm({ title: '', description: '', advantages: [], videoUrl: '', thumbnailUrl: '', isPublished: true, sortOrder: 0 })
     setEditing(null)
     setNewAdvantage('')
     setUploadProgress(0)
@@ -130,6 +132,51 @@ export default function AdminFalseCeilingGuides() {
     }, 1000)
   }
 
+  const handleThumbnailUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const maxMB = 10
+    if (file.size > maxMB * 1024 * 1024) {
+      alert(`Image file size must be under ${maxMB}MB.`)
+      e.target.value = ''
+      return
+    }
+
+    const token = localStorage.getItem('adminToken')
+    if (!token) {
+      alert('Session expired. Please login again.')
+      navigate('/admin/login')
+      return
+    }
+
+    setUploadingThumb(true)
+    const formData = new FormData()
+    formData.append('image', file)
+
+    try {
+      const res = await axios.post('/api/upload', formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 120000
+      })
+      if (res.data.success) {
+        setForm(prev => ({ ...prev, thumbnailUrl: res.data.url }))
+      }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        alert('Session expired. Please login again.')
+        navigate('/admin/login')
+      } else {
+        alert(`Thumbnail upload failed: ${err.response?.data?.message || err.message}`)
+      }
+    }
+    setUploadingThumb(false)
+    e.target.value = ''
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
@@ -158,6 +205,7 @@ export default function AdminFalseCeilingGuides() {
       description: g.description,
       advantages: g.advantages || [],
       videoUrl: g.videoUrl || '',
+      thumbnailUrl: g.thumbnailUrl || '',
       isPublished: g.isPublished,
       sortOrder: g.sortOrder || 0
     })
@@ -237,6 +285,56 @@ export default function AdminFalseCeilingGuides() {
                   </li>
                 ))}
               </ul>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Thumbnail Image (Cloudinary)</label>
+            <input
+              type="url"
+              value={form.thumbnailUrl}
+              onChange={e => setForm({ ...form, thumbnailUrl: e.target.value })}
+              placeholder="Upload thumbnail below or paste Cloudinary image URL directly"
+              disabled={uploadingThumb}
+            />
+            <div style={{ marginTop: 10 }}>
+              <label style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                cursor: uploadingThumb ? 'wait' : 'pointer',
+                padding: '10px 18px',
+                background: uploadingThumb ? '#e0e0e0' : '#f0f0f0',
+                borderRadius: 8,
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                pointerEvents: uploadingThumb ? 'none' : 'auto',
+                border: '2px dashed #ccc'
+              }}>
+                {uploadingThumb ? 'Uploading...' : '🖼️ Upload Thumbnail Image (max 10MB)'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailUpload}
+                  style={{ display: 'none' }}
+                  disabled={uploadingThumb}
+                />
+              </label>
+              <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
+                This image will be shown as the video poster/thumbnail on the Guides page. Recommended size: 720x1280 (9:16 ratio).
+              </p>
+            </div>
+
+            {/* Thumbnail Preview */}
+            {form.thumbnailUrl && !uploadingThumb && (
+              <div style={{ marginTop: 12 }}>
+                <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: 6, wordBreak: 'break-all' }}>{form.thumbnailUrl}</p>
+                <img
+                  src={form.thumbnailUrl}
+                  alt="Thumbnail preview"
+                  style={{ maxWidth: 200, maxHeight: 350, borderRadius: 8, border: '1px solid #eee', objectFit: 'cover' }}
+                />
+              </div>
             )}
           </div>
 
@@ -377,6 +475,7 @@ export default function AdminFalseCeilingGuides() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th>Thumbnail</th>
                 <th>Title</th>
                 <th>Advantages</th>
                 <th>Video</th>
@@ -388,6 +487,13 @@ export default function AdminFalseCeilingGuides() {
             <tbody>
               {guides.map(g => (
                 <tr key={g._id}>
+                  <td>
+                    {g.thumbnailUrl ? (
+                      <img src={g.thumbnailUrl} alt={g.title} style={{ width: 50, height: 80, objectFit: 'cover', borderRadius: 4, border: '1px solid #eee' }} />
+                    ) : (
+                      <span style={{ color: '#ccc', fontSize: '0.8rem' }}>No image</span>
+                    )}
+                  </td>
                   <td style={{ maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis' }}>{g.title}</td>
                   <td>{g.advantages?.length || 0} items</td>
                   <td>{g.videoUrl ? '✓' : '—'}</td>

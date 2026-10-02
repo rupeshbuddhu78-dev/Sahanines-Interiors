@@ -5,6 +5,7 @@ const falseCeilingGuideSchema = new mongoose.Schema({
   description: { type: String, required: true },
   advantages: [{ type: String }],
   videoUrl: { type: String, default: '' },
+  thumbnailUrl: { type: String, default: '' },
   isPublished: { type: Boolean, default: true },
   sortOrder: { type: Number, default: 0 }
 }, { timestamps: true });

@@ -8,6 +8,7 @@ export default function Guides() {
   const [guides, setGuides] = useState([])
   const [loading, setLoading] = useState(true)
   const [expandedGuide, setExpandedGuide] = useState(null)
+  const [activeVideo, setActiveVideo] = useState(null)
   const observerRef = useRef(null)
 
   useEffect(() => {
@@ -149,21 +150,42 @@ export default function Guides() {
                   >
                     {/* Video Section */}
                     <div className="guide-card-video">
-                      <video
-                        src={guide.videoUrl || ''}
-                        controls
-                        preload="metadata"
-                        playsInline
-                        className="guide-video-player"
-                        onClick={(e) => {
-                          const video = e.target;
-                          if (video.requestFullscreen) video.requestFullscreen();
-                          else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-                          else if (video.msRequestFullscreen) video.msRequestFullscreen();
-                        }}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
+                      {guide.thumbnailUrl && activeVideo !== guide._id ? (
+                        <>
+                          <img
+                            src={guide.thumbnailUrl}
+                            alt={guide.title}
+                            className="guide-thumbnail-img"
+                          />
+                          <div
+                            className="guide-play-overlay"
+                            onClick={() => setActiveVideo(guide._id)}
+                          >
+                            <div className="guide-play-btn-icon">
+                              <span>&#9654;</span>
+                            </div>
+                            <span className="guide-play-text">Watch Video</span>
+                          </div>
+                        </>
+                      ) : (
+                        <video
+                          src={guide.videoUrl || ''}
+                          poster={guide.thumbnailUrl || ''}
+                          controls
+                          autoPlay={activeVideo === guide._id}
+                          preload="metadata"
+                          playsInline
+                          className="guide-video-player"
+                          onClick={(e) => {
+                            const video = e.target;
+                            if (video.requestFullscreen) video.requestFullscreen();
+                            else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+                            else if (video.msRequestFullscreen) video.msRequestFullscreen();
+                          }}
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                       <div className="guide-card-video-badge">
                         <span className="guide-badge-icon">▶</span>
                         <span>Guide #{i + 1}</span>
