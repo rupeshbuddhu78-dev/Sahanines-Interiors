@@ -70,7 +70,7 @@ export default function AdminFalseCeilingGuides() {
     const file = e.target.files[0]
     if (!file) return
 
-    const maxMB = 200
+    const maxMB = 500
     if (file.size > maxMB * 1024 * 1024) {
       alert(`Video file size must be under ${maxMB}MB. Current: ${(file.size / 1024 / 1024).toFixed(1)}MB.`)
       e.target.value = ''
@@ -336,7 +336,7 @@ export default function AdminFalseCeilingGuides() {
           </div>
 
           <div className="form-group">
-            <label>Video (up to 200MB)</label>
+            <label>Video (up to 500MB)</label>
             <input
               type="url"
               value={form.videoUrl}
@@ -358,7 +358,7 @@ export default function AdminFalseCeilingGuides() {
                 pointerEvents: uploading ? 'none' : 'auto',
                 border: '2px dashed #ccc'
               }}>
-                {uploading ? 'Uploading...' : '📁 Upload Video File (max 200MB)'}
+                {uploading ? 'Uploading...' : '📁 Upload Video File (max 500MB)'}
                 <input
                   type="file"
                   accept="video/*"
@@ -411,7 +411,7 @@ export default function AdminFalseCeilingGuides() {
                   </span>
                 </div>
                 <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
-                  Please do not close this page. Large videos (up to 200MB) may take a few minutes.
+                  Please do not close this page. Large videos (up to 500MB) may take a few minutes.
                 </p>
               </div>
             )}
