@@ -797,21 +797,31 @@ async function ensureCloudinaryPreset() {
     
     if (presetExists) {
       console.log('✅ Cloudinary upload preset already exists:', presetName);
+      // Update preset to ensure video support
+      await cloudinary.api.update_upload_preset(presetName, {
+        unsigned: true,
+        folder: 'sahanines-interiors',
+        tags: ['admin-upload'],
+        allowed_formats: ['mp4', 'webm', 'mov', 'avi', 'mkv', 'jpg', 'png', 'webp']
+      });
+      console.log('✅ Updated Cloudinary preset with video support');
       return;
     }
     
-    // Create unsigned upload preset
+    // Create unsigned upload preset with video support
     await cloudinary.api.create_upload_preset({
       name: presetName,
       unsigned: true,
       folder: 'sahanines-interiors',
-      tags: ['admin-upload']
+      tags: ['admin-upload'],
+      allowed_formats: ['mp4', 'webm', 'mov', 'avi', 'mkv', 'jpg', 'png', 'webp']
     });
     
-    console.log('✅ Created Cloudinary upload preset:', presetName);
+    console.log('✅ Created Cloudinary upload preset with video support:', presetName);
   } catch (err) {
     console.error('⚠️  Failed to create Cloudinary preset:', err.message);
     console.log('   You can manually create preset "sahanines-admin" in Cloudinary dashboard');
+    console.log('   Make sure to enable "Unsigned" and allow video formats');
   }
 }
 

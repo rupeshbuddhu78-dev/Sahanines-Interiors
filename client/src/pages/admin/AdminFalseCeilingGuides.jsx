@@ -66,68 +66,7 @@ export default function AdminFalseCeilingGuides() {
     setForm({ ...form, advantages: form.advantages.filter((_, i) => i !== index) })
   }
 
-  const uploadVideoDirectToCloudinary = async (file, token) => {
-    // Step 1: Get Cloudinary signature from server
-    const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    if (!sigRes.data.success) throw new Error('Failed to get upload signature')
-
-    const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
-
-    // Step 2: Upload directly from browser to Cloudinary (bypasses server)
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('api_key', apiKey)
-    formData.append('timestamp', timestamp)
-    formData.append('signature', signature)
-    formData.append('folder', folder)
-
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest()
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`)
-
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded * 100) / event.total)
-          setUploadProgress(percent)
-        }
-      }
-
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const data = JSON.parse(xhr.responseText)
-            resolve({ success: true, url: data.secure_url, filename: data.public_id, storage: 'cloudinary' })
-          } catch (e) {
-            reject(new Error('Invalid response from Cloudinary'))
-          }
-        } else {
-          try {
-            const errData = JSON.parse(xhr.responseText)
-            reject(new Error(errData.error?.message || `Cloudinary error (${xhr.status})`))
-          } catch (e) {
-            reject(new Error(`Cloudinary upload failed (${xhr.status})`))
-          }
-        }
-      }
-
-      xhr.onerror = () => reject(new Error('Network error during upload'))
-      xhr.send(formData)
-    })
-  }
-
-  const handleVideoUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-
-    const maxMB = 1024
-    if (file.size > maxMB * 1024 * 1024) {
-      alert(`Video file size must be under ${maxMB}MB (1GB). Current: ${(file.size / 1024 / 1024).toFixed(1)}MB.`)
-      e.target.value = ''
-      return
-    }
-
+  const openCloudinaryWidget = () => {
     const token = localStorage.getItem('adminToken')
     if (!token) {
       alert('Session expired. Please login again.')
@@ -135,58 +74,91 @@ export default function AdminFalseCeilingGuides() {
       return
     }
 
-    setUploading(true)
-    setUploadProgress(0)
-    setUploadStatus('uploading')
+    // First get Cloudinary config from server
+    axios.get('/api/cloudinary-config', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(configRes => {
+      if (!configRes.data.success) {
+        alert('Cloudinary not configured on server. Please paste video URL directly.')
+        return
+      }
 
-    const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
+      const { cloudName, uploadPreset } = configRes.data
 
-    try {
-      // Try direct Cloudinary upload first (fastest, bypasses server)
-      let result
-      try {
-        result = await uploadVideoDirectToCloudinary(file, token)
-      } catch (cloudinaryErr) {
-        console.warn('Direct Cloudinary upload failed, falling back to server upload:', cloudinaryErr.message)
-        // Fallback: upload through server
-        const formData = new FormData()
-        formData.append('video', file)
-        const res = await axios.post('/api/upload-video', formData, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          },
-          timeout: 3600000,
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-              setUploadProgress(percent)
+      if (typeof window.cloudinary === 'undefined') {
+        alert('Cloudinary widget not loaded. Please refresh the page.')
+        return
+      }
+
+      setUploading(true)
+      setUploadProgress(0)
+      setUploadStatus('uploading')
+
+      const widget = window.cloudinary.createUploadWidget({
+        cloudName: cloudName,
+        uploadPreset: uploadPreset,
+        sources: ['local', 'camera', 'url'],
+        multiple: false,
+        folder: 'sahanines-interiors/videos',
+        resourceType: 'video',
+        maxFileSize: 1073741824, // 1GB
+        clientAllowedFormats: ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska'],
+        text: {
+          en: {
+            queue: {
+              title: 'Videos to upload',
+              title_uploading: 'Uploading videos... please wait'
             }
           }
-        })
-        result = res.data
-      }
+        }
+      }, (error, result) => {
+        if (!error && result && result.event === 'success') {
+          const videoUrl = result.info.secure_url
+          setForm(prev => ({ ...prev, videoUrl: videoUrl }))
+          setUploadStatus('success')
+          setUploadProgress(100)
+          setUploading(false)
+        } else if (error) {
+          console.error('Cloudinary widget error:', error)
+          setUploadStatus('error')
+          setUploading(false)
+          alert(`Video upload failed: ${error.message || 'Unknown error'}`)
+        } else if (result && result.event === 'close') {
+          // User closed widget without uploading
+          if (uploadStatus === 'uploading') {
+            setUploading(false)
+            setUploadStatus('')
+          }
+        } else if (result && result.event === 'queues-end') {
+          // All files in queue processed
+          if (result.info && result.info.length > 0) {
+            const lastResult = result.info[result.info.length - 1]
+            if (lastResult.success) {
+              setForm(prev => ({ ...prev, videoUrl: lastResult.url }))
+              setUploadStatus('success')
+              setUploadProgress(100)
+            }
+          }
+        }
+      })
 
-      if (result.success) {
-        setForm(prev => ({ ...prev, videoUrl: result.url }))
-        setUploadStatus('success')
-        setUploadProgress(100)
-      }
-    } catch (err) {
-      setUploadStatus('error')
-      const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
+      widget.open()
+    }).catch(err => {
+      console.error('Failed to get Cloudinary config:', err)
       if (err.response?.status === 401) {
         alert('Session expired. Please login again.')
         navigate('/admin/login')
       } else {
-        alert(`Video upload failed: ${errorMsg}\n\nFile size: ${fileSizeMB}MB\n\nTip: Paste a Cloudinary video URL directly in the field above.`)
+        alert('Failed to initialize upload. Please paste video URL directly.')
       }
-    }
-    setUploading(false)
-    setTimeout(() => {
-      e.target.value = ''
-      if (uploadStatus === 'error') setUploadStatus('')
-    }, 1000)
+    })
+  }
+
+  const handleVideoUpload = async (e) => {
+    // Open Cloudinary widget instead of file input
+    openCloudinaryWidget()
+    // Reset the file input
+    e.target.value = ''
   }
 
   const handleThumbnailUpload = async (e) => {
@@ -404,30 +376,28 @@ export default function AdminFalseCeilingGuides() {
               disabled={uploading}
             />
             <div style={{ marginTop: 10 }}>
-              <label style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                cursor: uploading ? 'wait' : 'pointer',
-                padding: '10px 18px',
-                background: uploading ? '#e0e0e0' : '#f0f0f0',
-                borderRadius: 8,
-                fontSize: '0.9rem',
-                fontWeight: 500,
-                pointerEvents: uploading ? 'none' : 'auto',
-                border: '2px dashed #ccc'
-              }}>
-                {uploading ? 'Uploading...' : '📁 Upload Video File (max 1GB)'}
-                <input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoUpload}
-                  style={{ display: 'none' }}
-                  disabled={uploading}
-                />
-              </label>
+              <button
+                type="button"
+                onClick={openCloudinaryWidget}
+                disabled={uploading}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  cursor: uploading ? 'wait' : 'pointer',
+                  padding: '10px 18px',
+                  background: uploading ? '#e0e0e0' : '#4a90d9',
+                  color: uploading ? '#666' : 'white',
+                  borderRadius: 8,
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                  border: 'none'
+                }}
+              >
+                {uploading ? 'Uploading...' : '📁 Upload Video (up to 1GB)'}
+              </button>
               <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 6 }}>
-                Video will be uploaded to Cloudinary. You can also paste any Cloudinary video URL directly in the field above.
+                Opens Cloudinary upload widget. Supports MP4, WebM, MOV up to 1GB. You can also paste any video URL directly above.
               </p>
             </div>
 
