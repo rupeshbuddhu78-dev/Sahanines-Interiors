@@ -84,24 +84,42 @@ export default function AdminFalseCeilingGuides() {
     }
 
     try {
-      // Get Cloudinary config from server
-      const configRes = await axios.get('/api/cloudinary-config', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      // Get signed upload parameters from server (no preset needed)
+      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        timeout: 30000
       })
 
-      if (!configRes.data.success) {
-        throw new Error('Failed to get upload config')
+      if (!sigRes.data.success) {
+        throw new Error('Failed to get upload signature')
       }
 
-      const { cloudName, uploadPreset } = configRes.data
+      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
 
-      // Open Cloudinary Upload Widget
+      // Open Cloudinary Upload Widget with signed upload
       const widget = window.cloudinary.createUploadWidget({
         cloudName: cloudName,
-        uploadPreset: uploadPreset,
+        apiKey: apiKey,
+        uploadSignature: async (callback) => {
+          // Request fresh signature for each chunk/upload
+          try {
+            const freshSig = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
+              headers: { 'Authorization': `Bearer ${token}` },
+              timeout: 30000
+            })
+            if (freshSig.data.success) {
+              callback(freshSig.data.signature, freshSig.data.timestamp)
+            } else {
+              throw new Error('Signature failed')
+            }
+          } catch (err) {
+            console.error('Signature error:', err)
+            callback(null, null)
+          }
+        },
         sources: ['local', 'camera'],
         resourceType: 'video',
-        folder: 'sahanines-interiors/videos',
+        folder: folder,
         maxFileSize: 1024 * 1024 * 1024, // 1GB
         clientAllowedFormats: ['video'],
         thumbnails: '.5',
@@ -193,24 +211,42 @@ export default function AdminFalseCeilingGuides() {
     }
 
     try {
-      // Get Cloudinary config from server
-      const configRes = await axios.get('/api/cloudinary-config', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      // Get signed upload parameters from server (no preset needed)
+      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'image' }, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        timeout: 30000
       })
 
-      if (!configRes.data.success) {
-        throw new Error('Failed to get upload config')
+      if (!sigRes.data.success) {
+        throw new Error('Failed to get upload signature')
       }
 
-      const { cloudName, uploadPreset } = configRes.data
+      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
 
-      // Open Cloudinary Upload Widget
+      // Open Cloudinary Upload Widget with signed upload
       const widget = window.cloudinary.createUploadWidget({
         cloudName: cloudName,
-        uploadPreset: uploadPreset,
+        apiKey: apiKey,
+        uploadSignature: async (callback) => {
+          // Request fresh signature for each upload
+          try {
+            const freshSig = await axios.post('/api/cloudinary-signature', { resourceType: 'image' }, {
+              headers: { 'Authorization': `Bearer ${token}` },
+              timeout: 30000
+            })
+            if (freshSig.data.success) {
+              callback(freshSig.data.signature, freshSig.data.timestamp)
+            } else {
+              throw new Error('Signature failed')
+            }
+          } catch (err) {
+            console.error('Signature error:', err)
+            callback(null, null)
+          }
+        },
         sources: ['local', 'camera'],
         resourceType: 'image',
-        folder: 'sahanines-interiors',
+        folder: folder,
         maxFileSize: 10 * 1024 * 1024, // 10MB
         clientAllowedFormats: ['image'],
         cropping: true,
