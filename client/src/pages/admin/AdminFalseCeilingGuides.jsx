@@ -87,33 +87,53 @@ export default function AdminFalseCeilingGuides() {
     setUploading(true)
     setUploadProgress(0)
     setUploadStatus('uploading')
-    const formData = new FormData()
-    formData.append('video', file)
 
     const fileSizeMB = (file.size / 1024 / 1024).toFixed(1)
 
     try {
-      const res = await axios.post('/api/upload-video', formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        },
-        timeout: 3600000, // 1 hour timeout for large files
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-            setUploadProgress(percent)
+      // Step 1: Get Cloudinary signature from server (small request, bypasses 413)
+      const sigRes = await axios.post('/api/cloudinary-signature', { resourceType: 'video' }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+
+      if (!sigRes.data.success) {
+        throw new Error('Could not get upload signature from server')
+      }
+
+      const { signature, timestamp, apiKey, cloudName, folder } = sigRes.data
+
+      // Step 2: Upload video DIRECTLY to Cloudinary from browser (bypasses server)
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('api_key', apiKey)
+      formData.append('timestamp', timestamp)
+      formData.append('signature', signature)
+      formData.append('folder', folder)
+
+      const uploadRes = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`,
+        formData,
+        {
+          timeout: 3600000, // 1 hour timeout for large files
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              setUploadProgress(percent)
+            }
           }
         }
-      })
-      if (res.data.success) {
-        setForm(prev => ({ ...prev, videoUrl: res.data.url }))
+      )
+
+      if (uploadRes.data.secure_url) {
+        setForm(prev => ({ ...prev, videoUrl: uploadRes.data.secure_url }))
         setUploadStatus('success')
         setUploadProgress(100)
+      } else {
+        throw new Error('Upload response did not contain URL')
       }
     } catch (err) {
       setUploadStatus('error')
-      const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
+      const errorMsg = err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Unknown error'
       if (err.response?.status === 401) {
         alert('Session expired. Please login again.')
         navigate('/admin/login')
